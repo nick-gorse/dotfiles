@@ -1,0 +1,26 @@
+JupyterLab v3.0.12
+/home/ngorse/.local/share/jupyter/labextensions
+        jupyterlab-system-monitor v0.8.0 enabled OK (python, jupyterlab-system-monitor)
+        jupyterlab_requirements v0.6.3 enabled OK (python, jupyterlab-requirements)
+        jupyterlab-topbar-extension v0.6.1 enabled OK (python, jupyterlab-topbar)
+        @jlab-enhanced/cell-toolbar v3.1.1 enabled OK (python, jlab-enhanced-cell-toolbar)
+        @jlab-enhanced/launcher v3.0.2 enabled OK (python, jlab-enhanced-launcher)
+        @ryantam626/jupyterlab_code_formatter v1.4.5 enabled OK (python, jupyterlab-code-formatter)
+        @krassowski/jupyterlab-lsp v3.5.0 enabled OK (python, jupyterlab_lsp)
+        @jupyter-widgets/jupyterlab-manager v3.0.0 enabled OK (python, jupyterlab_widgets)
+        @lckr/jupyterlab_variableinspector v3.0.6 enabled OK (python, lckr_jupyterlab_variableinspector)
+        @jupyter-server/resource-usage v0.5.0 enabled OK (python, jupyter-resource-usage)
+        @jupyterlab/git v0.30.0-beta.1 enabled OK (python, jupyterlab-git)
+
+Other labextensions (built into JupyterLab)
+   app dir: /home/ngorse/.local/share/jupyter/lab
+        @jupyterlab/apputils v3.0.5 enabled OK
+        @mamba-org/gator-lab v3.0.0 enabled OK
+        jupyterlab-code-snippets v2.0.1 enabled OK
+        jupyterlab-dash v0.4.0 enabled OK
+        jupyterlab-theme-toggle v0.6.1 enabled OK
+        jupyterlab-topbar-text v0.6.1 enabled OK
+
+
+Disabled extensions:
+    @jupyterlab/launcher-extension (all plugins)

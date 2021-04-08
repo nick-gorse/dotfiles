@@ -1,0 +1,16 @@
+Known nbextensions:
+  config dir: /home/ngorse/.jupyter/nbconfig
+    notebook section
+      jupyter-nbrequirements/extension  enabled
+      - Validating: OK
+      jupyter-require/extension  enabled
+      - Validating: OK
+      jupyter_resource_usage/main  enabled
+      - Validating: OK
+      nbdime/index  enabled
+      - Validating: OK
+      qgrid/extension  enabled
+      - Validating: problems found:
+        - require?  X qgrid/extension
+      jupyter-js-widgets/extension  enabled
+      - Validating: OK

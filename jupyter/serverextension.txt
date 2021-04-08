@@ -1,0 +1,36 @@
+Loading Gnome
+Loading Google
+Loading Windows (alt)
+Loading file
+Loading keyczar
+Loading multi
+Loading pyfs
+Config dir: /home/ngorse/.jupyter
+    jupyter_lsp enabled
+    - Validating jupyter_lsp...
+      jupyter_lsp 1.1.4 OK
+    jupyter_resource_usage enabled
+    - Validating jupyter_resource_usage...
+      jupyter_resource_usage  OK
+    jupyterlab enabled
+    - Validating jupyterlab...
+      jupyterlab 3.0.12 OK
+    jupyterlab_code_formatter enabled
+    - Validating jupyterlab_code_formatter...
+      jupyterlab_code_formatter 1.4.5 OK
+    jupyterlab_git enabled
+    - Validating jupyterlab_git...
+      jupyterlab_git 0.30.0b1 OK
+    jupyterlab_requirements enabled
+    - Validating jupyterlab_requirements...
+      jupyterlab_requirements 0.6.3 OK
+    nbclassic enabled
+    - Validating nbclassic...
+      nbclassic  OK
+    nbdime enabled
+    - Validating nbdime...
+      nbdime 3.0.0.b1 OK
+
+Config dir: /usr/etc/jupyter
+
+Config dir: /usr/local/etc/jupyter
