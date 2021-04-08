@@ -1,0 +1,60 @@
+#!/bin/zsh
+
+ 
+
+# shortcut to this dotfiles path is $ZSH
+export ZSH=$HOME/.dotfiles
+
+if [[ -a ~/.localrc ]]
+then
+      source ~/.localrc
+  fi
+
+source $ZSH/tmux/config
+
+# all of our zsh files
+typeset -U config_files
+config_files=($ZSH/**/*.zsh)
+
+# load the path files
+for file in ${(M)config_files:#*/path.zsh}
+ do
+   source ${file}
+   typeset -gU path
+done
+export -U PATH
+
+# load everything but the path and completion files
+for file in ${${config_files:#*/path.zsh}:#*/completion.zsh}
+do
+  source ${file}
+done
+
+# initialize autocomplete here, otherwise functions won't be loaded
+autoload -U compinit
+compinit
+#
+# load every completion after autocomplete loads
+for file in ${(M)config_files:#*/completion.zsh}
+do
+   source $file
+done
+
+unset config_files
+
+# >>> mamba initialize >>>
+# !! Contents within this block are managed by 'mamba init' !!
+export MAMBA_EXE="/home/ngorse/micro_mamba/bin/micromamba";
+export MAMBA_ROOT_PREFIX="/home/ngorse/micromamba";
+__mamba_setup="$('/home/ngorse/micro_mamba/bin/micromamba' shell hook --shell zsh --prefix '/home/ngorse/micromamba' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__mamba_setup"
+else
+    if [ -f "/home/ngorse/micromamba/etc/profile.d/mamba.sh" ]; then
+        . "/home/ngorse/micromamba/etc/profile.d/mamba.sh"
+    else
+        export PATH="/home/ngorse/micromamba/bin:$PATH"
+    fi
+fi
+unset __mamba_setup
+# <<< mamba initialize <<<
