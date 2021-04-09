@@ -42,19 +42,3 @@ done
 
 unset config_files
 
-# >>> mamba initialize >>>
-# !! Contents within this block are managed by 'mamba init' !!
-export MAMBA_EXE="/home/ngorse/micro_mamba/bin/micromamba";
-export MAMBA_ROOT_PREFIX="/home/ngorse/micromamba";
-__mamba_setup="$('/home/ngorse/micro_mamba/bin/micromamba' shell hook --shell zsh --prefix '/home/ngorse/micromamba' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__mamba_setup"
-else
-    if [ -f "/home/ngorse/micromamba/etc/profile.d/mamba.sh" ]; then
-        . "/home/ngorse/micromamba/etc/profile.d/mamba.sh"
-    else
-        export PATH="/home/ngorse/micromamba/bin:$PATH"
-    fi
-fi
-unset __mamba_setup
-# <<< mamba initialize <<<

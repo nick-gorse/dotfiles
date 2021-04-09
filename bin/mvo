@@ -1,0 +1,11 @@
+#/bin/zsh
+mvo () {
+for file in $@
+do
+  if [[ ${file##*.} == "zsh" ]]; then
+    mv "$file" "${file%%.*}.old"
+  elif [[ ${1##*.} == "old" ]]; then
+    mv "$file" "${file%%.*}.zsh"
+  fi
+done
+}
