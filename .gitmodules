@@ -1,0 +1,3 @@
+[submodule "vim/pack/nick-gorse/start/vim-autoclose"]
+	path = vim/pack/nick-gorse/start/vim-autoclose
+	url = https://github.com/spf13/vim-autoclose.git
