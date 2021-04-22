@@ -1,15 +1,12 @@
 filetype on
 filetype off
-" Pathogen
-call pathogen#infect()
-call pathogen#helptags()
 
+packloadall
 set autowrite
 set mouse=a
 
 set number
 set relativenumber
-set noswapfile
 
 " Brackets Highlighting Colors
 hi MatchParen cterm=none ctermbg=black ctermfg=white
