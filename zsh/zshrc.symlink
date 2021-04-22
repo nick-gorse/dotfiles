@@ -1,16 +1,24 @@
 #!/bin/zsh
 
- 
+call_file () {
+  printf "\n%s\n%s - %s\n%s\n" $pad $1 $2 $pad >> $outfile
+  cat $1 >> $outfile
+  source $1
+}
+
+printf -v pad '%0.1s' "-"{1..60}
+export outfile=$HOME/zshrc-last
+echo `date` >| $outfile
 
 # shortcut to this dotfiles path is $ZSH
 export ZSH=$HOME/.dotfiles
 
 if [[ -a ~/.localrc ]]
 then
-      source ~/.localrc
+      call_file ~/.localrc "local"
   fi
 
-source $ZSH/tmux/config
+#call_file $ZSH/tmux/config "tmux"
 
 # all of our zsh files
 typeset -U config_files
@@ -19,7 +27,7 @@ config_files=($ZSH/**/*.zsh)
 # load the path files
 for file in ${(M)config_files:#*/path.zsh}
  do
-   source ${file}
+   call_file ${file} "path"
    typeset -gU path
 done
 export -U PATH
@@ -27,7 +35,7 @@ export -U PATH
 # load everything but the path and completion files
 for file in ${${config_files:#*/path.zsh}:#*/completion.zsh}
 do
-  source ${file}
+  call_file ${file} "main"
 done
 
 # initialize autocomplete here, otherwise functions won't be loaded
@@ -37,7 +45,7 @@ compinit
 # load every completion after autocomplete loads
 for file in ${(M)config_files:#*/completion.zsh}
 do
-   source $file
+   call_file $file "completion"
 done
 
 unset config_files

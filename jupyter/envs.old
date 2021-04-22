@@ -1,0 +1,3 @@
+#export JUPYTER_CONFIG_DIR=/home/ngorse/.jupyter
+#export JUPYTER_DATA_DIR=/home/ngorse/.local/share/jupyter
+export JUPYTER_PREFER_ENV_PATH=true

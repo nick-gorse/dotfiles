@@ -1,0 +1,21 @@
+#!/usr/bin/zsh
+#
+function jupyter_kill() {
+    JUP_PID=`cat $HOME/.jup_pid`
+    if ! ps -o pid --no-headers -fp $JUP_PID > /dev/null 2>&1; then
+        kill -9 JUP_PID
+    fi
+    unset JUP_PID
+}
+
+function jupyter_start() {
+    JUP_PID=`cat $HOME/.jup_pid`
+    if ! ps -o pid --no-headers -fp $JUP_PID > /dev/null 2>&1; then
+        source $HOME/.virtualenvs/jupyter/bin/activate >| $HOME/jup.log 2>&1 &
+        nohup $HOME/.virtualenvs/jupyter/bin/python $HOME/.virtualenvs/jupyter/bin/jupyter-lab >> $HOME/jup.log 2>&1 &
+        echo $! >| $HOME/.jup_pid 
+    fi
+    unset JUP_PID
+}
+
+

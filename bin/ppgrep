@@ -1,0 +1,1 @@
+function ppgrep() { pgrep "$@" | xargs ps -fp 2> /dev/null; }

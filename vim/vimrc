@@ -1,10 +1,15 @@
-filetype plugin indent on
+filetype on
+filetype off
+" Pathogen
+call pathogen#infect()
+call pathogen#helptags()
 
 set autowrite
 set mouse=a
 
-:set number
-:set noswapfile
+set number
+set relativenumber
+set noswapfile
 
 " Brackets Highlighting Colors
 hi MatchParen cterm=none ctermbg=black ctermfg=white
@@ -25,6 +30,21 @@ set tabstop=4       " The width of a TAB is set to 4.
 
 set shiftwidth=4    " Indents will have a width of 4
 
-set softtabstop=4   " Sets the number of columns for a TAB
-
+set softtabstop=4
 set expandtab       " Expand TABs to spaces
+
+" Search
+set hlsearch        "Highlight Search Result
+set ignorecase      "Ignore case when searching
+set incsearch
+set smartcase       "Automatically switch search to case-sensitive when search query contains an uppercase letter
+
+set wildmenu
+set showmatch
+nnoremap gV `[v`]
+
+syntax enable
+colorscheme slate
+set title
+set autoindent
+filetype plugin indent on

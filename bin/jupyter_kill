@@ -1,0 +1,9 @@
+#!/usr/bin/zsh
+#
+function jupyter_kill() {
+    JUP_PID=`cat $HOME/.jup_pid`
+    if ! ps -o pid --no-headers -fp $JUP_PID > /dev/null 2>&1; then
+        kill -9 JUP_PID
+    fi
+    unset JUP_PID
+}
