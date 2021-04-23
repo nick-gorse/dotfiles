@@ -9,6 +9,9 @@ call_file () {
 printf -v pad '%0.1s' "-"{1..60}
 export outfile=$HOME/zshrc-last
 echo `date` >| $outfile
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  call_file "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" "instant"
+fi
 
 # shortcut to this dotfiles path is $ZSH
 export ZSH=$HOME/.dotfiles
