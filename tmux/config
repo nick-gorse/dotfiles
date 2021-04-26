@@ -1,4 +1,0 @@
-if [ -z "$TMUX" ] && [ -n "$SSH_TTY" ] && [[ $- =~ i ]]; then 
-	tmux -CC attach-session -t ssh || tmux -CC new-session -s ssh 
-	exit 
-fi
