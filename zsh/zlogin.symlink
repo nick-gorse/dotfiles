@@ -1,0 +1,11 @@
+#!/bin/zsh
+# Executes commands at login post-zshrc.
+#
+#
+. $ZSH/bin/call_file
+echo "#{{{1 # zlogin" >> $outfile
+zlogin_files=($ZSH/**/*.zlogin)
+for file in ${zlogin_files[@]}
+do
+  call_file ${file} "zlogin"
+done

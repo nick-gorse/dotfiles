@@ -46,3 +46,4 @@ set title
 set autoindent
 filetype plugin indent on
 set foldmethod=marker
+set nofoldenable

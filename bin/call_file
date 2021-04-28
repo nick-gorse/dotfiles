@@ -1,0 +1,7 @@
+#!/bin/zsh
+#{{{1 # call_file function
+call_file () {
+  printf "\n%s -- #%s - %s\n" "{{{2" $2 $1>> $outfile # }}}
+  cat $1 >> $outfile
+  source $1
+}

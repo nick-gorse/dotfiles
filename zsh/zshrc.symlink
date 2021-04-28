@@ -1,23 +1,14 @@
 #!/bin/zsh
-
-call_file () {
-#  printf "\n%s\n#%s - %s\n%s\n" $pad $1 $2 $pad >> $outfile
-  printf "\n%s -- #%s - %s\n" "{{{1" $2 $1>> $outfile # }}}
-  cat $1 >> $outfile
-
-  source $1
-}
-
-printf -v pad '%0.1s' "-"{1..60}
 export outfile=$HOME/zshrc-last
+export ZSH=$HOME/.dotfiles
+source $ZSH/bin/call_file
 echo `date` >| $outfile
+
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   call_file "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" "instant"
 fi
 
 # shortcut to this dotfiles path is $ZSH
-export ZSH=$HOME/.dotfiles
-
 if [[ -a ~/.localrc ]]
 then
       call_file ~/.localrc "local"
@@ -54,4 +45,3 @@ do
 done
 
 unset config_files
-
