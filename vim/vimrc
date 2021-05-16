@@ -39,9 +39,12 @@ set smartcase       "Automatically switch search to case-sensitive when search q
 set wildmenu
 set showmatch
 nnoremap gV `[v`]
+set t_Co=256   " This is may or may not needed.
+
+set background=light
+colorscheme PaperColor
 
 syntax enable
-colorscheme slate
 set title
 set autoindent
 filetype plugin indent on
