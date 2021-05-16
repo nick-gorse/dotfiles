@@ -1,0 +1,3 @@
+function make_reqs() {
+    awk '/import/ { print $2 }' *.(py|ipynb) | sed 's:[\\\.\"].*::g' | sort --unique |> requirements.txt
+    }
