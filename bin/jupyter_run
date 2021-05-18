@@ -3,9 +3,9 @@
 function jupyter_run() {
     JUP_PID=`cat $HOME/.jup_pid`
     if ! ps -o pid --no-headers -fp $JUP_PID > /dev/null 2>&1; then
-        source $HOME/.virtualenvs/jupyter/bin/activate >| $HOME/jup.log 2>&1 
+        source $HOME/.virtualenvs/jupyter/bin/activate >| $HOME/jup.log 2>&1
         nohup $HOME/.virtualenvs/jupyter/bin/python $HOME/.virtualenvs/jupyter/bin/jupyter-lab >> $HOME/jup.log 2>&1 &
-        echo $! >| $HOME/.jup_pid 
+        echo $! >| $HOME/.jup_pid
     fi
     unset JUP_PID
 }
