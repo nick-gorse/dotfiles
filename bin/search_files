@@ -1,0 +1,18 @@
+#!/usr/local/bin/zsh
+setopt extended_glob
+setopt null_glob
+setopt rematch_pcre
+
+echo $1
+echo $2
+echo $3
+
+if [[ -d $1 ]]; then
+  echo ${1}"/**/*"${2}
+    search_files=($1/**/*$2)
+fi
+# load the path files
+for file in $search_files
+do
+  cat ${file} | grep $3 
+done

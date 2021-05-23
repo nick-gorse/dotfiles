@@ -1,0 +1,4 @@
+#!/bin/sh
+if [[ -w $HOME/PAN ]]; then
+    hdiutil attach -mountpoint $HOME/PAN $HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/PAN.sparsebundle
+fi

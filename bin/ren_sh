@@ -1,0 +1,9 @@
+#/bin/zsh
+for file in $@
+do
+if [[ ${file##*.} == "sh" ]]; then
+    mv "$file" "${file%%.*}"
+  elif [[ ${1##*.} == "old" ]]; then
+    mv "$file" "${file%%.*}.zsh"
+  fi
+done

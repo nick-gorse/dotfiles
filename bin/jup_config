@@ -1,0 +1,32 @@
+#!/bin/zsh
+function echo_exists() {
+  if [[ -e "$1" ]]; then
+    echo $1
+    cat $1
+  else
+  fi
+}
+echo_exists "/Users/ngorse/.jupyter/jupyter_notebook_config.json"
+echo_exists "/etc/jupyter/jupyter_notebook_config.json"
+echo_exists "/usr/local/etc/jupyter/jupyter_notebook_config.d/jupyterlab.json"
+echo_exists "/usr/local/etc/jupyter/jupyter_notebook_config.d/jupyterlab_git.json"
+echo_exists "/usr/local/etc/jupyter/jupyter_notebook_config.d/nbdime.json"
+echo_exists "/usr/local/etc/jupyter/jupyter_notebook_config.json"
+echo_exists "/Users/ngorse/miniconda3/envs/jupyter/etc/jupyter/jupyter_notebook_config.d/jupyterlab.json"
+echo_exists "/Users/ngorse/miniconda3/envs/jupyter/etc/jupyter/jupyter_notebook_config.d/jupyterlab_code_formatter.json"
+echo_exists "/Users/ngorse/miniconda3/envs/jupyter/etc/jupyter/jupyter_notebook_config.d/mamba_gator.json"
+echo_exists "/Users/ngorse/miniconda3/envs/jupyter/etc/jupyter/jupyter_notebook_config.d/nbdime.json"
+echo_exists "/Users/ngorse/miniconda3/envs/jupyter/etc/jupyter/jupyter_notebook_config.json"
+echo_exists "/Users/ngorse/.jupyter/jupyter_notebook_config.json"
+echo_exists "/etc/jupyter/jupyter_server_config.json"
+echo_exists "/usr/local/etc/jupyter/jupyter_server_config.d/jupyterlab.json"
+echo_exists "/usr/local/etc/jupyter/jupyter_server_config.d/nbclassic.json"
+echo_exists "/usr/local/etc/jupyter/jupyter_server_config.json"
+echo_exists "/Users/ngorse/miniconda3/envs/jupyter/etc/jupyter/jupyter_server_config.d/jupyterlab.json"
+echo_exists "/Users/ngorse/miniconda3/envs/jupyter/etc/jupyter/jupyter_server_config.d/jupyterlab_code_formatter.json"
+echo_exists "/Users/ngorse/miniconda3/envs/jupyter/etc/jupyter/jupyter_server_config.d/jupyterlab_git.json"
+echo_exists "/Users/ngorse/miniconda3/envs/jupyter/etc/jupyter/jupyter_server_config.d/mamba_gator.json"
+echo_exists "/Users/ngorse/miniconda3/envs/jupyter/etc/jupyter/jupyter_server_config.d/nbclassic.json"
+echo_exists "/Users/ngorse/miniconda3/envs/jupyter/etc/jupyter/jupyter_server_config.d/nbdime.json"
+echo_exists "/Users/ngorse/miniconda3/envs/jupyter/etc/jupyter/jupyter_server_config.json"
+echo_exists "/Users/ngorse/.jupyter/jupyter_server_config.json"
