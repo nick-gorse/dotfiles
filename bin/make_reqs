@@ -2,7 +2,7 @@ function make_reqs() {
     mods=("${(@f)$(awk '/import/ { print $2 }' *.(py|ipynb) | sed -E 's:[\\\.\"].*::g;s~(^[a-zA-Z_]*)~^\1=~g;s~_~-~g' | sort --unique )}")
     pip freeze | grep -E "$(export IFS="|"; echo "${mods[*]}")"
     for mod in ${mods[*]}; do
-      pip freeze | grep $mod 
+      echo `pip freeze | grep $mod` 
     done
     unset mods
     }
