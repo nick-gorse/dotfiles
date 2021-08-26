@@ -1,0 +1,95 @@
+#!/usr/local/bin/zsh
+function help {
+		printf "Usage: sshconfig [-h, --help] [-V, --version] [-a, --add-port <port(s)>]\n\n" 
+		printf "  %-30s\n" "Options Avaliable" 
+		printf "  %-30s %s\n" "-h, --help" "Show help." 
+		printf "  %-30s %s\n" "-V, --version" "Show version and exit." 
+		printf "  %-30s %s\n" "-a, --add-port <port(s)>" "Add ports forwarded to ssh host. (Multiple with ,)" 
+		printf "  %-30s %s\n" "-r, --remove-port <port(s)>" "Remove ports forwarded to ssh host. (Multiple with ,)" 
+		printf "  %-30s %s\n" "-l, --list-ports" "List ports in current config" 
+}
+
+function list_ports {
+    printf "%s\n" $ports[@]
+}
+
+function add_ports {
+	ports+=(`echo ${1//,/ }`)
+	ports=($(printf "%s\n" "${ports[@]}" | sort | uniq -c | sort -rnk1 | awk '{ print $2 }'))
+    bckup_sshconfig
+    gen_config
+}
+	
+function remove_ports {
+	rports=(`echo ${1//,/ }`)
+    for port in ${rports[@]}; do 
+        [[ "${ports[@]}" == "${port}" ]] && ports=( ${ports[@]/${port}/} )
+    done
+    unset rports
+    list_ports
+    bckup_sshconfig
+    gen_config
+}
+
+function error_drop {
+  printf "$1 is an unknown option.\n" >&2
+  help >&2
+  return 1
+}
+
+function bckup_sshconfig {
+[[ -z "$IFS" ]] && OLDIFS=$IFS
+while IFS= read -r line; do
+    case $line in
+        (Host [[:punct:]])
+            outfile=$hostdir/default.host
+            echo $line >| $outfile
+            continue ;;
+        (Host *)              
+            outfile=$hostdir/${line#Host[[:space:]]}.host
+            echo $line >| $outfile
+            continue ;;
+    esac
+    [[ -n ${line// /} && $line != *"LocalForward"* ]] && echo ${line//    /  } >> $outfile
+done < $sshconfig
+[[ -z "$OLDIFS" ]] && IFS=$OLDIFS
+local_conn
+}
+
+function gen_config {
+  echo "#`date`" >| $sshconfig
+  hosts=($hostdir/*.host)
+  for file in ${hosts[@]}
+  do
+      cat $file >> $sshconfig
+      echo >> $sshconfig
+  done
+}
+
+function local_conn {
+  for port in ${ports[@]}; do 
+      if [[ $port -lt 999 ]]; then port_loc=$((port + 7000)); fi 
+      port_loc=${port_loc:=$port}
+      echo "  LocalForward $port_loc 127.0.0.1:$port" >> $hostdir/tunnel.host
+      unset port_loc
+  done
+  printf "%s\n" "${ports[@]}" >| $hostdir/ports.txt
+}
+
+    set -o errexit
+    hostdir=$HOME/.dotfiles/ssh
+    hostfile=$hostdir/dump.txt
+    sshconfig=$HOME/.ssh/config
+    version=0.1
+    declare -a ports
+    ports=(`cat $hostdir/ports.txt`)
+
+    while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do case $1 in
+        -V | --version )      echo $version                   ;;
+	    -a | --add-port )     shift; add_ports $1             ;;
+	    -r | --remove-port )  shift; remove_ports $1          ;;
+	    -l | --list-ports )   list_ports                      ;;
+	    -h | --help )         help; return 0 2>/dev/null      ;;
+	    *)                    error_drop $1; return 1 2>/dev/null                   ;;
+    esac; shift; done
+    if [[ "$1" == '--' ]]; then shift; fi

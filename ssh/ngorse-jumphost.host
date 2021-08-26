@@ -1,0 +1,4 @@
+Host ngorse-jumphost
+  hostname 10.237.97.170
+  ControlPath ~/.ssh/ctl_chan/%r@%h:%p
+  user ngorse

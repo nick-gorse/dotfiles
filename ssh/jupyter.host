@@ -1,0 +1,5 @@
+Host jupyter
+  SetEnv LC_TMUX=jupyter
+  hostname 10.237.97.170
+  user ngorse
+  ControlPath ~/.ssh/ctl_chan/%r@%h:%p

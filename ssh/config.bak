@@ -1,0 +1,34 @@
+Host *
+  AddKeysToAgent yes
+  ForwardAgent yes
+  UseKeychain yes
+  IdentityFile ~/.ssh/id_ed25519    
+
+Host jumpbox
+  hostname 10.237.97.170
+  user ngorse
+
+Host jupyter
+  SetEnv LC_TMUX=jupyter
+  hostname 10.237.97.170
+  user ngorse
+
+Host tunnel
+  hostname 10.237.97.170
+  user ngorse
+  RemoteForward 2222 127.0.0.1:22
+  LocalForward 9888 127.0.0.1:9888
+  LocalForward 8050 127.0.0.1:80
+  LocalForward 8000 127.0.0.1:8000
+  LocalForward 9000 127.0.0.1:9000
+  ControlMaster auto
+  ControlPath ~/.ssh/%r@%h:%p
+
+Host home
+    hostname nicks-network-nwvdwcpqjj.dynamic-m.com
+    User admin
+    DynamicForward 4096
+
+Host nas
+    hostname 192.168.0.5
+    User admin
