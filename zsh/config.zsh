@@ -8,3 +8,4 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
 fi
 
 setopt NO_BG_NICE
+source ~/powerlevel10k/powerlevel10k.zsh-theme

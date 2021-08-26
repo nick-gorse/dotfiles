@@ -7,10 +7,11 @@ case `uname` in
     export PATH="$PYENV_ROOT/bin:$PATH"
     eval "$(pyenv init -)"
     eval "$(pyenv virtualenv-init -)"
+    export PATH="$PYENV_ROOT/shims:$PATH"
   ;;
   Linux)
     # commands for Linux go here
-    export WORKON_HOME=~/.virtualenvs
+    export WORKON_HOME=$HOME/.virtualenvs
     source $HOME/.local/bin/virtualenvwrapper.sh
   ;;
   FreeBSD)
