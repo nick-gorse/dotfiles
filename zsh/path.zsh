@@ -1,5 +1,1 @@
-path=(
-  /usr/local/{bin,sbin}
-  $HOME/.local/bin
-  $path
-)
+export PATH="$HOME/local/bin:$HOME/local/sbin:$HOME/.local/bin:$PATH"
