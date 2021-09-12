@@ -1,0 +1,3 @@
+Config to remap ± to ~ and § to ~ on UK keyboard. 
+
+Needs to be copied to ~/Library/LaunchAgents/ on a mac
