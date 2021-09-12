@@ -25,6 +25,26 @@ fail () {
   exit
 }
 
+setup_gitconfig () {
+  if ! [ -f %HOME/.gitconfig.local ]
+  then
+    info 'setup gitconfig'
+
+    git_credential='cache'
+    if [[ `uname` == "Darwin" ]]
+    then
+      git_credential='osxkeychain'
+    fi
+
+    git_authorname='Nick Gorse'
+	git_authorname='nick@olb42.com'
+
+    sed -e "s/AUTHORNAME/$git_authorname/g" -e "s/AUTHOREMAIL/$git_authoremail/g" -e "s/GIT_CREDENTIAL_HELPER/$git_credential/g" git/gitconfig.local.symlink.example > $HOME/.gitconfig.local
+
+    success 'gitconfig'
+  fi
+}
+
 link_file () {
   local src=$1 dst=$2
   local overwrite= backup= skip=
@@ -109,4 +129,5 @@ install_dotfiles () {
   done
 }
 
+setup_gitconfig
 install_dotfiles
