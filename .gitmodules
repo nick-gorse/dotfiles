@@ -1,6 +1,6 @@
-[submodule "vim/pack/nick-gorse/start/vim-autoclose"]
-	path = vim/pack/nick-gorse/start/vim-autoclose
-	url = https://github.com/spf13/vim-autoclose.git
 [submodule "vim/pack/nick-gorse/start/vim-prettier"]
 	path = vim/pack/nick-gorse/start/vim-prettier
 	url = https://github.com/prettier/vim-prettier
+[submodule "vim/pack/nick-gorse/start/vim-autoclose"]
+	path = vim/pack/nick-gorse/start/vim-autoclose
+	url = https://github.com/spf13/vim-autoclose.git
