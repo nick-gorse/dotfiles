@@ -1,0 +1,12 @@
+Host tunnel
+  hostname 10.237.97.170
+  user ngorse
+  RemoteForward 2224 127.0.0.1:22
+  ControlMaster auto
+  ControlPath ~/.ssh/ctl_chan/%r@%h:%p
+  LocalForward 9888 127.0.0.1:9888
+  LocalForward 9000 127.0.0.1:9000
+  LocalForward 8051 127.0.0.1:8051
+  LocalForward 8001 127.0.0.1:8001
+  LocalForward 8000 127.0.0.1:8000
+  LocalForward 7080 127.0.0.1:80

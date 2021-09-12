@@ -1,0 +1,4 @@
+Host home
+  hostname nicks-network-nwvdwcpqjj.dynamic-m.com
+  User admin
+  DynamicForward 4096
