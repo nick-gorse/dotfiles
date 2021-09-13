@@ -1,4 +1,4 @@
-source /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+source $HOMEBREW_PREFIX/share/zsh-history-substring-search/zsh-history-substring-search.zsh
 HISTFILE=~/.zsh_history
 HISTSIZE=50000
 SAVEHIST=10000

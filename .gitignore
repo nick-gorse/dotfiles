@@ -1,3 +1,4 @@
 ._*
 *.swp
 .netrwhist
+.jupyterlab-workspace
