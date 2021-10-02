@@ -8,11 +8,19 @@ case `uname` in
     eval "$(pyenv init -)"
     eval "$(pyenv virtualenv-init -)"
     export PATH="$PYENV_ROOT/shims:$PATH"
+    alias virt='foo(){ pyenv activate "$1" }; foo '
   ;;
   Linux)
+    export PYENV_ROOT="$HOME/.pyenv"
+    export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init -)"
+    eval "$(pyenv virtualenv-init -)"
+    export PATH="$PYENV_ROOT/shims:$PATH"
+    alias virt='foo(){ pyenv activate "$1" }; foo '
     # commands for Linux go here
-    export WORKON_HOME=$HOME/.virtualenvs
-    source $HOME/.local/bin/virtualenvwrapper.sh
+#    export WORKON_HOME=$HOME/.virtualenvs
+#    source $HOME/.local/bin/virtualenvwrapper.sh
+#    alias virt='foo(){ workon "$1" }; foo '
   ;;
   FreeBSD)
     # commands for FreeBSD go here
