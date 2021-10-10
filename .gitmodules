@@ -4,3 +4,6 @@
 [submodule "vim/pack/nick-gorse/start/vim-prettier"]
 	path = vim/pack/nick-gorse/start/vim-prettier
 	url = https://github.com/prettier/vim-prettier
+[submodule "tmux/plugins/tpm"]
+	path = tmux/plugins/tpm
+	url = https://github.com/tmux-plugins/tpm

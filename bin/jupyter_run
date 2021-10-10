@@ -1,13 +1,11 @@
 #!/usr/bin/zsh
 #
 function jupyter_run() {
-    JUP_PID=`cat $HOME/.jup_pid`
+	printf -v JUP_PID "`jupyter server list --json | grep 9888 | jq '.pid'`"
     if ! ps -o pid --no-headers -fp $JUP_PID > /dev/null 2>&1; then
-        source $HOME/.virtualenvs/jupyter/bin/activate >| $HOME/jup.log 2>&1
-        nohup $HOME/.virtualenvs/jupyter/bin/python $HOME/.virtualenvs/jupyter/bin/jupyter-lab >> $HOME/jup.log 2>&1 &
-        echo $! >| $HOME/.jup_pid
+		pyenv shell jupyter
+        jupyter lab --no-browser --port 9888 -y #>> $HOME/jup.log
     fi
-    unset JUP_PID
 }
 
 

@@ -1,7 +1,9 @@
 #!/usr/bin/zsh
 #
 function jupyter_kill() {
-    JUP_PID=`cat $HOME/.jup_pid`
-    ps -o pid --no-headers -fp $JUP_PID > /dev/null 2>&1 && kill -9 $JUP_PID
-    unset JUP_PID
+    printf -v JUP_PID "`jupyter server list --json | grep 9888 | jq '.pid'`"
+	if ps -o pid --no-headers -fp $JUP_PID > /dev/null 2>&1; then
+		pyenv shell jupyter
+		jupyter server stop 9888
+	fi
 }

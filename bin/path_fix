@@ -1,0 +1,18 @@
+#!/usr/bin/zsh
+# while read -d ':' p; do
+#    [[ -d $p ]] || NEW_PATH=$NEW_PATH"$p"
+# done <<< "$PATH:"
+# [[ $VIRTUAL_ENV != "*virtualenvs*" ]] &&
+
+path_fix () {
+paths=(`tr ':' '\n' <<< "$PATH"`)
+for p in "${paths[@]}" ; do
+	if [[ $VIRTUAL_ENV ]] && [[ $p =~ "pyenv" ]]; then
+		continue
+	fi
+    [[ -d $p ]] && NEW_PATH="${NEW_PATH}${DELIM}${p}"
+	DELIM=":"
+done
+export OLDPATH=$PATH
+export PATH=$NEW_PATH
+}

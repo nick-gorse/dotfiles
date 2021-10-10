@@ -1,7 +1,15 @@
 #!/usr/bin/zsh
 
-if [ -z "$TMUX" ] && [ -n "$SSH_TTY" ] && [ -n "$LC_TMUX" ] && [[ $- =~ i ]]; then 
-    tmux has-session -t ${LC_TMUX} > /dev/null 2>&1 || tmux -2 new-session -s "$LC_TMUX" -d
-	tmux attach -t "$LC_TMUX"
-fi
+unset SESS_NAME
+
+# if [ -z "$TMUX" ] && [ -n "$SSH_TTY" ] && [ -n "$LC_TMUX" ] && [[ $- =~ i ]]; then
+# 	# tmux -2 -CC new-session -A -s "$LC_TMUX"
+#  	if ! tmux has-session -t ${LC_TMUX}; then
+# 		tmux -2 new-session -d -s "$LC_TMUX" -d \; \
+# 			split-window -v \;
+# 	fi
+# 	# tmux send-keys -t 'Main'
+# 	tmux -CC attach -t $LC_TMUX
+# 	exit
+# fi
 

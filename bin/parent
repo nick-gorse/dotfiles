@@ -1,0 +1,4 @@
+#!/usr/bin/zsh
+parent_find () {
+	topic=$(basename `/bin/readlink -f ${1%/*}`)
+}

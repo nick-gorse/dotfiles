@@ -1,0 +1,6 @@
+#session1
+new  -s jupyter -n server 
+neww -n server/console
+splitw -v -p 50 -t 0 console
+selectw -t 0 
+selectp -t 0
