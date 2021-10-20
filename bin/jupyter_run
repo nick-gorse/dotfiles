@@ -1,10 +1,12 @@
 #!/usr/bin/zsh
 #
 function jupyter_run() {
-	printf -v JUP_PID "`jupyter server list --json | grep 9888 | jq '.pid'`"
-    if ! ps -o pid --no-headers -fp $JUP_PID > /dev/null 2>&1; then
-		pyenv shell jupyter
-        jupyter lab --no-browser --port 9888 -y #>> $HOME/jup.log
+	# printf -v JUP_PID "`jupyter server list --json | grep ${JUP_PORT:-9888} | jq '.pid'`"
+	if [[ -e "$HOME/.pyenv/versions/jupyter/bin" ]]; then; pyenv shell jupyter;fi
+	export JUP_PID=$(jupyter server list --json | grep ${JUP_PORT:-9888} | jq '.pid')
+    if ! jupyter server list --json | grep ${JUP_PORT:-9888} > /dev/null 2>&1; then
+		# pyenv shell jupyter
+        jupyter lab --no-browser --port ${JUP_PORT:-9888} -y >> $HOME/jup.log &
     fi
 }
 

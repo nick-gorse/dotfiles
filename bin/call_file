@@ -1,7 +1,7 @@
-#!/bin/zsh
+#!/usr/bin/zsh
 #{{{1 # call_file function
 call_file () {
-  curr=$(basename `/bin/readlink -f ${1%/*}`)
+  curr=$(basename `$READLINK_DIR/readlink -f ${1%/*}`)
   printf "\n%s -- #%s - %s\n" "{{{2" ${2:-$curr} $1>> $outfile # }}}
   cat $1 >> $outfile
   source $1

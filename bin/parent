@@ -1,4 +1,5 @@
 #!/usr/bin/zsh
 parent_find () {
-	topic=$(basename `/bin/readlink -f ${1%/*}`)
+	# [[ -a ~/.localrc ]] && source ~/.localrc
+	topic=$(basename `${READLINK_DIR:="/bin"}/readlink -f ${1%/*}`)
 }

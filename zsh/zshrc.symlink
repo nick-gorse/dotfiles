@@ -1,4 +1,5 @@
 #!/bin/zsh
+source $HOME/.envrc
 export outfile=$HOME/zshrc-last
 export ZSH=$HOME/.dotfiles
 source $ZSH/bin/call_file

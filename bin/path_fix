@@ -13,6 +13,7 @@ for p in "${paths[@]}" ; do
     [[ -d $p ]] && NEW_PATH="${NEW_PATH}${DELIM}${p}"
 	DELIM=":"
 done
-export OLDPATH=$PATH
-export PATH=$NEW_PATH
+# export OLDPATH=$PATH
+# export PATH=$NEW_PATH
+tr ':' '\n' <<< "$NEW_PATH"
 }
