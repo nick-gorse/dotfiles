@@ -32,10 +32,12 @@ export -U PATH
 
 printf "\n{{{%s -- #%s\n" ${fold:-"1"} "basic zsh files" "${ZSH}/*/*.zsh" >>$outfile # }}}
 export fold=2
+# echo files >| ~/files.txt
 
 # load everything but the path and completion files
 for file in ${${config_files:#*/path.zsh}:#*/completion.zsh}; do
-	parent_find ${file}
+    # echo -n "${file} " >> ~/files.txt
+    # parent_find ${file}
  	call_file ${file} 
 done
 
