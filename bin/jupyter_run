@@ -12,14 +12,13 @@ function jupyter_kill() {
 }
 
 function jupyter_run() {
-	if [[ -e "$HOME/.pyenv/versions/jupyter/bin" ]]; then; pyenv shell jupyter;fi
     if ! jupyter server list --json | grep ${JUP_PORT:-9888} > /dev/null 2>&1; then
         jupyter_start
 	else
 	    while [[ "$1" =~ ^- && ! "$1" == "--" ]]
 		do
 			case $1 in
-				(-r | --restart ) jupyter server stop ${JUP_PORT:-9888}
+				(-r | --restart ) jupyter_kill
 						jupyter_start                   ;;
 				(-h | --help )	printf "Usage: jupyter_run [-h, --help] [-r, --restart]\n"; return 0 2>/dev/null      ;;
 		    	(*) return 1 2>/dev/null                   ;;
