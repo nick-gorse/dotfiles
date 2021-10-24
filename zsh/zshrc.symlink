@@ -1,38 +1,40 @@
 #!/bin/zsh
-source $HOME/.envrc
 export outfile=$HOME/zshrc-last
 export ZSH=$HOME/.dotfiles
-source $ZSH/bin/call_file
-source $ZSH/bin/parent
+[[ -a $HOME/.envrc ]] && source $HOME/.envrc
+[[ -a $ZSH/bin/call_file ]] && source $ZSH/bin/call_file
 echo `date` >| $outfile
+export fold=1
+
+# load envrc from $HOME
+if [[ -a $HOME/.envrc ]];then	
+	call_file $HOME/.envrc "env"
+fi
+# load localrc from $HOME
+if [[ -a $HOME/.localrc ]];then
+	call_file $HOME/.localrc "local"
+fi
 
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   call_file "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" "instant"
 fi
-
-# shortcut to this dotfiles path is $ZSH
-if [[ -a ~/.localrc ]]
-then
-      call_file ~/.localrc "local"
-fi
-
-#call_file $ZSH/tmux/config "tmux"
 
 # all of our zsh files
 typeset -U config_files
 config_files=($ZSH/**/*.zsh)
 
 # load the path files
-for file in ${(M)config_files:#*/path.zsh}
- do
+for file in ${(M)config_files:#*/path.zsh}; do
    call_file ${file} "path"
    typeset -gU path
 done
 export -U PATH
 
+printf "\n{{{%s -- #%s\n" ${fold:-"1"} "basic zsh files" "${ZSH}/*/*.zsh" >>$outfile # }}}
+export fold=2
+
 # load everything but the path and completion files
-for file in ${${config_files:#*/path.zsh}:#*/completion.zsh}
-do
+for file in ${${config_files:#*/path.zsh}:#*/completion.zsh}; do
 	parent_find ${file}
  	call_file ${file} 
 done
@@ -43,8 +45,7 @@ autoload -Uz compinit && compinit
 # autoload -U compinit
 #
 # load every completion after autocomplete loads
-for file in ${(M)config_files:#*/completion.zsh}
-do
+for file in ${(M)config_files:#*/completion.zsh}; do
    call_file $file "completion"
 done
 

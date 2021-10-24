@@ -2,17 +2,20 @@
 typeset -gU fpath
 typeset -U function_files
 #add each topic folder to fpath so that they can add functions and completion scripts
-for topic_folder ($ZSH/bin) 
-    if [ -d $topic_folder ]; then  
+bin_files=($ZSH/bin)
+for topic_folder in $bin_files; do
+    if [ -d $topic_folder ]; then
         fpath=($topic_folder $fpath)
         typeset -gU fpath
-        echo "fpath=($topic_folder $fpath)" >> $outfile;
-    fi;
+        echo $fpath >>$outfile
+    fi
+done
 
 functions_files=($ZSH/bin/*(:t))
-for func in $functions_files
-    if typeset -f $func > /dev/null; then
-        unset -f $func;
-    fi;    
+for func in $functions_files; do
+    if typeset -f $func >/dev/null; then
+        unset -f $func
+    fi
+done
 
-autoload -U $ZSH/bin/*(:t)
+autoload -U $functions_files

@@ -12,4 +12,3 @@ unset SESS_NAME
 # 	tmux -CC attach -t $LC_TMUX
 # 	exit
 # fi
-

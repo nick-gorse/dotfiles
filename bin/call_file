@@ -1,8 +1,14 @@
 #!/usr/bin/zsh
-#{{{1 # call_file function
+# #{{{1 # call_file function
+parent_find () {
+	# [[ -a ~/.localrc ]] && source ~/.localrc
+	topic=$(basename `${READLINK_DIR:="/bin"}/readlink -f ${1%/*}`)
+}
+
 call_file () {
-  curr=$(basename `$READLINK_DIR/readlink -f ${1%/*}`)
-  printf "\n%s -- #%s - %s\n" "{{{2" ${2:-$curr} $1>> $outfile # }}}
-  cat $1 >> $outfile
+  curr=$(basename `${READLINK_DIR:="/bin"}/readlink -f ${1%/*}`)
+  # echo $curr >> ~/files.txt
+  printf "\n{{{%s -- #%s - %s\n" ${fold:-"1"} ${2:-$curr} $1 >>$outfile # }}}
+  head -n 100 $1 >>$outfile
   source $1
 }

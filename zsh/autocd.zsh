@@ -1,1 +1,1 @@
-setopt  autocd autopushd pushdignoredups
+setopt autocd autopushd pushdignoredups
