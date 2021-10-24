@@ -18,6 +18,6 @@ for topic_folder ($ZSH/*) if [ -d $topic_folder ]; then  fpath=($topic_folder $f
 #     fi
 # done
 #
-# autoload -U $functions_files
+# autoload -U $ZSH/bin/*(:t)
 
 

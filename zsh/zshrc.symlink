@@ -36,15 +36,13 @@ export fold=2
 
 # load everything but the path and completion files
 for file in ${${config_files:#*/path.zsh}:#*/completion.zsh}; do
-    # echo -n "${file} " >> ~/files.txt
-    # parent_find ${file}
  	call_file ${file} 
 done
 
 # initialize autocomplete here, otherwise functions won't be loaded
 autoload bashcompinit && bashcompinit
 autoload -Uz compinit && compinit
-# autoload -U compinit
+autoload -U compinit
 #
 # load every completion after autocomplete loads
 for file in ${(M)config_files:#*/completion.zsh}; do
