@@ -21,6 +21,8 @@ fi
 
 # all of our zsh files
 typeset -U config_files
+unsetopt complete_aliases
+unsetopt nobgnice
 config_files=($ZSH/**/*.zsh)
 
 # load the path files

@@ -8,4 +8,4 @@ function _pip_completion {
         PIP_AUTO_COMPLETE=1 $words[1] 2>/dev/null))
 }
 compctl -K _pip_completion python -m pip
-# pip zsh completion end
+compctl -K _pip_completion ppip

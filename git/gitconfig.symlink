@@ -9,3 +9,5 @@
 [user]
 	name = nick-gorse
 	email = nick@olb42.com
+[core]
+	excludesFile = ~/.gitignore
