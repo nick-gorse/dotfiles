@@ -1,6 +1,6 @@
 #!/bin/bash
 host='127.0.0.1'
-remote_host='10.237.97.170'
+
 hostdir=$HOME/.dotfiles/ssh
 ports=(`cat $hostdir/ports.txt`)
 
