@@ -7,5 +7,4 @@ function _pip_completion {
         COMP_CWORD=$((cword - 1)) \
         PIP_AUTO_COMPLETE=1 $words[1] 2>/dev/null))
 }
-compctl -K _pip_completion python -m pip
-compctl -K _pip_completion ppip
+compctl -K _pip_completion 'python -m pip' ppip
