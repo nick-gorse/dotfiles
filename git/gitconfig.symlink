@@ -11,8 +11,3 @@
 	email = nick@olb42.com
 [core]
 	excludesFile = ~/.gitignore
-[filter "nbstripout"]
-	clean = \"/home/ngorse/.pyenv/versions/analytics/bin/python\" -m nbstripout
-	smudge = cat
-[diff "ipynb"]
-	textconv = \"/home/ngorse/.pyenv/versions/analytics/bin/python\" -m nbstripout -t
