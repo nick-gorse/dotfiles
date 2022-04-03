@@ -1,10 +1,22 @@
 #!/bin/zsh
 export outfile=$HOME/zshrc-last
 export ZSH=$HOME/.dotfiles
+export DOTFILES=$HOME/.dotfiles
 [[ -a $HOME/.envrc ]] && source $HOME/.envrc
-[[ -a $ZSH/bin/call_file ]] && source $ZSH/bin/call_file
+[[ -a $DOTFILES/bin/call_file ]] && source $DOTFILES/bin/call_file
 echo `date` >| $outfile
 export fold=1
+fpath=($DOTFILES/zsh/plugins/zsh-completions/src $fpath)
+
+setopt AUTO_CD              # Go to folder path without using cd.
+
+setopt AUTO_PUSHD           # Push the old directory onto the stack on cd.
+setopt PUSHD_IGNORE_DUPS    # Do not store duplicates in the stack.
+setopt PUSHD_SILENT         # Do not print the directory stack after pushd or popd.
+
+setopt CORRECT              # Spelling correction
+setopt CDABLE_VARS          # Change directory to a path stored in a variable.
+setopt EXTENDED_GLOB        # Use extended globbing syntax.
 
 # load envrc from $HOME
 if [[ -a $HOME/.envrc ]];then	
@@ -23,7 +35,7 @@ fi
 typeset -U config_files
 unsetopt complete_aliases
 unsetopt nobgnice
-config_files=($ZSH/**/*.zsh)
+config_files=($DOTFILES/**/*.zsh)
 
 # load the path files
 for file in ${(M)config_files:#*/path.zsh}; do
@@ -42,13 +54,16 @@ for file in ${${config_files:#*/path.zsh}:#*/completion.zsh}; do
 done
 
 # initialize autocomplete here, otherwise functions won't be loaded
-autoload bashcompinit && bashcompinit
-autoload -Uz compinit && compinit
-autoload -U compinit
+setopt complete_aliases
+source $DOTFILES/zsh/completion.zsh
+# autoload -Uz $DOTFILES/zsh/plugins/kubectl-completion/zsh-kubectl-completion
+#autoload bashcompinit && bashcompinit
+#autoload -Uz compinit && compinit
+#autoload -U compinit
 #
 # load every completion after autocomplete loads
 for file in ${(M)config_files:#*/completion.zsh}; do
-   call_file $file "completion"
+  call_file $file "completion"
 done
 
 unset config_files
