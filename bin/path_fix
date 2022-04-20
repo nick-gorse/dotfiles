@@ -4,16 +4,17 @@
 # done <<< "$PATH:"
 # [[ $VIRTUAL_ENV != "*virtualenvs*" ]] &&
 
-path_fix () {
-paths=(`tr ':' '\n' <<< "$PATH"`)
-for p in "${paths[@]}" ; do
-	if [[ $VIRTUAL_ENV ]] && [[ $p =~ "pyenv" ]]; then
-		continue
-	fi
-    [[ -d $p ]] && NEW_PATH="${NEW_PATH}${DELIM}${p}"
-	DELIM=":"
-done
-# export OLDPATH=$PATH
-# export PATH=$NEW_PATH
-tr ':' '\n' <<< "$NEW_PATH"
+path_fix() {
+	paths=($(tr ':' '\n' <<<"$PATH"))
+	for p in "${paths[@]}"; do
+		if [[ $VIRTUAL_ENV ]]; then
+			continue
+		fi
+		[[ -d $p ]] && NEW_PATH="${NEW_PATH}${DELIM}${p}"
+		DELIM=":"
+	done
+	# export OLDPATH=$PATH
+	# export PATH=$NEW_PATH
+	tr ':' '\n' <<<"$NEW_PATH"
+	unset NEW_PATH
 }
