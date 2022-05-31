@@ -1,36 +1,58 @@
 #!/usr/local/bin/zsh
+
+function prefix() { PYENV_VERSION=3.9.5 pyenv exec "$@"; }
+function suffix_grep() { prefix "$@" | grep ${JUP_PORT:-9888}; }
+function suffix_null() { $@ >/dev/null 2>&1; }
+
 function jupyter_start() {
-	nohup jupyter lab --no-browser --port ${JUP_PORT:-9888} -y > $HOME/jup.log 2>&1 &
+	prefix nohup jupyter lab --no-browser --ServerApp.disable_check_xsrf=True --port ${JUP_PORT:-9888} -y >$HOME/jup.log 2>&1 &
 	export JUP_PID=$!
 }
 
 function jupyter_kill() {
-	jupyter server stop ${JUP_PORT:-9888} >> $HOME/jup.log 2>&1
+	# prefix jupyter server stop ${JUP_PORT:-9888} >>$HOME/jup.log 2>&1
+	suffix_null jupyter server stop ${JUP_PORT:-9888}
 	unset JUP_PID
 }
 
 function jupyter_help() {
-	printf "Usage: jupyter_run [-h, --help] [-s, --show] [-r, --restart]\n"; return 0 2>/dev/null
+	printf "Usage: jupyter_run [-h, --help] [--stop] [-s, --show] [-r, --restart]\n"
 }
 
 function jupyter_run() {
-    if ! jupyter server list --json | grep ${JUP_PORT:-9888} > /dev/null 2>&1; then
-        jupyter_start
-	else
-	    while [[ "$1" =~ ^- && ! "$1" == "--" ]]
-		do
-			case $1 in
-				(-r | --restart ) jupyter_kill
-						jupyter_start                   ;;
-				(-s | --show )	jupyter server list | grep ${JUP_PORT:-9888}     ;;
-				(-h | --help )	jupyter_help      ;;
-		    	(*) return 1 2>/dev/null                   ;;
-			esac
-			shift
-		done
-	    if [[ "$1" == '--' ]]; then shift; fi
-		return 02>/dev/null
-    fi
+	typeset -i num_arg
+	num_arg=$#
+	if [[ $num_arg == '0' ]]; then
+		suffix_null suffix_grep jupyter server list || jupyter_start
+		return 0 2>/dev/null
+	fi
+	while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
+		case $1 in
+		-r | --restart)
+			jupyter_kill
+			jupyter_start
+			return 0 2>/dev/null
+			;;
+		--stop)
+			jupyter_kill
+			return 0 2>/dev/null
+			;;
+		-s | --show)
+			suffix_grep jupyter server list
+			return 0 2>/dev/null
+			;;
+		-h | --help)
+			jupyter_help
+			return 0 2>/dev/null
+			;;
+		*)
+			jupyter_help
+			return 1 2>/dev/null
+			;;
+		esac
+		shift
+	done
+	if [[ "$1" == '--' ]]; then shift; fi
 }
 
 jupyter_run
