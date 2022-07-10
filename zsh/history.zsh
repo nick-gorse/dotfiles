@@ -18,23 +18,17 @@ bindkey '^[[B' history-substring-search-down
 bindkey "$terminfo[kcuu1]" history-substring-search-up
 bindkey "$terminfo[kcud1]" history-substring-search-down
 
-
 # History search
-# autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
-# zle -N up-line-or-beginning-search
-# zle -N down-line-or-beginning-search
-# [[ -n "$key[Up]"   ]] && bindkey -- "$key[Up]"   up-line-or-beginning-search
-# [[ -n "$key[Down]" ]] && bindkey -- "$key[Down]" down-line-or-beginning-search
-
-
+autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+[[ -n "$key[Up]" ]] && bindkey -- "$key[Up]" up-line-or-beginning-search
+[[ -n "$key[Down]" ]] && bindkey -- "$key[Down]" down-line-or-beginning-search
 
 # setopt append_history                   # adds history
 # setopt inc_append_history share_history # adds history incrementally and share it across sessions
 # setopt hist_ignore_all_dups             # don't record dupes in history
 
+setopt HIST_IGNORE_SPACE
 
-
-
-# setopt HIST_IGNORE_SPACE
-
-#zsh-history-substring-search key bindings
+# zsh-history-substring-search key bindings
