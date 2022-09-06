@@ -1,0 +1,7 @@
+=($DOTFILES/**/*.zsh)
+case $(uname) in
+Darwin)
+    # commands for OS X go here
+    [[ ! -e ${HOME}/Library/LaunchAgents/ ]]
+    ;;
+esac

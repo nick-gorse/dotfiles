@@ -1,7 +1,7 @@
 case $(uname) in
 Darwin)
     # commands for OS X go here
-    eval "$(/usr/local/bin/brew shellenv)"
+    eval "$(/opt/homebrew/bin/brew shellenv)"
     ;;
 Linux)
     # commands for Linux go here
