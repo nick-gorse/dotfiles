@@ -6,8 +6,6 @@ parent_find () {
 }
 
 call_file () {
-  set -o localtraps
-  trap 'echo "12334 ${2:-$curr}"' ERR
   curr=$(basename `${READLINK_DIR:="/bin"}/readlink -f ${1%/*}`)
   # echo $curr >> ~/files.txt
   printf "\n{{{%s -- #%s - %s\n" ${fold:-"1"} ${2:-$curr} $1 >>$outfile # }}}

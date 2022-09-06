@@ -1,6 +1,0 @@
-machine api.heroku.com
-  login nick@olb42.com
-  password ce797033-c518-4449-aa96-6db586e80b2a
-machine git.heroku.com
-  login nick@olb42.com
-  password ce797033-c518-4449-aa96-6db586e80b2a
