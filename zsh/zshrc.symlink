@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/zsh
 export outfile=$HOME/zshrc-last
 export ZSH=$HOME/.dotfiles
 export DOTFILES=$HOME/.dotfiles
@@ -7,6 +7,12 @@ export DOTFILES=$HOME/.dotfiles
 echo `date` >| $outfile
 export fold=1
 fpath=($DOTFILES/zsh/plugins/zsh-completions/src $fpath)
+
+
+# TRAPERR() {
+#     set -o localoptions -o localtraps
+#     echo "Got ${LINENO}" SIGKILL
+# }
 
 setopt AUTO_CD              # Go to folder path without using cd.
 
@@ -19,15 +25,16 @@ setopt CDABLE_VARS          # Change directory to a path stored in a variable.
 setopt EXTENDED_GLOB        # Use extended globbing syntax.
 
 # load envrc from $HOME
-if [[ -a $HOME/.envrc ]];then	
+if [[ -s $HOME/.envrc ]];then	
 	call_file $HOME/.envrc "env"
 fi
 # load localrc from $HOME
-if [[ -a $HOME/.localrc ]];then
+if [[ -s $HOME/.localrc ]];then
 	call_file $HOME/.localrc "local"
 fi
 
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+
+if [[ -s "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   call_file "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" "instant"
 fi
 
@@ -36,7 +43,6 @@ typeset -U config_files
 unsetopt complete_aliases
 unsetopt nobgnice
 config_files=($DOTFILES/**/*.zsh)
-
 # load the path files
 for file in ${(M)config_files:#*/path.zsh}; do
    call_file ${file} "path"
@@ -47,6 +53,7 @@ export -U PATH
 printf "\n{{{%s -- #%s\n" ${fold:-"1"} "basic zsh files" "${ZSH}/*/*.zsh" >>$outfile # }}}
 export fold=2
 # echo files >| ~/files.txt
+# trap 'echo "${2:-$file}"' ERR
 
 # load everything but the path and completion files
 for file in ${${config_files:#*/path.zsh}:#*/completion.zsh}; do
@@ -67,3 +74,5 @@ for file in ${(M)config_files:#*/completion.zsh}; do
 done
 
 unset config_files
+
+export PATH="$HOME/.poetry/bin:$PATH"
