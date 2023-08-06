@@ -1,8 +1,8 @@
 case $(uname) in
 Darwin)
     # commands for OS X go here
-    [[ -a /usr/local/bin/brew ]] && eval "$(/usr/local/bin/brew shellenv)"
-    [[ -a /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
+    [[ -e /opt/homebrew/bin/brew && $(arch) =~ 'arm.*' ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
+    [[ -e /usr/local/bin/brew && $(arch) =~ '.*86.*' ]] && eval "$(/usr/local/bin/brew shellenv)"
     ;;
 Linux)
     # commands for Linux go here
