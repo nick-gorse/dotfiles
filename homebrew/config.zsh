@@ -1,8 +1,16 @@
 case $(uname) in
 Darwin)
-    # commands for OS X go here
-    [[ -e /opt/homebrew/bin/brew && $(arch) =~ 'arm.*' ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
-    [[ -e /usr/local/bin/brew && $(arch) =~ '.*86.*' ]] && eval "$(/usr/local/bin/brew shellenv)"
+    case ${${$(uname -m)%64}//_/} in
+        arm)
+            BREWHOME='/opt/homebrew'
+            ;;
+        x86)
+            BREWHOME='/usr/local'
+            ;;
+        esac
+    echo "$(${BREWHOME}/bin/brew shellenv)" >>$outfile
+    [[ -e ${BREWHOME}/bin/brew ]]  && eval "$(${BREWHOME}/bin/brew shellenv)"
+    # [[ -e /usr/local/bin/brew ]] && eval "$(/usr/local/bin/brew shellenv)"
     ;;
 Linux)
     # commands for Linux go here
