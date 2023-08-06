@@ -14,6 +14,7 @@ FreeBSD)
     ;;
 esac
 if [[ -e ${foo[$CPUTYPE]}/bin/brew ]]; then
+    echo "Environment Variables set for homebrew" >>$outfile
     echo "$(${foo[$CPUTYPE]}/bin/brew shellenv)" >>$outfile
     eval "$(${foo[$CPUTYPE]}/bin/brew shellenv)"
 fi
