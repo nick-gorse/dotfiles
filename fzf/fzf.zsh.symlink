@@ -1,13 +1,15 @@
+[[ -d $(brew --prefix fzf) ]] || brew install --quiet fzf &> /dev/null; export FZF_PREFIX=$(brew --prefix fzf)
+
 # Setup fzf
 # ---------
-if [[ ! "$PATH" == *$(brew --prefix)/opt/fzf/bin* ]]; then
-  PATH="${PATH:+${PATH}:}$(brew --prefix)/opt/fzf/bin"
+if [[ ! "$PATH" == *${FZF_PREFIX}/bin* ]]; then
+  PATH="${PATH:+${PATH}:}${FZF_PREFIX}/bin"
 fi
 
 # Auto-completion
 # ---------------
-[[ $- == *i* ]] && source "$(brew --prefix)/opt/fzf/shell/completion.zsh" 2> /dev/null
+[[ $- == *i* ]] && source "${FZF_PREFIX}/shell/completion.zsh" 2> /dev/null
 
 # Key bindings
 # ------------
-source "$(brew --prefix)/opt/fzf/shell/key-bindings.zsh"
+source "${FZF_PREFIX}/shell/key-bindings.zsh"
