@@ -6,6 +6,6 @@ else;
     if [ $runcount -ne 0 ]; then
         killall -9 ssh-agent
     fi
-    eval $(ssh-agent -s)
-    ssh-add $HOME/.ssh/id_ed25519
+    eval $(ssh-agent -s &> /dev/null)
+    ssh-add $HOME/.ssh/id_ed25519 &> /dev/null
 fi
