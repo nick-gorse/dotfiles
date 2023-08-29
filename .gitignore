@@ -4,3 +4,4 @@
 .jupyterlab-workspace
 *workspaces*
 .history/Users/ngorse/.dotfiles/
+zsh/plugins/site-functions

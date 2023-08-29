@@ -29,8 +29,10 @@ for library in ${(@)brew_libs}; do
     fi
 done
 unset LD_PREFIX LD_SUFFIX CPP_PREFIX CPP_SUFFIX PKG_SUFFIX brew_libs
-[[ -d $(xcrun --show-sdk-path) ]] && LD_F+="-L$(xcrun --show-sdk-path)/usr/lib"
-[[ -d $(xcrun --show-sdk-path) ]] && CPP_F+="-I$(xcrun --show-sdk-path)/usr/include"
+if which xcrun > /dev/null; then
+    [[ -d $(xcrun --show-sdk-path) ]] && LD_F+="-L$(xcrun --show-sdk-path)/usr/lib"
+    [[ -d $(xcrun --show-sdk-path) ]] && CPP_F+="-I$(xcrun --show-sdk-path)/usr/include"
+fi
 export LDFLAGS="${LDFLAGS}${LDFLAGS:+ }${LD_F}"
 export CPPFLAGS="${CPP_FLAGS}${CPP_FLAGS:+ }${CPP_F}"
 export PKG_CONFIG_PATH="${PKG_CONFIG_PATH:+:}${PKG_F}"
