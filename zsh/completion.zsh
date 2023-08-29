@@ -6,7 +6,7 @@
 
 # Load more completions
 fpath=($DOTFILES/zsh/plugins/zsh-completions/src $fpath)
-fpath=($DOTFILES/zsh/plugins/site-functions $fpath)
+fpath=($(brew --prefix)/share/zsh/site-functions $fpath)
 zcompdump="${XDG_CACHE_HOME:-$HOME/.cache}/"
 
 # Should be called before compinit
