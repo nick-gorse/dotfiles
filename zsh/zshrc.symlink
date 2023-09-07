@@ -55,15 +55,21 @@ done
 
 # initialize autocomplete here, otherwise functions won't be loaded
 setopt complete_aliases
-source $DOTFILES/zsh/completion.zsh
+# call_file $DOTFILES/zsh/completion.zsh "base completion"
 # autoload -Uz $DOTFILES/zsh/plugins/kubectl-completion/zsh-kubectl-completion
 #autoload bashcompinit && bashcompinit
 #autoload -Uz compinit && compinit
 #autoload -U compinit
 #
+
+if [[ -e $HOME/.local_comp_rc ]];then
+  # load local_comp_rc from $HOME
+  call_file $HOME/.local_comp_rc "local completion"
+fi
 # load every completion after autocomplete loads
 for file in ${(M)config_files:#*/completion.zsh}; do
   call_file $file "completion"
 done
+
 
 unset config_files

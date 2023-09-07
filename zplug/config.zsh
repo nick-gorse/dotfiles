@@ -9,6 +9,7 @@ if [[ ! -d $HOME/.zplug ]]; then
     zplug update &> /dev/null
 else;
     source $HOME/.zplug/init.zsh
+    zplug 'zplug/zplug', hook-build:'zplug --self-manage'
     if ! zplug check; then
         zplug install &> /dev/null
     fi
