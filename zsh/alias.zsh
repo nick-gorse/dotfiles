@@ -34,3 +34,4 @@ alias mkdir='mkdir -pv'
 alias mount='mount |column -t'
 alias path='echo -e ${PATH//:/\\n}'
 alias fpath='echo -e ${FPATH//:/\\n}'
+alias -s {zsh,symlink}=subl

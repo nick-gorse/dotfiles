@@ -5,4 +5,3 @@ export POETRY_HOME="$HOME/.poetry"
 export PATH=$POETRY_HOME/bin:$PATH
 export ZSH_POETRY_AUTO_ACTIVATE=true
 export ZSH_POETRY_AUTO_DEACTIVATE=true
-# export CDPATH=$HOME/PAN_alt:$HOME/PAN:$HOME/config
