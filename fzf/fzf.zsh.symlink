@@ -1,13 +1,16 @@
+
+
 # Setup fzf
 # ---------
-if [[ ! "$PATH" == */opt/homebrew/opt/fzf/bin* ]]; then
-  PATH="${PATH:+${PATH}:}/opt/homebrew/opt/fzf/bin"
+# [ -f ~/.fzf.zsh ] && call_file ~/.fzf.zsh "fzf"
+if [[ ! "$PATH" == *$(brew --prefix)/opt/fzf/bin* ]]; then
+  PATH="${PATH:+${PATH}:}${(f)$(brew --prefix)}/opt/fzf/bin"
 fi
 
 # Auto-completion
 # ---------------
-[[ $- == *i* ]] && source "/opt/homebrew/opt/fzf/shell/completion.zsh" 2> /dev/null
+[[ $- == *i* ]] && call_file $HOMEBREW_PREFIX/opt/fzf/shell/completion.zsh "fzf"
 
 # Key bindings
 # ------------
-source "/opt/homebrew/opt/fzf/shell/key-bindings.zsh"
+call_file $HOMEBREW_PREFIX/opt/fzf/shell/key-bindings.zsh "fzf"

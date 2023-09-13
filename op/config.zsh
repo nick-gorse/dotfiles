@@ -1,0 +1,1 @@
+[[ -e $HOME/.config/op/plugins.sh ]] && call_file $HOME/.config/op/plugins.sh "1password"
