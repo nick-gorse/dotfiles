@@ -1,0 +1,16 @@
+#!/bin/zsh
+NEWPATH=()
+DELPATH=()
+new_path() {
+	for el in ${${(R)${(us/:/)PATH}:#* *}[@]}; do
+		if [[ -d $el ]]; then
+			NEWPATH+=$el
+		else
+			DELPATH+=$el
+		fi
+	done
+}
+
+new_path
+# echo ${(F)DELPATH}
+echo ${(j/:/)NEWPATH}

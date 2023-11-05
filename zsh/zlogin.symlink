@@ -2,10 +2,17 @@
 # Executes commands at login post-zshrc.
 
 #. $ZSH/bin/call_file
-echo "\n#{{{1 # zlogin" >>$outfile
+echo "\n{{{1 # zlogin" >>$outfile
 zlogin_files=($ZSH/**/*.zlogin)
 for file in ${zlogin_files[@]}; do
     call_file ${file} "zlogin"
 done
 
 export PIP_DISABLE_PIP_VERSION_CHECK=1
+
+printf "\n{{{%s -- #%s\n" "1" "clean path"  >>$outfile
+printf "\n{{{%s -- #%s\n" "2" "Removed Path Entries" >>$outfile # }}}
+echo ${(F)${(M)${(us/:/)PATH}:#* *}} >>$outfile
+printf "\n{{{%s -- #%s\n" "2" "Final Path Entries" >>$outfile
+echo ${(F)${(R)${(us/:/)PATH}:#* *}} >>$outfile
+PATH=${(Rj/:/)${(us/:/)PATH}:#* *}

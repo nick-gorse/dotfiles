@@ -1,0 +1,9 @@
+#!/bin/zsh
+export outfile=$HOME/zshrc-last
+export ZSH=$HOME/.dotfiles
+export DOTFILES=$HOME/.dotfiles
+[[ -a $DOTFILES/bin/call_file ]] && source $DOTFILES/bin/call_file
+export fold=1
+echo `date` >| $outfile
+echo "\n{{{1 # zshenv" >>$outfile
+echo -e $PATH >> $outfile

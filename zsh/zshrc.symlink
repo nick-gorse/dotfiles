@@ -1,11 +1,16 @@
 #!/bin/zsh
-export outfile=$HOME/zshrc-last
-export ZSH=$HOME/.dotfiles
-export DOTFILES=$HOME/.dotfiles
+# export outfile=$HOME/zshrc-last
+# export ZSH=$HOME/.dotfiles
+# export DOTFILES=$HOME/.dotfiles
 [[ -a $HOME/.envrc ]] && source $HOME/.envrc
-[[ -a $DOTFILES/bin/call_file ]] && source $DOTFILES/bin/call_file
-echo `date` >| $outfile
-export fold=1
+# [[ -a $DOTFILES/bin/call_file ]] && source $DOTFILES/bin/call_file
+# echo `date` >| $outfile
+# export fold=1
+# load zprofile from $HOME into log output
+# if [[ -a $HOME/.zprofile ]];then 
+#   printf "\n{{{%s -- #%s - %s\n" ${fold:-"2"} "zprofile loaded" "~/.zprofile" >>$outfile # }}}
+#   head -n 100 $HOME/.zprofile >>$outfile
+# fi
 fpath=($DOTFILES/zsh/plugins/zsh-completions/src $fpath)
 
 setopt AUTO_CD              # Go to folder path without using cd.
@@ -70,6 +75,5 @@ fi
 for file in ${(M)config_files:#*/completion.zsh}; do
   call_file $file "completion"
 done
-
 
 unset config_files

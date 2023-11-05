@@ -19,8 +19,10 @@ if [[ -e ${foo[$CPUTYPE]}/bin/brew ]]; then
     eval "$(${foo[$CPUTYPE]}/bin/brew shellenv)"
 fi
 declare -a LD_F CPP_F PKG_F
-brew_libs=(xz readline zlib bzip2 openssl@1.1 tcl-tk openblas lapack)
+brew_libs=(xz readline zlib bzip2 openssl@1.1 tcl-tk openblas lapack openjdk@11)
 LD_PREFIX="-L" LD_SUFFIX="/lib" CPP_PREFIX="-I" CPP_SUFFIX="/include" PKG_SUFFIX="/lib/pkgconfig"
+LD_F+=`echo ${LD_PREFIX}$(brew --prefix )${LD_SUFFIX}`
+CPP_F+=`echo ${CPP_PREFIX}$(brew --prefix "${library}")${CPP_SUFFIX}`
 for library in ${(@)brew_libs}; do
     if [[ -d $(brew --prefix "${library}") ]]; then
         LD_F+=`echo ${LD_PREFIX}$(brew --prefix "${library}")${LD_SUFFIX}`

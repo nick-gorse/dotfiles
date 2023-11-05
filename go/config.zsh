@@ -1,7 +1,8 @@
 case $(uname) in
 Darwin)
 	# commands for OS X go here
-	export GOROOT=/usr/local/Cellar/go/1.17.2/libexec
+	export GOROOT=$(brew --prefix go)
+	# export GOPATH=$(brew --prefix go) # don't forget to change your path correctly!
 	;;
 Linux)
 	# commands for Linux go here
@@ -11,7 +12,9 @@ FreeBSD)
 	# commands for FreeBSD go here
 	;;
 esac
-export GOPATH=$HOME/go # don't forget to change your path correctly!
+if [[ ! -d $HOME/go ]]; then
+	mkdir -p $HOME/go/{bin,src,pkg}
+fi
+export GOPATH=$HOME/go
 
-export PATH=$PATH:$GOPATH/bin
-export PATH=$PATH:$GOROOT/bin
+export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
