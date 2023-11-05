@@ -14,7 +14,7 @@ if which pyspark > /dev/null; then
   fi
   SPARK_BIN="$(brew --cellar apache-spark)/$SPARK_VERSION/bin"
   if [[ -e $SPARK_BIN ]]; then
-    echo "SPARK_HOME is set to ${SPARK_BIN}" >> $outfile
+    echo "SPARK_BIN is set to ${SPARK_BIN}" >> $outfile
     export PATH=$SPARK_BIN:$PATH
   fi
   unset SPARK_BIN
