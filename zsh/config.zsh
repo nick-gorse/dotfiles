@@ -1,4 +1,4 @@
-export EDITOR='vim'
+export EDITOR=${EDITOR:-'vim'}
 export VISUAL='vim'
 
 unsetopt NO_BG_NICE

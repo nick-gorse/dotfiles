@@ -16,3 +16,4 @@ echo ${(F)${(M)${(us/:/)PATH}:#* *}} >>$outfile
 printf "\n{{{%s -- #%s\n" "2" "Final Path Entries" >>$outfile
 echo ${(F)${(R)${(us/:/)PATH}:#* *}} >>$outfile
 PATH=${(Rj/:/)${(us/:/)PATH}:#* *}
+# source 

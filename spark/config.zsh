@@ -13,7 +13,7 @@ if which pyspark > /dev/null; then
   SPARK_HOME="$(brew --cellar apache-spark)/$SPARK_VERSION/libexec"
 
   if [[ -e $SPARK_HOME ]]; then
-    echo "SPARK_HOME is set to ${SPARK_HOME} ;" >> $outfile
+    echo "SPARK_HOME is set to ${SPARK_HOME}" >> $outfile
     export SPARK_HOME
   fi
   SPARK_BIN="$(brew --cellar apache-spark)/$SPARK_VERSION/bin"
