@@ -5,3 +5,4 @@
 *workspaces*
 .history/Users/ngorse/.dotfiles/
 zsh/plugins/site-functions
+00-homebrew/Brewfile.lock.json
