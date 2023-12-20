@@ -41,5 +41,6 @@ fi
 export LDFLAGS="${LDFLAGS}${LDFLAGS:+ }${LD_F}"
 export CPPFLAGS="${CPP_FLAGS}${CPP_FLAGS:+ }${CPP_F}"
 export PKG_CONFIG_PATH="${PKG_CONFIG_PATH:+:}${PKG_F}"
+export HOMEBREW_BUNDLE_FILE="${DOTFILES}/00-homebrew/Brewfile"
 echo "----- End Adding Libraries from homebrew" >>$outfile
 unset CPP_F LD_F PKG_F
