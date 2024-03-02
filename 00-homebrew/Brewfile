@@ -44,13 +44,17 @@ cask "1password"
 cask "1password-cli"
 cask "macvim"
 cask "notunes"
-cask "sublime-text"
+cask "sublime-text" if OS.mac?
+cask "sublime-merge" if OS.mac?
 cask "raycast"
 cask "whatsapp"
 cask "spotify"
 cask "zoom"
 cask "postman"
-cask "jetbrains-toolbox"
+cask "jetbrains-toolbox" if OS.mac?
+cask "dash" if OS.mac?
+cask "vlc"
+cask "warp" if OS.mac?
 mas "Amphetamine", id: 937984704
 mas "Seashore", id: 1448648921
 mas "Boop", id: 1518425043
