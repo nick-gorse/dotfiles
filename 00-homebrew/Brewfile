@@ -52,6 +52,7 @@ cask "spotify"
 cask "zoom"
 cask "postman"
 cask "jetbrains-toolbox" if OS.mac?
+cask "nordvpn" if OS.mac?
 cask "dash" if OS.mac?
 cask "vlc"
 cask "warp" if OS.mac?
