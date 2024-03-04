@@ -21,6 +21,8 @@ brew "htop"
 brew "lapack"
 brew "mas" if OS.mac?
 brew "nmap"
+brew "node"
+brew "nodenv"
 brew "openblas"
 brew "openjdk@11"
 brew "openssl@1.1"
