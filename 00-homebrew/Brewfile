@@ -61,3 +61,4 @@ cask "warp" if OS.mac?
 mas "Amphetamine", id: 937984704
 mas "Seashore", id: 1448648921
 mas "Boop", id: 1518425043
+mas "Keeper", id: 414781829

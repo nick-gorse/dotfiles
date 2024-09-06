@@ -3,7 +3,21 @@ echo "---- start spark config -----" >> $outfile
 
 if which java > /dev/null; then
   echo "JAVA_HOME is set to ${SPARK_HOME} ;" >> $outfile
-  export JAVA_HOME=$(/usr/libexec/java_home)
+  declare -A foo
+  case $(uname) in
+  Darwin)
+      # commands for Mac go here
+      export JAVA_HOME=$(/usr/libexec/java_home)
+      ;;
+  Linux)
+      # commands for Linux go here
+      export JAVA_HOME=$(dirname $(dirname $(readlink -e /usr/bin/javac)))
+      ;;
+  FreeBSD)
+      # commands for FreeBSD go here
+      ;;
+  esac
+  
 fi
 
 # For a ipython notebook and pyspark integration
