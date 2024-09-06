@@ -11,7 +11,7 @@ if which java > /dev/null; then
       ;;
   Linux)
       # commands for Linux go here
-      export JAVA_HOME=$(dirname $(dirname $(readlink -e /usr/bin/javac)))
+      export JAVA_HOME=$(dirname $(dirname $(readlink -e $(which javac))))
       ;;
   FreeBSD)
       # commands for FreeBSD go here
