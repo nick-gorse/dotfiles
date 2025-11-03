@@ -6,7 +6,8 @@ parent_find () {
 }
 
 call_file () {
-  curr=$(basename `$(where readlink) -f ${1%/*}`)
+  # curr=$(basename `$(where readlink) -f ${1%/*}`)
+  curr=${1:A:h:t}
   # echo $curr >> ~/files.txt
   printf "\n{{{%s -- #%s - %s\n" ${fold:-"1"} ${2:-$curr} $1 >>$outfile # }}}
   head -n 100 $1 >>$outfile

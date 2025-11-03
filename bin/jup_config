@@ -1,32 +1,19 @@
-#!/bin/zsh
+#!/usr/bin/zsh
 function echo_exists() {
-  if [[ -e "$1" ]]; then
-    echo $1
-    cat $1
+  if [[ -e "${1:r}.py" ]]; then
+    echo "${1:r}.py"
+    # cat "${1:r}.py"
+  elif [[ -e "${1:h}" ]]; then
+    echo "${1:h}"
   else
+    echo "${1} - no"
   fi
 }
-echo_exists "/Users/ngorse/.jupyter/jupyter_notebook_config.json"
-echo_exists "/etc/jupyter/jupyter_notebook_config.json"
-echo_exists "/usr/local/etc/jupyter/jupyter_notebook_config.d/jupyterlab.json"
-echo_exists "/usr/local/etc/jupyter/jupyter_notebook_config.d/jupyterlab_git.json"
-echo_exists "/usr/local/etc/jupyter/jupyter_notebook_config.d/nbdime.json"
-echo_exists "/usr/local/etc/jupyter/jupyter_notebook_config.json"
-echo_exists "/Users/ngorse/miniconda3/envs/jupyter/etc/jupyter/jupyter_notebook_config.d/jupyterlab.json"
-echo_exists "/Users/ngorse/miniconda3/envs/jupyter/etc/jupyter/jupyter_notebook_config.d/jupyterlab_code_formatter.json"
-echo_exists "/Users/ngorse/miniconda3/envs/jupyter/etc/jupyter/jupyter_notebook_config.d/mamba_gator.json"
-echo_exists "/Users/ngorse/miniconda3/envs/jupyter/etc/jupyter/jupyter_notebook_config.d/nbdime.json"
-echo_exists "/Users/ngorse/miniconda3/envs/jupyter/etc/jupyter/jupyter_notebook_config.json"
-echo_exists "/Users/ngorse/.jupyter/jupyter_notebook_config.json"
-echo_exists "/etc/jupyter/jupyter_server_config.json"
-echo_exists "/usr/local/etc/jupyter/jupyter_server_config.d/jupyterlab.json"
-echo_exists "/usr/local/etc/jupyter/jupyter_server_config.d/nbclassic.json"
-echo_exists "/usr/local/etc/jupyter/jupyter_server_config.json"
-echo_exists "/Users/ngorse/miniconda3/envs/jupyter/etc/jupyter/jupyter_server_config.d/jupyterlab.json"
-echo_exists "/Users/ngorse/miniconda3/envs/jupyter/etc/jupyter/jupyter_server_config.d/jupyterlab_code_formatter.json"
-echo_exists "/Users/ngorse/miniconda3/envs/jupyter/etc/jupyter/jupyter_server_config.d/jupyterlab_git.json"
-echo_exists "/Users/ngorse/miniconda3/envs/jupyter/etc/jupyter/jupyter_server_config.d/mamba_gator.json"
-echo_exists "/Users/ngorse/miniconda3/envs/jupyter/etc/jupyter/jupyter_server_config.d/nbclassic.json"
-echo_exists "/Users/ngorse/miniconda3/envs/jupyter/etc/jupyter/jupyter_server_config.d/nbdime.json"
-echo_exists "/Users/ngorse/miniconda3/envs/jupyter/etc/jupyter/jupyter_server_config.json"
-echo_exists "/Users/ngorse/.jupyter/jupyter_server_config.json"
+
+typeset -a SEARCH_DIR=("${(@f)"$(<$DOTFILES/bin/jupconf.txt)"}")
+for _dir in "${SEARCH_DIR[@]}"; do
+  echo_exists $_dir
+done
+
+
+

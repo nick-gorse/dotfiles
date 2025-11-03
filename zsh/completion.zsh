@@ -13,7 +13,7 @@ zcompdump="${XDG_CACHE_HOME:-$HOME/.cache}/"
 zmodload zsh/complist
 
 autoload -U compinit; compinit
-_comp_options+=(globdots) # With hidden files
+# _comp_options+=(globdots) # With hidden files
 
 # +---------+
 # | Options |

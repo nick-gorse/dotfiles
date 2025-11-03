@@ -2,6 +2,7 @@
 export outfile=$HOME/zshrc-last
 export ZSH=$HOME/.dotfiles
 export DOTFILES=$HOME/.dotfiles
+export ICLOUD_DRIVE_DIR=$HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/
 [[ -a $DOTFILES/bin/call_file ]] && source $DOTFILES/bin/call_file
 export fold=1
 echo `date` >| $outfile

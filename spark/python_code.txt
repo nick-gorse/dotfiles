@@ -1,0 +1,7 @@
+amount = input("How many numbers do you want?")
+num_list = list()
+for n in range(int(amount)):
+    num_list.append(int(input("Enter a number")))
+
+print(f"The average of the numbers is {sum(num_list)/len(num_list)}")
+print(f"The sum of the numbers is {sum(num_list)}")

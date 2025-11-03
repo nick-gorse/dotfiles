@@ -20,7 +20,7 @@ if [[ -e ${foo[$CPUTYPE]}/bin/brew ]]; then
     echo "----- End Environment Variables set for homebrew" >>$outfile
 fi
 declare -a LD_F CPP_F PKG_F
-brew_libs=(xz readline zlib bzip2 openssl@1.1 openssl@3 tcl-tk openblas lapack openjdk@11)
+brew_libs=(xz readline zlib bzip2 openssl@1.1 openssl@3 tcl-tk openblas lapack openjdk@17)
 LD_PREFIX="-L" LD_SUFFIX="/lib" CPP_PREFIX="-I" CPP_SUFFIX="/include" PKG_SUFFIX="/lib/pkgconfig"
 LD_F+=`echo ${LD_PREFIX}$(brew --prefix )${LD_SUFFIX}`
 CPP_F+=`echo ${CPP_PREFIX}$(brew --prefix "${library}")${CPP_SUFFIX}`

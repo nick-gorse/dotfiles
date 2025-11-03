@@ -44,10 +44,12 @@ brew "poetry"
 brew "enchant"
 cask "1password"  
 cask "1password-cli"
-cask "macvim"
+cask "macvim-app"
 cask "notunes"
 cask "sublime-text" if OS.mac?
+cask "chatgpt" if OS.mac?
 cask "sublime-merge" if OS.mac?
+cask "unity-hub" if OS.mac?
 cask "raycast"
 cask "whatsapp"
 cask "spotify"
@@ -58,7 +60,11 @@ cask "nordvpn" if OS.mac?
 cask "dash" if OS.mac?
 cask "vlc"
 cask "warp" if OS.mac?
+mas "1Password for Safari", id: 1569813296
 mas "Amphetamine", id: 937984704
-mas "Seashore", id: 1448648921
 mas "Boop", id: 1518425043
 mas "Keeper", id: 414781829
+mas "Hour", id: 569089415
+mas "Infuse", id: 1136220934
+mas "Seashore", id: 1448648921
+mas "Strflow", id: 6468486339
