@@ -1,5 +1,0 @@
-#!/usr/bin/zsh
-function net_port_test() {
-    netstat -antp 2>/dev/null | grep $1 | awk '{print $7;}' | awk -F "/" '{print $1;}'
-    }
-

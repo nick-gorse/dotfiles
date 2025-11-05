@@ -35,4 +35,6 @@ alias mkdir='mkdir -p'
 alias mount='mount |column -t'
 alias path='echo -e ${PATH//:/\\n}'
 alias fpath='echo -e ${FPATH//:/\\n}'
+alias zup='zplug update && zplug load --compile'
+alias zinstall='zplug install && zplug load --compile'
 # alias -s {zsh,symlink}=subl

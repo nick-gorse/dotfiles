@@ -42,4 +42,8 @@ setopt completealiases
 
 # don't error out when unset parameters are used
 setopt unset
+
+setopt auto_pushd 
+
+setopt pushd_ignore_dups
 #}}}

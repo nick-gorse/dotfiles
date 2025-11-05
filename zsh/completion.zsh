@@ -5,14 +5,23 @@
 # zstyle ':completion:*' insert-tab pending
 
 # Load more completions
-fpath=($DOTFILES/zsh/plugins/zsh-completions/src $fpath)
-fpath=($(brew --prefix)/share/zsh/site-functions $fpath)
-zcompdump="${XDG_CACHE_HOME:-$HOME/.cache}/"
+# zcompdump="${XDG_CACHE_HOME:-$HOME/.cache}/"
 
-# Should be called before compinit
-zmodload zsh/complist
 
 autoload -U compinit; compinit
+# # Should be called before compinit
+_comp_path="${XDG_CACHE_HOME:-$HOME/.cache}/zcompdump"
+# #q expands globs in conditional expressions
+if [[ $_comp_path(#qNmh-20) ]]; then
+  # -C (skip function check) implies -i (skip security check).
+  compinit -C -d "$_comp_path"
+else
+  mkdir -p "$_comp_path:h"
+  compinit -i -d "$_comp_path"
+fi
+unset _comp_path
+
+
 # _comp_options+=(globdots) # With hidden files
 
 # +---------+

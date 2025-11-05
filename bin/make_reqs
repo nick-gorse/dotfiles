@@ -1,9 +1,5 @@
 function make_reqs() {
     mods=("${(@f)$(awk '/import/ { print $2 }' *.(py|ipynb) | sed -E 's:[\\\.\"].*::g;s~_~-~g' | sort --unique )}")
-<<<<<<< HEAD
-
-=======
->>>>>>> 277fa76693e18694e5bcde7279292ad29dd60cf0
     pip freeze | grep -E "$(export IFS="|"; echo "${mods[*]}")"
     for mod in ${mods[*]}; do
       echo $mod

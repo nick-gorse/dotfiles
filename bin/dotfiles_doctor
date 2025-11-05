@@ -1,0 +1,63 @@
+#!/usr/bin/env zsh
+# ===============================================================
+# dotfiles_doctor — Zsh Config Health & Performance Analyzer
+# ===============================================================
+
+LOGFILE="${1:-$HOME/zshrc-log.json}"
+SLOW_THRESHOLD=${SLOW_THRESHOLD:-200}
+WARN_THRESHOLD=${WARN_THRESHOLD:-500}
+
+if ! command -v jq >/dev/null 2>&1; then
+  echo "❌ jq is required (brew install jq)"; exit 1
+fi
+[[ ! -f "$LOGFILE" ]] && { echo "❌ No log file found: $LOGFILE"; exit 1 }
+
+echo
+echo "🩺  Dotfiles Doctor — Startup Diagnostic"
+echo "📄  Log: $LOGFILE"
+echo "⚙️  Slow threshold: ${SLOW_THRESHOLD}ms | Warn threshold: ${WARN_THRESHOLD}ms"
+echo "---------------------------------------------------------------"
+
+jq -r '. | [.label, .duration_ms, .status, .file] | @tsv' "$LOGFILE" |
+while IFS=$'\t' read -r label duration exit_code file; do
+  color="" reset="\033[0m" emoji="✅"
+  if (( exit_code != 0 )); then color="\033[31m"; emoji="💥"
+  elif (( duration > WARN_THRESHOLD )); then color="\033[31m"; emoji="🔥"
+  elif (( duration > SLOW_THRESHOLD )); then color="\033[33m"; emoji="⚠️ "
+  else color="\033[32m"; fi
+  printf "%b%s %-10s %6sms  (exit:%s)  %s%b\n" "$color" "$emoji" "$label" "$duration" "$exit_code" "$file" "$reset"
+done
+
+echo "---------------------------------------------------------------"
+echo "📊 Aggregate timings:"
+jq -r '
+  group_by(.label)
+  | map({
+      label: .[0].label,
+      count: length,
+      total: (map(.duration_ms) | add),
+      avg: (map(.duration_ms) | add / length)
+    })
+  | (["label","count","total_ms","avg_ms"], (.[] | [.label, .count, (.total|tostring), (.avg|tostring)]))
+  | @tsv
+' "$LOGFILE" | column -t -s $'\t'
+echo "---------------------------------------------------------------"
+
+total=$(jq '[.[].duration_ms] | add' "$LOGFILE")
+fails=$(jq '[.[].status] | map(select(. != 0)) | length' "$LOGFILE")
+slows=$(jq "[.[].duration_ms] | map(select(. > $SLOW_THRESHOLD)) | length" "$LOGFILE")
+
+echo
+echo "🕒  Total startup time: ${total}ms"
+echo "💀  Failed modules:     ${fails}"
+echo "🐢  Slow modules:       ${slows}"
+echo
+
+if (( fails > 0 )); then
+  echo "❗ One or more modules failed to load. Check 💥 entries."
+elif (( slows > 0 )); then
+  echo "⚠️  Some modules exceeded ${SLOW_THRESHOLD}ms."
+else
+  echo "✅  All modules healthy and fast."
+fi
+echo

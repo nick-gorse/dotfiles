@@ -1,53 +1,59 @@
+#!/usr/bin/env zsh
+# ===============================================================
+# Apache Spark + Java environment configuration (JSON-safe)
+# ===============================================================
 
-echo "---- start spark config -----" >> $outfile
-
-if which java > /dev/null; then
-  declare -A foo
-  case $(uname) in
-  Darwin)
-      # macOS: use explicit Java 17
-      export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+# --- Java Setup ---
+if command -v java >/dev/null 2>&1; then
+  case "$(uname)" in
+    Darwin)
+      # macOS: Prefer explicit Java 17, fallback to latest available
+      export JAVA_HOME="$(
+        /usr/libexec/java_home -v 17 2>/dev/null || /usr/libexec/java_home 2>/dev/null
+      )"
       ;;
-  Linux)
-      # Linux: detect javac location
-      export JAVA_HOME=$(dirname $(dirname $(readlink -e $(which javac))))
+    Linux)
+      # Linux: infer from javac
+      if command -v javac >/dev/null 2>&1; then
+        export JAVA_HOME="$(dirname "$(dirname "$(readlink -f "$(command -v javac)")")")"
+      fi
       ;;
-  FreeBSD)
-      # commands for FreeBSD go here
+    FreeBSD)
+      # Optional customization placeholder
       ;;
   esac
-  echo "JAVA_HOME is set to ${JAVA_HOME} ;" >> $outfile
 fi
 
-# For a ipython notebook and pyspark integration
-if which pyspark > /dev/null; then
-  export SPARK_VERSION="3.5.6"
-  
-  SPARK_HOME="$( brew --prefix apache-spark )/libexec"
+# --- Spark Setup ---
+if command -v pyspark >/dev/null 2>&1 || command -v spark-shell >/dev/null 2>&1; then
+  # Detect prefix
+  if command -v brew >/dev/null 2>&1; then
+    SPARK_PREFIX="$(brew --prefix apache-spark 2>/dev/null)"
+  elif [[ -d "/opt/homebrew/opt/apache-spark" ]]; then
+    SPARK_PREFIX="/opt/homebrew/opt/apache-spark"
+  elif [[ -d "/usr/local/opt/apache-spark" ]]; then
+    SPARK_PREFIX="/usr/local/opt/apache-spark"
+  else
+    SPARK_PREFIX=""
+  fi
 
-  if [[ -e $SPARK_HOME ]]; then
-    echo "SPARK_HOME is set to ${SPARK_HOME}" >> $outfile
-    export SPARK_HOME
+  # Default to libexec if it exists
+  if [[ -n "$SPARK_PREFIX" && -d "$SPARK_PREFIX/libexec" ]]; then
+    export SPARK_HOME="$SPARK_PREFIX/libexec"
+  elif [[ -z "$SPARK_HOME" && -d "/usr/local/spark" ]]; then
+    export SPARK_HOME="/usr/local/spark"
   fi
-  SPARK_SBIN="${SPARK_HOME}/sbin"
-  if [[ -e $SPARK_SBIN ]]; then
-    echo "SPARK_SBIN is set to ${SPARK_SBIN}" >> $outfile
-    export PATH=$SPARK_SBIN:$PATH
+
+  # Add bin and sbin to PATH if they exist
+  if [[ -n "$SPARK_HOME" ]]; then
+    [[ -d "$SPARK_HOME/bin" ]]  && PATH="$SPARK_HOME/bin:$PATH"
+    [[ -d "$SPARK_HOME/sbin" ]] && PATH="$SPARK_HOME/sbin:$PATH"
   fi
-  unset SPARK_SBIN
-  SPARK_BIN="${SPARK_HOME}/bin"
-  if [[ -e $SPARK_BIN ]]; then
-    echo "SPARK_BIN is set to ${SPARK_BIN}" >> $outfile
-    export PATH=$SPARK_BIN:$PATH
-  fi
-  unset SPARK_BIN
-  
-  
-  # export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/build:$PYTHONPATH
-  # export PYTHONPATH=$SPARK_HOME/python/lib/py4j-0.10.9.7-src.zip:$PYTHONPATH
+
+  export SPARK_VERSION="${SPARK_VERSION:-3.5.6}"
 fi
 
-# export PYSPARK_PYTHON=/usr/local/bin/python3
-# export PYSPARK_DRIVER_PYTHON=jupyter
-# export PYSPARK_DRIVER_PYTHON_OPTS=’notebook’
-echo "---- finish spark config -----" >> $outfile
+# --- Cleanup ---
+unset SPARK_PREFIX
+
+return 0

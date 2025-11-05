@@ -1,23 +1,25 @@
-#fpath+=
 typeset -gU fpath
-typeset -U function_files
-#add each topic folder to fpath so that they can add functions and completion scripts
-# bin_files=($ZSH/bin)
-# for topic_folder in $bin_files; do
-#     if [ -d $topic_folder ]; then
-#         fpath=($topic_folder $fpath)
-#         typeset -gU fpath
-#     fi
-# done
-for topic_folder ($ZSH/*) if [ -d $topic_folder ]; then  fpath=($topic_folder $fpath); fi;
 
-# functions_files=($ZSH/bin/*(:t))
-# for func in $functions_files; do
-#     if typeset -f $func >/dev/null; then
-#         unset -f $func
-#     fi
-# done
-#
-autoload -U $ZSH/bin/*(:t)
+fpath=($DOTFILES/zsh/plugins/zsh-completions/src $fpath)
+fpath=($(brew --prefix)/share/zsh/site-functions $fpath)
+
+# Define excluded directory names (just names, not full paths)
+EXCLUDES=(zsh scripts bash ssh vim p10k zplug 00-homebrew iterm2 prettifer)
+
+# Get all directories under DOTFILES
+dirs=(${DOTFILES}/*(/N))
+
+# Loop through each exclusion and remove matches
+for ex in $EXCLUDES; do
+  dirs=(${dirs:#${DOTFILES}/$ex})
+done
+
+for topic_folder in $dirs; do
+	if [ -d $topic_folder ]; then
+		fpath=($topic_folder $fpath)
+	fi
+done
+
+autoload -U $DOTFILES/bin/*(:t)
 
 

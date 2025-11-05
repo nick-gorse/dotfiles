@@ -1,26 +1,13 @@
-#!/bin/zsh
-# export outfile=$HOME/zshrc-last
-# export ZSH=$HOME/.dotfiles
-# export DOTFILES=$HOME/.dotfiles
-[[ -a $HOME/.envrc ]] && source $HOME/.envrc
-# [[ -a $DOTFILES/bin/call_file ]] && source $DOTFILES/bin/call_file
-# echo `date` >| $outfile
-# export fold=1
-# load zprofile from $HOME into log output
-# if [[ -a $HOME/.zprofile ]];then 
-#   printf "\n{{{%s -- #%s - %s\n" ${fold:-"2"} "zprofile loaded" "~/.zprofile" >>$outfile # }}}
-#   head -n 100 $HOME/.zprofile >>$outfile
-# fi
-fpath=($DOTFILES/zsh/plugins/zsh-completions/src $fpath)
+#!/usr/bin/env zsh
+# ===============================================================
+# zshrc — Dynamic Modular Config Loader with JSON Logging
+# ===============================================================
 
-setopt AUTO_CD              # Go to folder path without using cd.
+# Ensure globals
+export DOTFILES="${DOTFILES:-$HOME/.dotfiles}"
+export outfile="${outfile:-$HOME/zshrc-log.json}"
+: > "$outfile"  # clear old log
 
-setopt AUTO_PUSHD           # Push the old directory onto the stack on cd.
-setopt PUSHD_IGNORE_DUPS    # Do not store duplicates in the stack.
-setopt PUSHD_SILENT         # Do not print the directory stack after pushd or popd.
-
-setopt CORRECT              # Spelling correction
-setopt CDABLE_VARS          # Change directory to a path stored in a variable.
 setopt EXTENDED_GLOB        # Use extended globbing syntax.
 
 # load envrc from $HOME
@@ -36,44 +23,32 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   call_file "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" "instant"
 fi
 
-# all of our zsh files
+unsetopt complete_aliases nobgnice
 typeset -U config_files
-unsetopt complete_aliases
-unsetopt nobgnice
 config_files=($DOTFILES/**/*.zsh)
 
-# load the path files
+# --- PATH phase -------------------------------------------------
 for file in ${(M)config_files:#*/path.zsh}; do
-   call_file ${file} "path"
-   typeset -gU path
+  call_file "$file" "path"
+  typeset -gU path
 done
 export -U PATH
 
-printf "\n{{{%s -- #%s\n" ${fold:-"1"} "basic zsh files" "${ZSH}/*/*.zsh" >>$outfile # }}}
-export fold=2
-# echo files >| ~/files.txt
-
-# load everything but the path and completion files
+# --- CONFIG phase -----------------------------------------------
 for file in ${${config_files:#*/path.zsh}:#*/completion.zsh}; do
- 	call_file ${file} 
+  call_file "$file"
 done
 
 # initialize autocomplete here, otherwise functions won't be loaded
-setopt complete_aliases
-# call_file $DOTFILES/zsh/completion.zsh "base completion"
-# autoload -Uz $DOTFILES/zsh/plugins/kubectl-completion/zsh-kubectl-completion
-#autoload bashcompinit && bashcompinit
-#autoload -Uz compinit && compinit
-#autoload -U compinit
-#
+setopt complete_aliases nobgnice
 
 if [[ -e $HOME/.local_comp_rc ]];then
   # load local_comp_rc from $HOME
   call_file $HOME/.local_comp_rc "local completion"
 fi
-# load every completion after autocomplete loads
+# --- COMPLETION phase -------------------------------------------
 for file in ${(M)config_files:#*/completion.zsh}; do
-  call_file $file "completion"
+  call_file "$file" "completion"
 done
 
 unset config_files

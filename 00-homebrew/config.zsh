@@ -1,46 +1,79 @@
-declare -A foo
-case $(uname) in
-Darwin)
-    # commands for Mac go here
-    foo[x86_64]='/usr/local'
-    foo[arm64]='/opt/homebrew'
+#!/usr/bin/env zsh
+# ===============================================================
+# Homebrew Environment Setup (macOS, Linux, FreeBSD)
+# Modern JSON-safe version
+# ===============================================================
+
+# Detect platform and architecture
+declare -A brew_prefix
+case "$(uname)" in
+  Darwin)
+    brew_prefix[x86_64]="/usr/local"
+    brew_prefix[arm64]="/opt/homebrew"
     ;;
-Linux)
-    # commands for Linux go here
-    foo[x86_64]='/home/linuxbrew/.linuxbrew'
+  Linux)
+    brew_prefix[x86_64]="/home/linuxbrew/.linuxbrew"
     ;;
-FreeBSD)
-    # commands for FreeBSD go here
+  FreeBSD)
+    brew_prefix[x86_64]="/usr/local"
     ;;
 esac
-if [[ -e ${foo[$CPUTYPE]}/bin/brew ]]; then
-    echo "\n----- Start Environment Variables set for homebrew" >>$outfile
-    echo "$(${foo[$CPUTYPE]}/bin/brew shellenv)" >>$outfile
-    eval "$(${foo[$CPUTYPE]}/bin/brew shellenv)"
-    echo "----- End Environment Variables set for homebrew" >>$outfile
+
+# Detect current architecture (fallback for older macOS)
+CPUTYPE="$(uname -m)"
+
+# If brew exists, initialize its environment
+if [[ -x "${brew_prefix[$CPUTYPE]}/bin/brew" ]]; then
+  eval "$(${brew_prefix[$CPUTYPE]}/bin/brew shellenv 2>/dev/null)"
 fi
-declare -a LD_F CPP_F PKG_F
-brew_libs=(xz readline zlib bzip2 openssl@1.1 openssl@3 tcl-tk openblas lapack openjdk@17)
-LD_PREFIX="-L" LD_SUFFIX="/lib" CPP_PREFIX="-I" CPP_SUFFIX="/include" PKG_SUFFIX="/lib/pkgconfig"
-LD_F+=`echo ${LD_PREFIX}$(brew --prefix )${LD_SUFFIX}`
-CPP_F+=`echo ${CPP_PREFIX}$(brew --prefix "${library}")${CPP_SUFFIX}`
-echo "----- Start Adding Libraries from homebrew" >>$outfile
-for library in ${(@)brew_libs}; do
-    if [[ -d $(brew --prefix "${library}") ]]; then
-        LD_F+=`echo ${LD_PREFIX}$(brew --prefix "${library}")${LD_SUFFIX}`
-        CPP_F+=`echo ${CPP_PREFIX}$(brew --prefix "${library}")${CPP_SUFFIX}`
-        [[ -d `echo $(brew --prefix "${library}")${PKG_SUFFIX}` ]] && PKG_F+=`echo $(brew --prefix "${library}")${PKG_SUFFIX}`
-        echo "added library '`echo $library`' from brew into [LD, CPP and PKG]" >> $outfile
-    fi
+
+# Skip if brew not available
+if ! command -v brew >/dev/null 2>&1; then
+  return 0
+fi
+
+# Core library paths for linkage
+brew_libs=(xz readline zlib bzip2 openssl@3 tcl-tk openblas lapack openjdk@17)
+LD_Flags=()
+CPP_Flags=()
+PKG_Paths=()
+
+LD_PREFIX="-L"
+CPP_PREFIX="-I"
+LD_SUFFIX="/lib"
+CPP_SUFFIX="/include"
+PKG_SUFFIX="/lib/pkgconfig"
+
+# Always include the core Homebrew prefix
+LD_Flags+=("${LD_PREFIX}$(brew --prefix)${LD_SUFFIX}")
+CPP_Flags+=("${CPP_PREFIX}$(brew --prefix)${CPP_SUFFIX}")
+
+# Add optional libraries
+for library in "${(@)brew_libs}"; do
+  prefix="$(brew --prefix "$library" 2>/dev/null)"
+  [[ -z "$prefix" || ! -d "$prefix" ]] && continue
+
+  LD_Flags+=("${LD_PREFIX}${prefix}${LD_SUFFIX}")
+  CPP_Flags+=("${CPP_PREFIX}${prefix}${CPP_SUFFIX}")
+  [[ -d "${prefix}${PKG_SUFFIX}" ]] && PKG_Paths+=("${prefix}${PKG_SUFFIX}")
 done
-unset LD_PREFIX LD_SUFFIX CPP_PREFIX CPP_SUFFIX PKG_SUFFIX brew_libs
-if which xcrun > /dev/null; then
-    [[ -d $(xcrun --show-sdk-path) ]] && LD_F+="-L$(xcrun --show-sdk-path)/usr/lib"
-    [[ -d $(xcrun --show-sdk-path) ]] && CPP_F+="-I$(xcrun --show-sdk-path)/usr/include"
+
+# Xcode SDK (macOS only)
+if command -v xcrun >/dev/null 2>&1; then
+  sdk_path="$(xcrun --show-sdk-path 2>/dev/null)"
+  if [[ -d "$sdk_path" ]]; then
+    LD_Flags+=("${LD_PREFIX}${sdk_path}/usr/lib")
+    CPP_Flags+=("${CPP_PREFIX}${sdk_path}/usr/include")
+  fi
 fi
-export LDFLAGS="${LDFLAGS}${LDFLAGS:+ }${LD_F}"
-export CPPFLAGS="${CPP_FLAGS}${CPP_FLAGS:+ }${CPP_F}"
-export PKG_CONFIG_PATH="${PKG_CONFIG_PATH:+:}${PKG_F}"
+
+# Export environment variables (deduplicated)
+typeset -U LD_Flags CPP_Flags PKG_Paths
+
+export LDFLAGS="${LDFLAGS}${LDFLAGS:+ }${(j: :)LD_Flags}"
+export CPPFLAGS="${CPPFLAGS}${CPPFLAGS:+ }${(j: :)CPP_Flags}"
+export PKG_CONFIG_PATH="${PKG_CONFIG_PATH}${PKG_CONFIG_PATH:+:}${(j/:/)PKG_Paths}"
 export HOMEBREW_BUNDLE_FILE="${DOTFILES}/00-homebrew/Brewfile"
-echo "----- End Adding Libraries from homebrew" >>$outfile
-unset CPP_F LD_F PKG_F
+
+# Done — no stdout/stderr or file writes.
+return 0

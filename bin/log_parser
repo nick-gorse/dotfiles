@@ -1,0 +1,56 @@
+#!/usr/bin/env zsh
+# ===============================================================
+# log_parser.zsh — Pretty-print call_file JSON logs (aligned + exit codes)
+# ===============================================================
+
+LOGFILE="${1:-$HOME/zshrc-log.json}"
+
+if [[ ! -r "$LOGFILE" ]]; then
+  echo "❌ Log file not found: $LOGFILE"
+  exit 1
+fi
+
+echo "Parsed call_file log:"
+
+# Arrays to hold parsed data
+labels=()
+durations=()
+exit_codes=()
+files=()
+
+# Parse the JSON lines
+while IFS= read -r line; do
+  label=$(echo "$line" | jq -r '.label // empty' 2>/dev/null)
+  duration=$(echo "$line" | jq -r '.duration_ms // empty' 2>/dev/null)
+  exit_code=$(echo "$line" | jq -r '.exit_code // empty' 2>/dev/null)
+  file=$(echo "$line" | jq -r '.file // empty' 2>/dev/null)
+
+  [[ -z "$label" || -z "$file" ]] && continue
+
+  labels+=("$label")
+  durations+=("${duration:-0}")
+  exit_codes+=("${exit_code:-0}")
+  files+=("$file")
+done < <(grep -E '"label"' "$LOGFILE")
+
+# Determine max column widths for alignment
+max_label=0
+max_duration=0
+max_exit=0
+for label in "${labels[@]}"; do
+  (( ${#label} > max_label )) && max_label=${#label}
+done
+for dur in "${durations[@]}"; do
+  (( ${#dur} > max_duration )) && max_duration=${#dur}
+done
+for code in "${exit_codes[@]}"; do
+  (( ${#code} > max_exit )) && max_exit=${#code}
+done
+
+# Build sorted, aligned output
+{
+  for i in {1..${#labels[@]}}; do
+    printf "%-${max_label}s  %${max_duration}sms  %${max_exit}s  %s\n" \
+      "${labels[i-1]}" "${durations[i-1]}" "${exit_codes[i-1]}" "${files[i-1]}"
+  done
+} | sort -k2,2n

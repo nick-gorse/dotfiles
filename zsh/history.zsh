@@ -25,8 +25,8 @@ setopt hist_reduce_blanks
 # [[ -n "$key[Up]" ]] && bindkey -- "$key[Up]" up-line-or-beginning-search
 # [[ -n "$key[Down]" ]] && bindkey -- "$key[Down]" down-line-or-beginning-search
 
-# setopt append_history                   # adds history
-# setopt inc_append_history share_history # adds history incrementally and share it across sessions
+setopt append_history                   # adds history
+setopt inc_append_history share_history # adds history incrementally and share it across sessions
 # setopt hist_ignore_all_dups             # don't record dupes in history
 
 setopt HIST_IGNORE_SPACE

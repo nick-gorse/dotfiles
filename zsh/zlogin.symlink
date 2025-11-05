@@ -1,19 +1,38 @@
-#!/bin/zsh
-# Executes commands at login post-zshrc.
+#!/usr/bin/env zsh
+# ===============================================================
+# zlogin — Post-Startup Finalisation & Summary
+# ===============================================================
 
-#. $ZSH/bin/call_file
-echo "\n{{{1 # zlogin" >>$outfile
-zlogin_files=($ZSH/**/*.zlogin)
+# --- Ensure environment ---
+export DOTFILES="${DOTFILES:-$HOME/.dotfiles}"
+export outfile="${outfile:-$HOME/zshrc-log.json}"
+LOGFILE="$outfile"
+
+# --- Execute all module .zlogin files dynamically ---
+zlogin_files=($DOTFILES/**/*.zlogin)
 for file in ${zlogin_files[@]}; do
-    call_file ${file} "zlogin"
+    call_file "${file}" "zlogin"
 done
 
+# --- Post-login environment tweaks ---
 export PIP_DISABLE_PIP_VERSION_CHECK=1
 
-printf "\n{{{%s -- #%s\n" "1" "clean path"  >>$outfile
-printf "\n{{{%s -- #%s\n" "2" "Removed Path Entries" >>$outfile # }}}
-echo ${(F)${(M)${(us/:/)PATH}:#* *}} >>$outfile
-printf "\n{{{%s -- #%s\n" "2" "Final Path Entries" >>$outfile
-echo ${(F)${(R)${(us/:/)PATH}:#* *}} >>$outfile
+# --- Clean duplicate PATH entries ---
+typeset -U path
 PATH=${(Rj/:/)${(us/:/)PATH}:#* *}
-# source 
+export PATH
+
+# # --- Timing summary from JSON log ---
+# if [[ -f "$LOGFILE" ]]; then
+#   echo
+#   echo "⏱ Startup Summary:"
+#   if command -v jq >/dev/null 2>&1; then
+#     jq -r '. | [.label, .duration_ms, .status, .file] | @tsv' "$LOGFILE" \
+#       | column -t -s $'\t'
+#   else
+#     echo "(Install jq to parse $LOGFILE)"
+#   fi
+# fi
+
+# --- Optional compdump refresh ---
+[[ -f "$DOTFILES/zsh/compdump.zlogin" ]] && call_file "$DOTFILES/zsh/compdump.zlogin" "compdump"

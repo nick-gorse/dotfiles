@@ -1,0 +1,68 @@
+find_dupes() {
+    local maxdepth regex ignore_case tmpfile grep_flags
+
+    if [[ $# -lt 1 ]]; then
+        echo "Usage: find_dupes <maxdepth:int> [regex] [--ignore-case]" >&2
+        return 1
+    fi
+
+    maxdepth=$1
+    regex=${2:-'.*'}
+    ignore_case=false
+
+    # Optional flag
+    if [[ "$3" == "--ignore-case" ]]; then
+        ignore_case=true
+    fi
+
+    grep_flags="-E"
+    if $ignore_case; then
+        grep_flags="$grep_flags -i"
+    fi
+
+    tmpfile=$(mktemp /tmp/find_dupes.XXXXXX)
+
+    # Find relevant files
+    find . -type f -maxdepth "$maxdepth" ! -path '*/.git/*' \
+        \( -name "*.zsh" -o -name "*.sh" -o -name "*.zlogin" -o -name "*.symlink" -o ! -name "*.*" \) \
+        -print0 | while IFS= read -r -d '' file; do
+            grep $grep_flags "$regex" "$file" 2>/dev/null | \
+            awk '
+                {
+                    # Normalize line endings and remove CR/NBSP
+                    gsub(/\r/, "", $0)
+                    gsub(/\302\240/, "", $0)  # remove non-breaking space (UTF-8 \xC2\xA0)
+                    line = $0
+                }
+
+                /^[[:space:]]*#/ { next }     # Skip comment lines
+
+                {
+                    # Trim leading and trailing whitespace for reliable blank detection
+                    sub(/^[[:space:]]+/, "", line)
+                    sub(/[[:space:]]+$/, "", line)
+                    if (length(line) == 0) next          # Skip truly blank lines
+                    if (length(line) < 5) next           # Skip very short lines
+                    print line "\t" FILENAME
+                }
+            ' FILENAME="$file" >> "$tmpfile"
+        done
+
+    # Sort + show duplicates
+    sort "$tmpfile" | awk -F'\t' '
+    {
+        line=$1; file=$2
+        count[line]++
+        files[line]=files[line] file "\n"
+    }
+    END {
+        for (l in count)
+            if (count[l] > 1) {
+                print "==== Duplicate line: \"" l "\" ===="
+                printf "%s", files[l]
+                print ""
+            }
+    }'
+
+    rm -f "$tmpfile"
+}
