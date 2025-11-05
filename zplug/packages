@@ -1,21 +1,11 @@
-zplug "junegunn/fzf", use:shell/\*.zsh, defer:3
 zplug "zsh-users/zsh-completions"
-zplug "zsh-users/zsh-autosuggestions"
-zplug "zsh-users/zsh-syntax-highlighting", defer:2
-# zplug "zsh-users/zsh-history-substring-search", defer:3
-zplug "plugins/asdf", from:oh-my-zsh
-zplug "plugins/pip", from:oh-my-zsh
-# zplug "plugins/web-search", from:oh-my-zsh
-zplug "plugins/macos", from:oh-my-zsh
-zplug "darvid/zsh-poetry"
-# zplug "jeffreytse/zsh-vi-mode"
-#zplug "~/.zsh", from:local
-# zplug "mafredri/zsh-async", from:github
-# zplug "spaceship-prompt/spaceship-vi-mode"
-# zplug "spaceship-prompt/spaceship-prompt", use:spaceship.zsh, from:github, as:theme
-# zplug "spaceship-prompt/spaceship-ember"
-zplug "plugins/asdf", from:oh-my-zsh
-zplug "junegunn/fzf", use:shell/\*.zsh, defer:3
-zplug "sharkdp/fd"
 zplug "zsh-hooks/zsh-hooks"
-zplug "plugins/aliases", from:oh-my-zsh
+zplug "zsh-users/zsh-autosuggestions", defer:2
+zplug "zsh-users/zsh-syntax-highlighting", defer:2
+zplug "plugins/asdf", from:oh-my-zsh, defer:2
+zplug "darvid/zsh-poetry", defer:2
+zplug "plugins/aliases", from:oh-my-zsh, defer:2
+zplug "plugins/pip", from:oh-my-zsh, defer:3
+zplug "plugins/macos", from:oh-my-zsh, defer:3
+zplug "junegunn/fzf", use:shell/\*.zsh, defer:3
+zplug "sharkdp/fd", defer:3
