@@ -39,6 +39,8 @@ for file in ${${config_files:#*/path.zsh}:#*/completion.zsh}; do
   call_file "$file"
 done
 
+# call_file $DOTFILES/zsh/plugins/bd.zsh
+
 # initialize autocomplete here, otherwise functions won't be loaded
 setopt complete_aliases nobgnice
 
