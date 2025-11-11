@@ -1,0 +1,69 @@
+#!/usr/bin/env zsh
+# ===============================================================
+# compinit_doctor — On-demand Zsh Completion System Diagnostic
+# ===============================================================
+
+setopt err_exit pipe_fail
+zmodload zsh/datetime
+
+VERBOSE=0 FORCE_REBUILD=0 CLEAN=0
+for arg in "$@"; do
+  case $arg in
+    --verbose) VERBOSE=1 ;;
+    --rebuild) FORCE_REBUILD=1 ;;
+    --clean) CLEAN=1 ;;
+  esac
+done
+
+LOGFILE="${outfile:-$HOME/zshrc-log.json}"
+DIAGFILE="${LOGFILE}.diagnostic"
+_zcompdump="${ZSH_COMPDUMP_PATH:-${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump}"
+mkdir -p "${_zcompdump:h}"
+
+autoload -Uz compinit
+
+echo "🔍 compinit_doctor starting..."
+echo "  zcompdump: $_zcompdump" | tee -a "$DIAGFILE"
+
+if (( CLEAN )); then
+  echo "🧹 Cleaning caches..." | tee -a "$DIAGFILE"
+  rm -f "${_zcompdump}"* 2>/dev/null
+fi
+
+# Snapshot fpath before compinit
+typeset -a fpath_before=("${fpath[@]}")
+
+start=$EPOCHREALTIME
+if (( FORCE_REBUILD )) || [[ ! -f $_zcompdump || $(find "$_zcompdump" -mtime +7 2>/dev/null) ]]; then
+  compinit -i -d "$_zcompdump"
+else
+  compinit -C -d "$_zcompdump"
+fi
+exit_code=$?
+duration_ms=$(( (EPOCHREALTIME - start) * 1000 ))
+
+# Snapshot fpath after compinit
+typeset -a fpath_after=("${fpath[@]}")
+diff=()
+for path in "${fpath_after[@]}"; do
+  [[ -z ${(M)fpath_before:#$path} ]] && diff+=("$path")
+done
+
+if (( $#diff )); then
+  echo "⚠️  Late fpath additions detected *after* compinit:" | tee -a "$DIAGFILE"
+  printf "   %s\n" "${diff[@]}" | tee -a "$DIAGFILE"
+else
+  echo "✅ No fpath changes post-compinit." | tee -a "$DIAGFILE"
+fi
+
+jq -nc \
+  --arg file "$0" \
+  --arg label "compinit" \
+  --argjson exit_code "$exit_code" \
+  --argjson duration_ms "$duration_ms" \
+  --argjson fpath_added "$(printf '%s\n' "${diff[@]}" | jq -R . | jq -s .)" \
+  '{timestamp:(now|floor), file:$file, label:$label, exit_code:$exit_code, duration_ms:$duration_ms, fpath_added:$fpath_added}' \
+  >> "$LOGFILE"
+
+printf "\n⏱ compinit: %.1fms (exit:%d)\n" "$duration_ms" "$exit_code"
+echo "📄 Diagnostic log: $DIAGFILE"

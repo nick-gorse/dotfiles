@@ -19,8 +19,12 @@ if [[ -a $HOME/.localrc ]];then
 	call_file $HOME/.localrc "local"
 fi
 
+# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#   call_file "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" "instant"
+# fi
+
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  call_file "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" "instant"
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
 unsetopt complete_aliases nobgnice
@@ -34,23 +38,13 @@ for file in ${(M)config_files:#*/path.zsh}; do
 done
 export -U PATH
 
-# --- CONFIG phase -----------------------------------------------
-for file in ${${config_files:#*/path.zsh}:#*/completion.zsh}; do
-  call_file "$file"
+# --- CONFIG phase ------------------------------------------------
+# exclude path.zsh, any *completion*.zsh, and the compinit driver itself
+for file in ${${${config_files:#*/path.zsh}:#*/*completion*.zsh}:#*/zsh/compinit.zsh}; do
+  call_file "$file"     # label auto-derives (dir for config.zsh, stem otherwise)
 done
 
-# call_file $DOTFILES/zsh/plugins/bd.zsh
-
-# initialize autocomplete here, otherwise functions won't be loaded
-setopt complete_aliases nobgnice
-
-if [[ -e $HOME/.local_comp_rc ]];then
-  # load local_comp_rc from $HOME
-  call_file $HOME/.local_comp_rc "local completion"
-fi
-# --- COMPLETION phase -------------------------------------------
-for file in ${(M)config_files:#*/completion.zsh}; do
-  call_file "$file" "completion"
-done
+# --- COMPLETION (cache-aware) -----------------------------------
+call_file "$DOTFILES/zsh/compinit.zsh" "compinit"
 
 unset config_files

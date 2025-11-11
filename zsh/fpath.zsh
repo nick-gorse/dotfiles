@@ -4,7 +4,7 @@ fpath=($DOTFILES/zsh/plugins/zsh-completions/src $fpath)
 fpath=($(brew --prefix)/share/zsh/site-functions $fpath)
 
 # Define excluded directory names (just names, not full paths)
-EXCLUDES=(zsh scripts bash ssh vim p10k zplug 00-homebrew iterm2 prettifer)
+EXCLUDES=(zsh scripts bash ssh vim zplug 00-homebrew iterm2 prettifer)
 
 # Get all directories under DOTFILES
 dirs=(${DOTFILES}/*(/N))

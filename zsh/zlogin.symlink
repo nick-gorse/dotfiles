@@ -22,7 +22,7 @@ typeset -U path
 PATH=${(Rj/:/)${(us/:/)PATH}:#* *}
 export PATH
 
-# # --- Timing summary from JSON log ---
+# --- Timing summary from JSON log ---
 # if [[ -f "$LOGFILE" ]]; then
 #   echo
 #   echo "⏱ Startup Summary:"
@@ -34,5 +34,13 @@ export PATH
 #   fi
 # fi
 
-# --- Optional compdump refresh ---
-[[ -f "$DOTFILES/zsh/compdump.zlogin" ]] && call_file "$DOTFILES/zsh/compdump.zlogin" "compdump"
+# # --- Optional compdump refresh ---
+# [[ -f "$DOTFILES/zsh/compdump.zlogin" ]] && call_file "$DOTFILES/zsh/compdump.zlogin" "compdump"
+
+# # Run completion diagnostics if failures logged
+# if grep -q '"label":"compinit".*"exit_code":[1-9]' "$HOME/zshrc-log.json" 2>/dev/null; then
+#   echo "⚠️  Re-running compinit_doctor due to prior failure..."
+#   ZSH_COMPLETION_DEBUG=1 source "$DOTFILES/zsh/compinit_doctor.zsh"
+# fi
+
+

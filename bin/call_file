@@ -1,49 +1,81 @@
-#!/usr/bin/env zsh
 # ===============================================================
-# call_file — Unified file executor with structured JSON logging
+# call_file — Timed JSON logger for Zsh config execution
 # ===============================================================
+# Source this file early (e.g. in ~/.zshenv). It defines a function:
+#   call_file /path/to/script.zsh [label]
+# Logs NDJSON lines to $outfile (default: ~/zshrc-log.json)
 
-# Example usage:
-#   call_file /Users/ngorse/.dotfiles/zsh/config.zsh
-#   call_file /Users/ngorse/.dotfiles/fzf/key-bindings.zsh fzf
-#
-# Output (to $outfile):
-# {"timestamp":1730940810,"file":"/Users/ngorse/.dotfiles/zsh/config.zsh","label":"zsh","exit_code":0,"duration_ms":4}
+function call_file() {
+  # No set -u here; be tolerant during early boot
+  local filepath="$1"
+  local label="${2:-}"
+  local resolved_path exit_code=0 duration_ms start_time end_time LOGFILE json_entry
 
-call_file() {
-  local file="$1"
-  local label="$2"
-  local start end duration exit_code relpath subdir
+  [[ -z "$filepath" ]] && return 0
 
-  # Ensure $outfile exists
-  : "${outfile:=$HOME/zshrc-log.json}"
+  LOGFILE="${outfile:-$HOME/zshrc-log.json}"
+  : "${CALL_FILE_DEBUG:=0}"
 
-  # Derive label if not provided
-  if [[ -z "$label" ]]; then
-    relpath="${file#$DOTFILES/}"                # Strip $DOTFILES prefix
-    subdir="${relpath%%/*}"                     # Extract subfolder (first path component)
-    if [[ "${file:t}" == "config.zsh" ]]; then
-      label="${subdir:-config}"                 # Label by subdirectory
+  # Resolve path (follow symlinks if present), fallback safely on macOS
+  if [[ -L "$filepath" ]]; then
+    if command -v readlink >/dev/null 2>&1 && readlink -f / >/dev/null 2>&1; then
+      resolved_path="$(readlink -f "$filepath" 2>/dev/null || echo "$filepath")"
+    elif command -v realpath >/dev/null 2>&1; then
+      resolved_path="$(realpath "$filepath" 2>/dev/null || echo "$filepath")"
     else
-      label="${file:t:r}"                       # Otherwise label by filename root
+      resolved_path="$filepath"
+    fi
+  else
+    resolved_path="$filepath"
+  fi
+
+  # Derive label if not provided: config.zsh -> parent dir name, else file stem
+  if [[ -z "$label" ]]; then
+    local fname="${resolved_path:t}"
+    local dname="${resolved_path:h:t}"
+    if [[ "$fname" == "config.zsh" ]]; then
+      label="$dname"
+    else
+      label="${fname:r}"
     fi
   fi
 
-  # Record start time (ms precision)
-  start=$EPOCHREALTIME
+  # Guard if file missing
+  [[ ! -r "$resolved_path" ]] && {
+    print -u2 "call_file: missing or unreadable: $resolved_path"
+    return 1
+  }
 
-  # Execute target file quietly, preserving exit status
-  if [[ -r "$file" ]]; then
-    source "$file" >/dev/null 2>&1
-    exit_code=$?
-  else
-    exit_code=126
+  # Timestamps (μs precision). Fall back if EPOCHREALTIME is unavailable.
+  start_time="${EPOCHREALTIME:-$(perl -MTime::HiRes=time -e 'printf "%.6f\n", time()')}"
+  [[ "$CALL_FILE_DEBUG" != "0" ]] && print -- "▶️  Starting $resolved_path (label: $label)"
+
+  {
+    # source quietly; the config can print if it wants—logs stay clean
+    source "$resolved_path"
+  } >/dev/null 2>&1 || exit_code=$?
+
+  end_time="${EPOCHREALTIME:-$(perl -MTime::HiRes=time -e 'printf "%.6f\n", time()')}"
+  # Floating math via awk to avoid zsh int math pitfalls
+  duration_ms=$(awk -v s="$start_time" -v e="$end_time" 'BEGIN {printf "%.5f", (e - s) * 1000}')
+
+  [[ "$CALL_FILE_DEBUG" != "0" ]] && print -- "⏱  Finished $resolved_path in ${duration_ms}ms (exit:${exit_code})"
+
+  # Ensure logfile dir exists
+  mkdir -p -- "$(dirname -- "$LOGFILE")" 2>/dev/null
+
+  # NDJSON entry (numbers are real numbers via --argjson)
+  json_entry=$(jq -nc \
+    --arg file "$resolved_path" \
+    --arg label "$label" \
+    --argjson start "$(printf "%.5f" "$start_time")" \
+    --argjson end   "$(printf "%.5f" "$end_time")" \
+    --argjson duration "$(printf "%.5f" "$duration_ms")" \
+    --argjson code "$exit_code" \
+    '{file:$file, label:$label, start:$start, end:$end, duration_ms:$duration, exit_code:$code}')
+
+  # Append (don’t fail if file doesn’t exist yet)
+  if [[ -w "$LOGFILE" || ! -e "$LOGFILE" ]]; then
+    print -- "$json_entry" >>"$LOGFILE"
   fi
-
-  # Compute duration in milliseconds
-  end=$EPOCHREALTIME
-  duration=$(printf "%.0f" "$(echo "($end - $start) * 1000" | bc -l 2>/dev/null)")
-
-  # Write structured JSON record
-  print -r -- "{\"timestamp\":$(date +%s),\"file\":\"$file\",\"label\":\"$label\",\"exit_code\":$exit_code,\"duration_ms\":${duration:-0}}" >>"$outfile"
 }

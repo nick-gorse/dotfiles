@@ -1,63 +1,128 @@
 #!/usr/bin/env zsh
 # ===============================================================
-# dotfiles_doctor — Zsh Config Health & Performance Analyzer
+# dotfiles_doctor — Zsh Config Health & Timeline Analyzer
 # ===============================================================
 
-LOGFILE="${1:-$HOME/zshrc-log.json}"
+# Be interactive-safe: never kill the session on errors here
+unsetopt errexit 2>/dev/null || true
+unsetopt nounset 2>/dev/null || true
+unsetopt pipefail 2>/dev/null || true
+setopt NO_NOMATCH
+
+LOGFILE="$HOME/zshrc-log.json"
+SHOW_TIMELINE=0
 SLOW_THRESHOLD=${SLOW_THRESHOLD:-200}
 WARN_THRESHOLD=${WARN_THRESHOLD:-500}
 
-if ! command -v jq >/dev/null 2>&1; then
-  echo "❌ jq is required (brew install jq)"; exit 1
-fi
-[[ ! -f "$LOGFILE" ]] && { echo "❌ No log file found: $LOGFILE"; exit 1 }
-
-echo
-echo "🩺  Dotfiles Doctor — Startup Diagnostic"
-echo "📄  Log: $LOGFILE"
-echo "⚙️  Slow threshold: ${SLOW_THRESHOLD}ms | Warn threshold: ${WARN_THRESHOLD}ms"
-echo "---------------------------------------------------------------"
-
-jq -r '. | [.label, .duration_ms, .status, .file] | @tsv' "$LOGFILE" |
-while IFS=$'\t' read -r label duration exit_code file; do
-  color="" reset="\033[0m" emoji="✅"
-  if (( exit_code != 0 )); then color="\033[31m"; emoji="💥"
-  elif (( duration > WARN_THRESHOLD )); then color="\033[31m"; emoji="🔥"
-  elif (( duration > SLOW_THRESHOLD )); then color="\033[33m"; emoji="⚠️ "
-  else color="\033[32m"; fi
-  printf "%b%s %-10s %6sms  (exit:%s)  %s%b\n" "$color" "$emoji" "$label" "$duration" "$exit_code" "$file" "$reset"
+# --- Argument parsing (flags only; NDJSON log stays default unless overridden) ---
+for arg in "$@"; do
+  case "$arg" in
+    --timeline) SHOW_TIMELINE=1 ;;
+    --logfile=*) LOGFILE="${arg#*=}" ;;
+  esac
 done
 
-echo "---------------------------------------------------------------"
+# --- Pre-flight checks (non-fatal for interactive) ---
+if ! command -v jq >/dev/null 2>&1; then
+  print -P "%F{red}❌ jq is required (brew install jq)%f"
+  return 1 2>/dev/null || exit 1
+fi
+if [[ ! -f "$LOGFILE" ]]; then
+  print -P "%F{red}❌ No log file found:%f $LOGFILE"
+  return 1 2>/dev/null || exit 1
+fi
+
+print
+print "🩺  Dotfiles Doctor — Startup Diagnostic"
+print "📄  Log: $LOGFILE"
+print "⚙️  Slow threshold: ${SLOW_THRESHOLD}ms | Warn threshold: ${WARN_THRESHOLD}ms"
+print "---------------------------------------------------------------"
+
+# ---- Individual file timings (slurp NDJSON -> array; then iterate) ----
+jq -sr '.[] | [.label, (.duration_ms // 0), (.exit_code // 0), .file] | @tsv' "$LOGFILE" |
+while IFS=$'\t' read -r label duration exit_code file; do
+  color="" reset=$'\033[0m' emoji="✅"
+  if (( exit_code != 0 )); then color=$'\033[31m'; emoji="💥"
+  elif (( ${duration%.*} > WARN_THRESHOLD )); then color=$'\033[31m'; emoji="🔥"
+  elif (( ${duration%.*} > SLOW_THRESHOLD )); then color=$'\033[33m'; emoji="⚠️ "
+  else color=$'\033[32m'; fi
+  printf "%b%-22s %8.3fms  (exit:%3d)  %s%b\n" \
+    "$color$emoji " "$label" "$duration" "$exit_code" "$file" "$reset"
+done
+
+print "---------------------------------------------------------------"
+
+# ---- Aggregate summary (right-justified, 3 decimals) ----
 echo "📊 Aggregate timings:"
-jq -r '
+jq -sr '
   group_by(.label)
   | map({
       label: .[0].label,
       count: length,
-      total: (map(.duration_ms) | add),
-      avg: (map(.duration_ms) | add / length)
+      total: (map(.duration_ms // 0) | add),
+      avg:   ((map(.duration_ms // 0) | add) / length)
     })
-  | (["label","count","total_ms","avg_ms"], (.[] | [.label, .count, (.total|tostring), (.avg|tostring)]))
+  | sort_by(.label)
+  | .[]
+  | [.label, (.count|tostring), (.total|tostring), (.avg|tostring)]
   | @tsv
-' "$LOGFILE" | column -t -s $'\t'
-echo "---------------------------------------------------------------"
+' "$LOGFILE" |
+awk -F '\t' '
+BEGIN {
+  printf "%-26s %7s %12s %10s\n", "label", "count", "total_ms", "avg_ms"
+  printf "%-26s %7s %12s %10s\n", "-----", "-----", "--------", "------"
+}
+{
+  label=$1; count=$2+0; total=$3+0; avg=$4+0
+  printf "%-26s %7d %12.3f %10.3f\n", label, count, total, avg
+}'
 
-total=$(jq '[.[].duration_ms] | add' "$LOGFILE")
-fails=$(jq '[.[].status] | map(select(. != 0)) | length' "$LOGFILE")
-slows=$(jq "[.[].duration_ms] | map(select(. > $SLOW_THRESHOLD)) | length" "$LOGFILE")
+# ---- Totals ----
+sum_total=$(jq -sr '[.[].duration_ms // 0] | add' "$LOGFILE")
+# Session elapsed = (max end - min start) * 1000 (if present)
+session_total_ms=$(jq -sr '
+  ( [.[].start] | map(select(. != null)) ) as $s
+  | ( [.[].end]   | map(select(. != null)) ) as $e
+  | if ($s|length)>0 and ($e|length)>0
+    then (( ($e|max) - ($s|min) ) * 1000)
+    else 0
+    end
+' "$LOGFILE")
 
-echo
-echo "🕒  Total startup time: ${total}ms"
-echo "💀  Failed modules:     ${fails}"
-echo "🐢  Slow modules:       ${slows}"
-echo
+fails=$(jq -sr '[.[].exit_code // 0] | map(select(. != 0)) | length' "$LOGFILE")
+slows=$(jq -sr "[.[].duration_ms // 0] | map(select(. > $SLOW_THRESHOLD)) | length" "$LOGFILE")
+
+printf "\n🕒  Total (sum of durations): %.5fms\n" "$sum_total"
+printf   "🕒  Session elapsed (first→last): %.5fms\n" "$session_total_ms"
+print    "💀  Failed modules:              $fails"
+print    "🐢  Slow modules:                $slows"
+print
 
 if (( fails > 0 )); then
-  echo "❗ One or more modules failed to load. Check 💥 entries."
+  print "❗ One or more modules failed to load. Check 💥 entries."
 elif (( slows > 0 )); then
-  echo "⚠️  Some modules exceeded ${SLOW_THRESHOLD}ms."
+  print "⚠️  Some modules exceeded ${SLOW_THRESHOLD}ms."
 else
-  echo "✅  All modules healthy and fast."
+  print "✅  All modules healthy and fast."
 fi
-echo
+
+# ---- Timeline (optional; format times in shell, not jq) ----
+if (( SHOW_TIMELINE )); then
+  print
+  print "🕰️  Load Timeline (start→end, μs precision)"
+  print "---------------------------------------------------------------"
+
+  jq -sr '.[] | select(.start != null and .end != null)
+           | [.label, (.start|tostring), (.end|tostring), (.duration_ms // 0), (.exit_code // 0), .file]
+           | @tsv' "$LOGFILE" |
+  while IFS=$'\t' read -r label start end duration exit_code file; do
+    # hh:mm:ss.fffff formatting in shell
+    s_sec="${start%.*}"; s_frac="${start#*.}"; s_frac="${s_frac%%[^0-9]*}"; s_frac="${s_frac:0:5}"
+    e_sec="${end%.*}"  ; e_frac="${end#*.}"  ; e_frac="${e_frac%%[^0-9]*}"  ; e_frac="${e_frac:0:5}"
+    s_hms="$(date -r "$s_sec" +%H:%M:%S 2>/dev/null).$(printf "%05d" ${s_frac:-0})"
+    e_hms="$(date -r "$e_sec" +%H:%M:%S 2>/dev/null).$(printf "%05d" ${e_frac:-0})"
+    printf "%-22s  %s → %s  %8.3fms  (exit:%3d)  %s\n" \
+      "$label" "$s_hms" "$e_hms" "$duration" "$exit_code" "$file"
+  done
+  print "---------------------------------------------------------------"
+fi
