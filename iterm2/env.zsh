@@ -1,2 +1,0 @@
-#!/usr/bin/env zsh
-export ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=YES

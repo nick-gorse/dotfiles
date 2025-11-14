@@ -42,5 +42,5 @@ export PATH
 #   echo "⚠️  Re-running compinit_doctor due to prior failure..."
 #   ZSH_COMPLETION_DEBUG=1 source "$DOTFILES/zsh/compinit_doctor.zsh"
 # fi
-
+# zprof
 

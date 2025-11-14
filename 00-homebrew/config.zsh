@@ -5,7 +5,7 @@
 # ===============================================================
 
 # ---------- lightweight tracer (NDJSON to $outfile) ----------
-: "${HB_TRACE:=1}"   # set HB_TRACE=0 to disable per-action logging
+: "${HB_TRACE:=0}"   # set HB_TRACE=0 to disable per-action logging
 __hb_now() { print -r -- "${EPOCHREALTIME:-$(perl -MTime::HiRes=time -e 'printf "%.6f\n", time()')}"; }
 __hb_ms(){ awk -v s="$1" -v e="$2" 'BEGIN{printf "%.5f",(e-s)*1000}' ; }
 __hb_log(){

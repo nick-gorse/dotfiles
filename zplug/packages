@@ -1,10 +1,11 @@
-zplug "zsh-hooks/zsh-hooks"
+# zplug "zsh-hooks/zsh-hooks"
 zplug "zsh-users/zsh-autosuggestions", defer:2
 zplug "zsh-users/zsh-syntax-highlighting", defer:2
-zplug "plugins/asdf", from:oh-my-zsh, defer:2
-zplug "darvid/zsh-poetry", defer:2
+#zplug "plugins/asdf", from:oh-my-zsh, defer:2
+#zplug "darvid/zsh-poetry", defer:2
+zplug "plugins/mise", from:oh-my-zsh, defer:2
 zplug "plugins/aliases", from:oh-my-zsh, defer:2
-zplug "plugins/pip", from:oh-my-zsh, defer:3
+#zplug "plugins/pip", from:oh-my-zsh, defer:3
 zplug "plugins/macos", from:oh-my-zsh, defer:3
 zplug "junegunn/fzf", use:shell/\*.zsh, defer:3
 zplug "sharkdp/fd", defer:3
