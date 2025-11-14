@@ -10,3 +10,4 @@ zsh/plugins/site-functions
 *.zip
 */archive/*
 *.old
+*.old*
