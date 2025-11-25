@@ -1,0 +1,15 @@
+# .zsh_plugins.txt
+zsh-users/zsh-autosuggestions
+zsh-users/zsh-syntax-highlighting
+
+# Oh-my-zsh dependency management
+getantidote/use-omz
+ohmyzsh/ohmyzsh path:lib
+ohmyzsh/ohmyzsh path:plugins/macos
+ohmyzsh/ohmyzsh path:plugins/asdf kind:defer
+ohmyzsh/ohmyzsh path:plugins/mise kind:defer
+ohmyzsh/ohmyzsh path:plugins/pip kind:defer
+ohmyzsh/ohmyzsh path:plugins/aliases kind:defer
+
+
+romkatv/zsh-bench kind:path

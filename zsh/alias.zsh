@@ -1,16 +1,48 @@
+# mask built-ins with better defaults
+alias ping='ping -c 5'
+alias vi=vim
+alias grep="${aliases[grep]:-grep} --exclude-dir={.git,.vscode}"
+alias ssh=kitten ssh
+
+# more ways to ls
+alias l='colorls -A --sd' 
+alias ll='colorls -lA --sd'
+alias la='colorls -lAh --sd'
+alias lsa="ls -aG --sd"
+alias ldot='ls -ld .* --sd'
+
+# disk usage
+alias df='df -H'
+alias du='du -ch'
+alias biggest='du -s ./* | sort -nr | awk '\''{print $2}'\'' | xargs du -sh'
+alias dux='du -x --max-depth=1 | sort -n'
+alias dud='du -d 1 -h'
+alias duf='du -sh *'
+
+# misc
+alias please=sudo
+alias zshrc='${EDITOR:-vim} "${ZDOTDIR:-$HOME}"/.zshrc'
+alias zbench='for i in {1..10}; do /usr/bin/time zsh -lic exit; done'
+alias cls="clear && printf '\e[3J'"
+
+# print things
+alias print-fpath='echo -e ${FPATH//:/\\n}'
+alias print-path='echo -e ${PATH//:/\\n}'
+alias print-functions='print -l ${(k)functions[(I)[^_]*]} | sort'
+
 alias dot='cd $HOME/.dotfiles/'
 alias dotz='cd $HOME/.dotfiles/zsh'
 alias szrc='subl $HOME/.dotfiles/zsh/zshrc.symlink'
 alias vzrc='vim $HOME/.dotfiles/zsh/zshrc.symlink'
-alias rl!='. $HOME/.zshrc'
+alias rl!='exec zsh'
+alias s_alias='subl $DOTFILES/zsh/alias.zsh'
+alias packages='subl $DOTFILES/antidote/zsh_plugins.txt'
 alias mkcd='foo(){ mkdir -p "$1"; cd "$1" }; foo '
 alias touchv='foa(){ touch "$1"; vim "$1" }; foa '
 alias touchs='foa(){ touch "$1"; subl "$1" }; foa '
-alias touchr='foa(){ touch "$1"; rmate "$1" }; foa '
 alias sub='subl -w'
 alias e='$EDITOR'
 alias lsub='$EDITOR $_'
-alias la='ls -goaFh --color=auto'
 alias vl='less $_'
 alias cv='cat $_'
 alias jc='vim $HOME/.virtualenvs/jupyter/etc/jupyter/jupyter_lab_config.py'
@@ -26,15 +58,12 @@ alias 6='cd -6'
 alias 7='cd -7'
 alias 8='cd -8'
 alias 9='cd -9'
-alias pwhich='pyenv which $_'
-alias dh='dirs -v'
+# alias pwhich='pyenv which $_'
 alias wget='wget -c'
-alias df='df -H'
-alias du='du -ch'
 alias mkdir='mkdir -p'
 alias mount='mount |column -t'
 alias path='echo -e ${PATH//:/\\n}'
 alias fpath='echo -e ${FPATH//:/\\n}'
-alias zup='zplug update && zplug load --compile'
-alias zinstall='zplug install && zplug load --compile'
+# alias zup='zplug update && zplug load --compile'
+# alias zinstall='zplug install && zplug load --compile'
 # alias -s {zsh,symlink}=subl

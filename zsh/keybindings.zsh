@@ -37,11 +37,11 @@ zmodload -i zsh/complist  # Needed for keybindings in menucomplete mode, and com
 bindkey -M menuselect '^[[Z' reverse-menu-complete
 
 # # Gets the nth argument from the last command by pressing Alt+1, Alt+2, ... Alt+5
-# bindkey -s '\e1' "!:0-0 \t"
-# bindkey -s '\e2' "!:1-1 \t"
-# bindkey -s '\e3' "!:2-2 \t"
-# bindkey -s '\e4' "!:3-3 \t"
-# bindkey -s '\e5' "!:4-4 \t"
+bindkey -s '\e1' "!:0-0 \t"
+bindkey -s '\e2' "!:1-1 \t"
+bindkey -s '\e3' "!:2-2 \t"
+bindkey -s '\e4' "!:3-3 \t"
+bindkey -s '\e5' "!:4-4 \t"
 
 # bindkey '^r' history-incremental-search-backward
 # bindkey '^s' history-incremental-search-forward
