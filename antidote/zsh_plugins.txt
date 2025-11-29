@@ -2,13 +2,20 @@
 zsh-users/zsh-autosuggestions
 zsh-users/zsh-syntax-highlighting
 
+
+mattmc3/zephyr path:plugins/color
+mattmc3/zephyr path:plugins/helper
+mattmc3/zephyr path:plugins/macos conditional:is-macos
+
+
 # Oh-my-zsh dependency management
 getantidote/use-omz
-ohmyzsh/ohmyzsh path:lib
-ohmyzsh/ohmyzsh path:plugins/macos
+#ohmyzsh/ohmyzsh path:lib
+#ohmyzsh/ohmyzsh path:plugins/macos conditional:is-macos
 ohmyzsh/ohmyzsh path:plugins/asdf kind:defer
 ohmyzsh/ohmyzsh path:plugins/mise kind:defer
 ohmyzsh/ohmyzsh path:plugins/pip kind:defer
+ohmyzsh/ohmyzsh path:custom/plugins/dotbare kind:defer
 ohmyzsh/ohmyzsh path:plugins/aliases kind:defer
 
 

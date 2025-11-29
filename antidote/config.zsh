@@ -10,7 +10,7 @@ zsh_plugins=${DOTFILES}/antidote/zsh_plugins
 fpath=($HOME/.antidote/functions $fpath)
 autoload -Uz antidote
 
-ZSH=$(antitdote path ohmyzsh/ohmyzsh)
+ZSH=$(antidote path ohmyzsh/ohmyzsh)
 zstyle ':antidote:bundle' use-friendly-names 'yes'
 
 # Generate a new static file whenever .zsh_plugins.txt is updated.
