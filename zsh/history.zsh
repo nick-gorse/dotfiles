@@ -1,8 +1,8 @@
-# call_file $HOMEBREW_PREFIX/share/zsh-history-substring-search/zsh-history-substring-search.zsh "history substring"
+call_file $HOMEBREW_PREFIX/share/zsh-history-substring-search/zsh-history-substring-search.zsh "history substring"
 HISTFILE=$HOME/.zsh_history
 SAVEHIST=5000
 HISTSIZE=5000
-HISTIGNORE=ls:ll:cd:pwd:..:...:htop:reload:r
+HISTIGNORE=ls:ll:cd:pwd:..:...:htop:reload:r:la 
 setopt hist_ignore_all_dups
 setopt hist_save_no_dups
 setopt histignorespace
@@ -13,8 +13,8 @@ setopt hist_ignore_dups
 setopt hist_verify
 setopt hist_reduce_blanks
 
-# bindkey '^[[A' history-substring-search-up
-# bindkey '^[[B' history-substring-search-down
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
 # bindkey "$terminfo[kcuu1]" history-substring-search-up
 # bindkey "$terminfo[kcud1]" history-substring-search-down
 
