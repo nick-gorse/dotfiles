@@ -8,6 +8,7 @@ export ZSH="/bin/zsh"
 # export PATH="$DOTFILES/bin:$PATH"
 export outfile="$HOME/zshrc-log.json"
 export ZSH_CACHE_DIR="$HOME/.cache"
+export LESSHISTFILE=-
 
 # Load call_file early
 if [[ -f "$DOTFILES/bin/call_file" ]]; then

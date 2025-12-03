@@ -5,7 +5,7 @@ alias grep="${aliases[grep]:-grep} --exclude-dir={.git,.vscode}"
 alias ssh=kitten ssh
 
 # more ways to ls
-alias l='colorls -A --sd' 
+alias ls='colorls -A --sd' 
 alias ll='colorls -lA --sd'
 alias la='colorls -lAh --sd'
 alias lsa="ls -aG --sd"
@@ -64,6 +64,7 @@ alias mkdir='mkdir -p'
 alias mount='mount |column -t'
 alias path='echo -e ${PATH//:/\\n}'
 alias fpath='echo -e ${FPATH//:/\\n}'
+alias -g ±=~
 # alias zup='zplug update && zplug load --compile'
 # alias zinstall='zplug install && zplug load --compile'
 # alias -s {zsh,symlink}=subl

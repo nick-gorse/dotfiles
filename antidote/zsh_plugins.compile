@@ -24,6 +24,8 @@ fpath+=( "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/plugins/pip" )
 zsh-defer source "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/plugins/pip/pip.plugin.zsh"
 fpath+=( "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/custom/plugins/dotbare" )
 zsh-defer source "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/custom/plugins/dotbare/dotbare.plugin.zsh"
+fpath+=( "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/custom/plugins/you-should-use" )
+zsh-defer source "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/custom/plugins/you-should-use/you-should-use.plugin.zsh"
 fpath+=( "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/plugins/aliases" )
 zsh-defer source "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/plugins/aliases/aliases.plugin.zsh"
 export PATH="$HOME/Library/Caches/antidote/romkatv/zsh-bench:$PATH"
