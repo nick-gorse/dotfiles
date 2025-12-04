@@ -8,10 +8,6 @@ REPORTTIME=5
 # don't forget to quote '^', '~' and '#'!
 setopt extended_glob
 
-# if a command is issued that can't be executed as a normal command, and the
-# command is the name of a directory, perform the cd command to that directory.
-setopt auto_cd
-
 # display PID when suspending processes as well
 setopt long_list_jobs
 
@@ -28,9 +24,6 @@ setopt complete_in_word
 # Don't send SIGHUP to background processes when the shell exits.
 # setopt no_hup
 
-# avoid "beep"ing
-setopt no_beep
-
 # * shouldn't match dotfiles. ever.
 setopt no_glob_dots
 
@@ -43,7 +36,7 @@ setopt completealiases
 # don't error out when unset parameters are used
 setopt unset
 
-setopt auto_pushd 
+setopt interactivecomments
 
-setopt pushd_ignore_dups
+setopt ignoreeof
 #}}}

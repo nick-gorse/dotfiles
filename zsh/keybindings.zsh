@@ -2,6 +2,10 @@
 # allow ctrl+a and ctrl+e to move to beginning/end of line
 bindkey '^a' beginning-of-line
 bindkey '^e' end-of-line
+# Home, End, Delete keys
+bindkey "\e[H" beginning-of-line
+bindkey "\e[F" end-of-line
+bindkey "\e[3~" delete-char
 
 # alt+q to push current line and fetch again on next line
 bindkey '\eq' push-line
@@ -49,3 +53,10 @@ bindkey -s '\e5' "!:4-4 \t"
 # bindkey '^[[A' history-substring-search-up
 # bindkey '^[[B' history-substring-search-down
 #}}}
+
+# Arrow keys navigation in the edit line
+bindkey "\e[1;5C" forward-word        # Ctrl+Right arrow -> forward one word
+bindkey "\e[1;5D" backward-word       # Ctrl+Left arrow -> backward one word
+
+bindkey "^?" backward-delete-char   # (optional, make Backspace more universal if needed)
+bindkey "^[[Z" undo                 # Shift+Tab to undo (from example)

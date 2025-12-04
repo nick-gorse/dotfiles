@@ -2,12 +2,16 @@
 alias ping='ping -c 5'
 alias vi=vim
 alias grep="${aliases[grep]:-grep} --exclude-dir={.git,.vscode}"
-alias ssh=kitten ssh
+if command -v kitten >/dev/null 2>&1; then
+	alias ssh='foa(){ kitten ssh "$1" }; foa '
+fi
 
 # more ways to ls
-alias ls='colorls -A --sd' 
-alias ll='colorls -lA --sd'
-alias la='colorls -lAh --sd'
+if command -v colorls >/dev/null 2>&1; then
+	alias ls='colorls -A --sd' 
+	alias ll='colorls -lA --sd'
+	alias la='colorls -lAh --sd'
+fi
 alias lsa="ls -aG --sd"
 alias ldot='ls -ld .* --sd'
 
