@@ -7,18 +7,28 @@
 [[ "$ZPROFRC" -ne 1 ]] || zmodload zsh/zprof
 alias zprofrc="ZPROFRC=1 zsh"
 
+
 # Ensure globals
 export DOTFILES="${DOTFILES:-$HOME/.dotfiles}"
 export outfile="${outfile:-$HOME/zshrc-log.json}"
 : > "$outfile"  # clear old log
 
-setopt EXTENDED_GLOB        # Use extended globbing syntax.
+setopt EXTENDED_GLOB     
 
-if [[ "$ZPROFRC" -ne 1 ]]; then 
-  if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-    source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+if [[ ! `typeset -f call_file` ]]; then
+  source "$DOTFILES/bin/call_file"
+fi
+
+if [[ "$WARP_IS_LOCAL_SHELL_SESSION" -eq 1 ]]; then
+  printf '\eP$f{"hook": "SourcedRcFileForWarp", "value": { "shell": "zsh"}}\x9c'
+else
+  if [[ "$ZPROFRC" -ne 1 ]]; then 
+    if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+      source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+    fi
   fi
 fi
+   # Use extended globbing syntax.
 
 # load envrc from $HOME
 if [[ -a $HOME/.envrc ]];then	

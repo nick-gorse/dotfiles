@@ -8,6 +8,10 @@ export DOTFILES="${DOTFILES:-$HOME/.dotfiles}"
 export outfile="${outfile:-$HOME/zshrc-log.json}"
 LOGFILE="$outfile"
 
+if [[ ! `typeset -f call_file1` ]]; then
+  source "$HOME/.dotfiles/bin/call_file"
+fi
+
 # --- Execute all module .zlogin files dynamically ---
 zlogin_files=($DOTFILES/**/*.zlogin)
 for file in ${zlogin_files[@]}; do

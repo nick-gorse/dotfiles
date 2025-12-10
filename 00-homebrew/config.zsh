@@ -42,6 +42,9 @@ fi
 # Always export Brewfile path
 export HOMEBREW_BUNDLE_FILE="${DOTFILES}/00-homebrew/Brewfile"
 
+export PATH="${brew_prefix[$CPUTYPE]}/opt/coreutils/libexec/gnubin:$PATH"
+export MANPATH="${brew_prefix[$CPUTYPE]}/opt/coreutils/libexec/gnuman:$MANPATH"
+
 # If brew still not found, we’re done quietly
 if ! command -v brew >/dev/null 2>&1; then
   return 0

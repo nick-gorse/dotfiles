@@ -18,6 +18,10 @@ ohmyzsh/ohmyzsh path:plugins/pip kind:defer
 ohmyzsh/ohmyzsh path:custom/plugins/dotbare kind:defer
 ohmyzsh/ohmyzsh path:custom/plugins/you-should-use kind:defer
 ohmyzsh/ohmyzsh path:plugins/aliases kind:defer
+joshskidmore/zsh-fzf-history-search
+
+mattmc3/zfunctions
+#zdharma-continuum/fast-syntax-highlighting kind:defer
 
 
 romkatv/zsh-bench kind:path
