@@ -1,0 +1,127 @@
+.TH CONFE 1 "2025" "User Commands"
+.SH NAME
+confe \- edit configuration files with optional backup and git staging
+.SH SYNOPSIS
+.B confe
+[\fB--backup\fR | \fB-b\fR]
+[\fB--staged\fR | \fB-s\fR]
+\fITOPIC\fR
+.SH DESCRIPTION
+The
+.B confe
+command provides a unified interface for editing a set of known
+configuration files. Each topic corresponds to a specific file path,
+and the command can optionally perform a backup of the file before
+editing, or stage the file into a git repository afterwards.
+
+The editing action itself is performed by an external executable,
+determined in the following order:
+.IP \(bu 3
+The value of the environment variable \fBCONFE_EDIT_CMD\fR
+.IP \(bu 3
+The user's \fBEDITOR\fR variable
+.IP \(bu 3
+A fallback to \fBecho\fR
+
+File backups are performed using the command referenced in
+\fBCONFE_BACKUP_CMD\fR, falling back to \fBecho\fR if unset.
+
+The function ensures that when staging is requested, the file is only
+added if it resides inside an actual git repository.
+
+.SH TOPICS
+The following topics are supported:
+
+.TP
+.B alias
+The user's shell alias configuration file.
+
+.TP
+.B keybindings
+Shell keybinding configuration file.
+
+.TP
+.B options
+General shell options file.
+
+.TP
+.B path
+Shell path configuration file.
+
+.TP
+.B packages
+A custom list of package declarations.
+
+.TP
+.B ssh
+SSH client configuration file (typically \fI~/.ssh/config\fR).
+
+.TP
+.B brewfile
+The user's Brewfile.
+
+.SH OPTIONS
+.TP
+.B --backup, -b
+Before editing, the file is passed to a backup helper. This helper is a
+dummy command by default and must be implemented by the user.
+
+.TP
+.B --staged, -s
+After editing, the file is staged into the git repository it belongs to.
+The command checks that the file resides within a valid git work tree.
+
+.SH ENVIRONMENT
+.TP
+.B CONFE_EDIT_CMD
+Defines the editor executable. Overrides \fBEDITOR\fR.
+
+.TP
+.B CONFE_BACKUP_CMD
+Defines the backup executable. If unset, backups use \fBecho\fR.
+
+.SH EXIT STATUS
+The command exits with:
+.TP
+0
+Success.
+.TP
+>0
+Failure in backup, edit, staging, or invalid topic.
+
+.SH EXAMPLES
+Edit alias file normally:
+.PP
+.nf
+    confe alias
+.fi
+
+Backup first, then edit keybindings:
+.PP
+.nf
+    confe --backup keybindings
+.fi
+
+Edit and automatically stage path file:
+.PP
+.nf
+    confe -s path
+.fi
+
+Backup + edit + stage:
+.PP
+.nf
+    confe -b -s options
+.fi
+
+Override editor:
+.PP
+.nf
+    CONFE_EDIT_CMD=nvim confe packages
+.fi
+
+.SH AUTHOR
+Generated automatically upon request.
+
+.SH SEE ALSO
+zsh(1), git(1), editor(1)

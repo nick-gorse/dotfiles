@@ -1,0 +1,118 @@
+.TH BIGGEST 1 "December 2025" "User Commands"
+.SH NAME
+biggest \- list the largest files and directories within a limited depth
+
+.SH SYNOPSIS
+.B biggest
+.RI [ \-n " COUNT" | \-\-number " COUNT" ]
+.RI [ \-p " GLOB_PATTERN" | \-\-pattern " GLOB_PATTERN" ]
+
+.SH DESCRIPTION
+.B biggest
+scans the current directory tree to a maximum depth of three levels,
+including hidden files and directories, and prints the largest entries
+sorted by size.
+
+Sizes are sorted using a block-based numeric size (via
+.BR du (1)
+with the
+.B -sk
+option), but displayed in human-readable form (e.g. 1K, 23M, 4.2G)
+using
+.BR du (1)
+with the
+.B -sh
+option. Permission-related errors and similar diagnostics are
+suppressed.
+
+The command considers both files and directories and "rolls up" the
+size of directories as
+.B du
+does.
+
+If no options are given, the default is to list the 20 largest entries
+that match the pattern "\fB*\fR".
+
+.SH OPTIONS
+.TP
+.BR -n " " \fICOUNT\fR ", " --number =\fICOUNT\fR
+Set the number of entries to display (largest first). \fICOUNT\fR must
+be a positive integer. The default is 20.
+
+.TP
+.BR -p " " \fIGLOB_PATTERN\fR ", " --pattern =\fIGLOB_PATTERN\fR
+Shell-style glob pattern used to filter file and directory names
+(e.g. "\fB*.log\fR", "\fBnode*\fR"). The pattern is applied by
+.BR find (1)
+via its
+.B -name
+predicate. The default pattern is "\fB*\fR", which matches all names.
+
+.TP
+.BR -h ", " --help
+Display a short usage message and exit.
+
+.SH BEHAVIOUR
+The search is limited to paths within three levels from the current
+directory:
+
+.IP \[bu]
+\fB./*\fR
+.IP \[bu]
+\fB./*/*\fR
+.IP \[bu]
+\fB./*/*/*\fR
+
+Hidden files and directories (names beginning with ".") are included as
+long as they match the specified pattern.
+
+The command suppresses "permission denied" and similar error messages
+from underlying tools.
+
+Output is colourised: the size field is printed in one colour and the
+path in another, subject to terminal support for ANSI escape codes.
+
+.SH EXAMPLES
+.TP
+List the top 20 largest files and directories within three levels:
+.PP
+.nf
+.RS
+biggest
+.RE
+.fi
+
+.TP
+List the top 50 largest entries:
+.PP
+.nf
+.RS
+biggest -n 50
+.RE
+.fi
+
+.TP
+List the top 20 largest log files:
+.PP
+.nf
+.RS
+biggest -p "*.log"
+.RE
+.fi
+
+.TP
+Use both options together:
+.PP
+.nf
+.RS
+biggest -n 100 -p "node*"
+.RE
+.fi
+
+.SH SEE ALSO
+.BR du (1),
+.BR find (1),
+.BR zsh (1)
+
+.SH AUTHOR
+Written by the user and maintained locally.

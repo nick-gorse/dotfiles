@@ -1,0 +1,15 @@
+#compdef compinit_doctor
+
+local -a args
+args=(
+  '(-h --help)'{-h,--help}'[Show help/usage]'
+  '(-s --status)'{-s,--status}'[Show current compinit/dump status (default)]'
+  '(-a --audit)'{-a,--audit}'[Run compaudit for insecure paths]'
+  '(-r --rebuild)'{-r,--rebuild}'[Force compinit -i -d and background zcompile]'
+  '(-S --snap)'{-S,--snap}'[Snapshot current $fpath to file]:snapshot file:_files'
+  '(-d --diff)'{-d,--diff}'[Diff current $fpath against a snapshot file]:snapshot file:_files'
+  '(-D --dump)'{-D,--dump}'[Override zcompdump path]:dump file:_files -g "*zcompdump(-.)"'
+  '(-j --json)'{-j,--json}'[Emit status as single JSON object]'
+)
+
+_arguments -s -S $args '*:file:_files'

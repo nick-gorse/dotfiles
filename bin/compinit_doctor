@@ -1,69 +1,163 @@
-#!/usr/bin/env zsh
-# ===============================================================
-# compinit_doctor — On-demand Zsh Completion System Diagnostic
-# ===============================================================
+#autoload
+# compinit_doctor — inspect, audit, diff, and (optionally) rebuild zsh completion state
+# Usage: compinit_doctor [--status] [--audit] [--rebuild] [--snap FILE] [--diff FILE] [--dump PATH] [--json] [--help]
 
-setopt err_exit pipe_fail
-zmodload zsh/datetime
+compinit_doctor() {
+  emulate -L zsh
+  setopt extended_glob
+  zmodload -F zsh/datetime 2>/dev/null || true
 
-VERBOSE=0 FORCE_REBUILD=0 CLEAN=0
-for arg in "$@"; do
-  case $arg in
-    --verbose) VERBOSE=1 ;;
-    --rebuild) FORCE_REBUILD=1 ;;
-    --clean) CLEAN=1 ;;
+  # -------- defaults --------
+  local dump="${ZCOMP_DUMP_PATH:-${XDG_CACHE_HOME:-$HOME/.cache}/zcompdump}"
+  local action=status json=0 snap_file="" diff_file=""
+
+  # -------- arg parse --------
+  while (( $# > 0 )); do
+    case "$1" in
+      --help|-h)     action=help;;
+      --status|-s)   action=status;;
+      --audit|-a)    action=audit;;
+      --rebuild|-r)  action=rebuild;;
+      --snap|-S)     shift; snap_file="${1:-}"; [[ -z $snap_file ]] && { print -ru2 "compinit_doctor: --snap requires a file"; return 2; }; action=snap;;
+      --diff|-d)     shift; diff_file="${1:-}"; [[ -z $diff_file ]] && { print -ru2 "compinit_doctor: --diff requires a file"; return 2; }; action=diff;;
+      --dump=*|-D=*) dump="${1#*=}";;
+      --dump|-D)     shift; dump="${1:-$dump}";;
+      --json|-j)     json=1;;
+      *)             print -ru2 "compinit_doctor: unknown option: $1"; return 2;;
+    esac
+    shift
+  done
+
+  # -------- helpers --------
+  __mtime() {
+    [[ -e $1 ]] || return 1
+    case "$(uname)" in
+      Darwin) stat -f %m -- "$1" 2>/dev/null;;
+      *)      stat -c %Y -- "$1" 2>/dev/null;;
+    esac
+  }
+  __age_human() {
+    local mt now delta
+    mt="$(__mtime "$1")" || { print -r -- "—"; return 0; }
+    now="${EPOCHSECONDS:-$(date +%s)}"
+    delta=$(( now - mt )); (( delta < 0 )) && delta=0
+    printf "%dd %02dh %02dm" $((delta/86400)) $(((delta%86400)/3600)) $(((delta%3600)/60))
+  }
+  __exists() { [[ -e $1 ]] && print yes || print no; }
+  __count_comps() { (( ${+_comps} )) && print ${#_comps} || print 0; }
+
+  __print_status_text() {
+    local dump_mtime dump_age compiled="${dump}.zwc"
+    dump_mtime="$(__mtime "$dump" 2>/dev/null)" || dump_mtime="—"
+    dump_age="$(__age_human "$dump")"
+
+    print -r -- "compinit status:"
+    print -r -- "  dump path         : $dump"
+    print -r -- "  dump exists       : $(__exists "$dump")"
+    print -r -- "  dump age          : $dump_age"
+    print -r -- "  compiled exists   : $(__exists "$compiled")"
+    print -r -- "  \$fpath entries    : ${#fpath}"
+    print -r -- "  \$fpath missing    : $(
+      local -a miss d
+      for d in $fpath; do [[ -d $d ]] || miss+=("$d"); done
+      print ${#miss}
+    )"
+    print -r -- "  completion funcs  : $(__count_comps)"
+    print -r -- "  compinit present  : $(( $+functions[compinit] || $+commands[compinit] )) && print yes || print no"
+  }
+
+  __print_status_json() {
+    local -a missing=(); local d
+    for d in $fpath; do [[ -d $d ]] || missing+=("$d"); done
+    local compinit_present=false
+    if (( $+functions[compinit] || $+commands[compinit] )); then compinit_present=true; fi
+
+    printf '{"dump":"%s","dump_exists":%s,"dump_age":"%s","compiled_exists":%s,' \
+      "$dump" "$([[ -e $dump ]] && print true || print false)" "$(__age_human "$dump")" "$([[ -e ${dump}.zwc ]] && print true || print false)"
+    printf '"fpath_count":%d,"fpath_missing_count":%d,"completion_funcs":%d,"compinit_present":%s}\n' \
+      "${#fpath}" "${#missing}" "$(__count_comps)" "$compinit_present"
+  }
+
+  __do_audit() {
+    if ! whence -w compaudit >/dev/null 2>&1; then
+      print -ru2 "compinit_doctor: compaudit not available"; return 3
+    fi
+    local -a insecure
+    insecure=(${(f)"$(compaudit 2>/dev/null)"})
+    if (( ${#insecure} )); then
+      print -r -- "Insecure completion dirs/files:"
+      printf "  %s\n" "${insecure[@]}"
+      print -r -- "\nSuggested fix (review before running):"
+      print -r -- "  chmod -R go-w -- ${insecure:q}"
+    else
+      print -r -- "No insecure completion paths found (compaudit)."
+    fi
+  }
+
+  __do_rebuild() {
+    local t0 t1 dt
+    t0="${EPOCHREALTIME:-$(perl -MTime::HiRes=time -e 'printf \"%.6f\", time()')}"
+    autoload -U compinit
+    compinit -i -d "$dump" || { print -ru2 "compinit_doctor: compinit failed"; return 4; }
+    { zcompile "$dump" 2>/dev/null || true; } &
+    t1="${EPOCHREALTIME:-$(perl -MTime::HiRes=time -e 'printf \"%.6f\", time()')}"
+    dt=$(awk -v s="$t0" -v e="$t1" 'BEGIN{printf "%.3f",(e-s)*1000}')
+    printf 'Rebuilt dump at: %s  (compinit %.3fms)\n' "$dump" "$dt"
+  }
+
+  __snap() {
+    local file="$1"
+    [[ -n $file ]] || { print -ru2 "compinit_doctor: snapshot file required"; return 2; }
+    mkdir -p -- "${file:h}" 2>/dev/null
+    {
+      print "# compinit_doctor snapshot"
+      print "# date: $(date +'%Y-%m-%d %H:%M:%S %z')"
+      printf "%s\n" "${(os)fpath[@]}"
+    } >| "$file"
+    print -r -- "Snapshot written: $file"
+  }
+
+  __diff() {
+    local file="$1"
+    [[ -r $file ]] || { print -ru2 "compinit_doctor: cannot read snapshot: $file"; return 2; }
+    local -a snap cur added removed
+    snap=(${(f)"$(<"$file")"})
+    snap=(${snap:#\#*})
+    cur=(${(os)fpath})
+    local -Ua _S _C
+    _S=("${snap[@]}"); _C=("${cur[@]}")
+    local s c
+    for s in "${_S[@]}"; do [[ -z ${_C[(r)$s]} ]] && removed+=("$s"); done
+    for c in "${_C[@]}"; do [[ -z ${_S[(r)$c]} ]] && added+=("$c"); done
+    print -r -- "fpath diff vs $file:"
+    print -r -- "  added  (${#added}):"
+    printf "    + %s\n" "${added[@]}"
+    print -r -- "  removed(${#removed}):"
+    printf "    - %s\n" "${removed[@]}"
+  }
+
+  # -------- dispatch --------
+  case "$action" in
+    help)
+      cat <<'EOF'
+compinit_doctor — inspect, audit, diff, and rebuild zsh completion state
+
+  --status|-s           Show current compinit/zcompdump status (default)
+  --audit |-a           Run compaudit and list insecure paths
+  --rebuild|-r          Force compinit -i -d <dump> and background zcompile
+  --snap  |-S FILE      Snapshot current $fpath (sorted) to FILE
+  --diff  |-d FILE      Diff current $fpath against FILE snapshot
+  --dump  |-D PATH      Override zcompdump path (default: $XDG_CACHE_HOME/zcompdump)
+  --json  |-j           Emit status as a single JSON object
+  --help  |-h           Show this help
+EOF
+      ;;
+    audit)   __do_audit;;
+    rebuild) __do_rebuild;;
+    snap)    __snap "$snap_file";;
+    diff)    __diff "$diff_file";;
+    status)
+      (( json )) && __print_status_json || __print_status_text
+      ;;
   esac
-done
-
-LOGFILE="${outfile:-$HOME/zshrc-log.json}"
-DIAGFILE="${LOGFILE}.diagnostic"
-_zcompdump="${ZSH_COMPDUMP_PATH:-${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump}"
-mkdir -p "${_zcompdump:h}"
-
-autoload -Uz compinit
-
-echo "🔍 compinit_doctor starting..."
-echo "  zcompdump: $_zcompdump" | tee -a "$DIAGFILE"
-
-if (( CLEAN )); then
-  echo "🧹 Cleaning caches..." | tee -a "$DIAGFILE"
-  rm -f "${_zcompdump}"* 2>/dev/null
-fi
-
-# Snapshot fpath before compinit
-typeset -a fpath_before=("${fpath[@]}")
-
-start=$EPOCHREALTIME
-if (( FORCE_REBUILD )) || [[ ! -f $_zcompdump || $(find "$_zcompdump" -mtime +7 2>/dev/null) ]]; then
-  compinit -i -d "$_zcompdump"
-else
-  compinit -C -d "$_zcompdump"
-fi
-exit_code=$?
-duration_ms=$(( (EPOCHREALTIME - start) * 1000 ))
-
-# Snapshot fpath after compinit
-typeset -a fpath_after=("${fpath[@]}")
-diff=()
-for path in "${fpath_after[@]}"; do
-  [[ -z ${(M)fpath_before:#$path} ]] && diff+=("$path")
-done
-
-if (( $#diff )); then
-  echo "⚠️  Late fpath additions detected *after* compinit:" | tee -a "$DIAGFILE"
-  printf "   %s\n" "${diff[@]}" | tee -a "$DIAGFILE"
-else
-  echo "✅ No fpath changes post-compinit." | tee -a "$DIAGFILE"
-fi
-
-jq -nc \
-  --arg file "$0" \
-  --arg label "compinit" \
-  --argjson exit_code "$exit_code" \
-  --argjson duration_ms "$duration_ms" \
-  --argjson fpath_added "$(printf '%s\n' "${diff[@]}" | jq -R . | jq -s .)" \
-  '{timestamp:(now|floor), file:$file, label:$label, exit_code:$exit_code, duration_ms:$duration_ms, fpath_added:$fpath_added}' \
-  >> "$LOGFILE"
-
-printf "\n⏱ compinit: %.1fms (exit:%d)\n" "$duration_ms" "$exit_code"
-echo "📄 Diagnostic log: $DIAGFILE"
+}

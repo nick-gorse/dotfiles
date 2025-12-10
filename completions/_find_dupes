@@ -1,0 +1,7 @@
+#compdef find_dupes
+
+_arguments \
+  '(-d --maxdepth)'{-d,--maxdepth}'[maximum recursion depth]:maxdepth (int):_guard "[0-9]#" "integer depth"' \
+  '(-r --regex)'{-r,--regex}'[POSIX extended regular expression]:regex (ERE)' \
+  '(-i --ignore-case)'{-i,--ignore-case}'[match regex case-insensitively]' \
+  '*: :->rest'

@@ -1,0 +1,33 @@
+#compdef confe
+
+# Completion for the confe function
+
+local -a topics opts
+
+topics=(
+  alias
+  keybindings
+  options
+  path
+  packages
+  ssh
+  brewfile
+)
+
+opts=(
+  '--backup[Backup the file before editing]'
+  '-b[Backup the file before editing]'
+  '--staged[Stage the file into its git repo after editing]'
+  '-s[Stage the file into its git repo after editing]'
+)
+
+_arguments \
+  $opts \
+  '1:topic:->topic' \
+  '*:filename:_files' && return 0
+
+case $state in
+  topic)
+    _describe 'topic' topics
+    ;;
+esac

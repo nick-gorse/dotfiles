@@ -1,0 +1,15 @@
+#compdef dotfiles_doctor
+
+# Zsh completion for dotfiles_doctor
+# Supports: --timeline, --logfile=PATH (completes *.json)
+# Usage: place this file on your $fpath, then compinit (or let your compinit.zsh rebuild)
+
+local -a _args
+_args=(
+  '--timeline[Show per-file start/end timeline with μs precision]'
+  '--logfile=[Path to NDJSON log (default: ~/zshrc-log.json)]:logfile:_files -g "*.json"'
+  '--help[Show usage]'
+)
+
+_arguments -s -S $_args \
+  '*:filename:_files'

@@ -1,0 +1,128 @@
+#autoload
+
+# Helper: backup a file via a dummy backup script/command
+confe_backup_file() {
+  emulate -L zsh
+
+  local file=${1:A}
+  if [[ -z $file ]]; then
+    print -u2 "confe: no file passed to confe_backup_file"
+    return 1
+  fi
+  if [[ ! -e $file ]]; then
+    print -u2 "confe: cannot backup, file does not exist: $file"
+    return 1
+  fi
+
+  # You can override this with: CONFE_BACKUP_CMD=your-script
+  local backup_cmd=${CONFE_BACKUP_CMD:-echo}
+
+  # Dummy backup – replace with your real backup script
+  "$backup_cmd" "$file"
+}
+
+# Helper: stage a file in its git repository (if there is one)
+confe_stage_file() {
+  emulate -L zsh
+
+  local file=${1:A}
+  if [[ -z $file ]]; then
+    print -u2 "confe: no file passed to confe_stage_file"
+    return 1
+  fi
+  if [[ ! -e $file ]]; then
+    print -u2 "confe: cannot stage, file does not exist: $file"
+    return 1
+  fi
+
+  local dir=${file:h}
+
+  if git -C "$dir" rev-parse --is-inside-work-tree &>/dev/null; then
+    git -C "$dir" add "$file"
+  else
+    print -u2 "confe: $file is not inside a git repository"
+    return 1
+  fi
+}
+
+confe() {
+  emulate -L zsh
+
+  # Main executable for editing – define here.
+  # You can also override with CONFE_EDIT_CMD in your env.
+  local edit_cmd=${CONFE_EDIT_CMD:-${EDITOR:-vim}}
+  [[ -z $edit_cmd ]] && edit_cmd=vim
+
+  local do_backup=false
+  local do_staged=false
+  local -a positional
+
+  # Option parsing: --backup/-b, --staged/-s
+  while (( $# > 0 )); do
+    case "$1" in
+      --backup|-b)
+        do_backup=true
+        ;;
+      --staged|-s)
+        do_staged=true
+        ;;
+      --)
+        shift
+        positional+=("$@")
+        break
+        ;;
+      --*)
+        print -u2 "confe: unknown option: $1"
+        return 1
+        ;;
+      -*)
+        print -u2 "confe: unknown short option: $1"
+        return 1
+        ;;
+      *)
+        positional+=("$1")
+        ;;
+    esac
+    shift
+  done
+
+  set -- "${positional[@]}"
+
+  local topic=$1
+  if [[ -z $topic ]]; then
+    print -u2 "usage: confe [--backup|-b] [--staged|-s] (alias|keybindings|options|path|packages|ssh|brewfile)"
+    return 1
+  fi
+
+  # Associative array: topic → file path
+  local -A CONFE_FILES=(
+    alias       "$ZDOTDIR/aliases.zsh"
+    keybindings "$ZDOTDIR/keybindings.zsh"
+    options     "$ZDOTDIR/options.zsh"
+    path        "$ZDOTDIR/path.zsh"
+    packages    "$DOTFILES/antidote/zsh_packages.txt"
+    ssh         "$HOME/.ssh/config"
+    brewfile    "$DOTFILES/00-homebrew/Brewfile"
+  )
+
+  local file=${CONFE_FILES[$topic]}
+
+  if [[ -z $file ]]; then
+    print -u2 "confe: unknown topic: $topic"
+    print -u2 "valid topics: ${(j:, :)${(k)CONFE_FILES}}"
+    return 1
+  fi
+
+  # Run backup first if requested
+  if $do_backup; then
+    confe_backup_file "$file" || return $?
+  fi
+
+  # Main dummy command – you replace by setting edit_cmd / CONFE_EDIT_CMD
+  eval "$edit_cmd" $file(:P) || return $?
+
+  # Stage changes if requested
+  if $do_staged; then
+    confe_stage_file "$file" || return $?
+  fi
+}

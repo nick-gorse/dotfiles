@@ -1,0 +1,72 @@
+#autoload
+
+biggest() {
+  emulate -L zsh
+  setopt pipe_fail
+
+  local count=20
+  local pattern='*'
+
+  # Option parsing
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -n|--number)
+        count="$2"
+        shift 2
+        ;;
+      -p|--pattern)
+        pattern="$2"
+        shift 2
+        ;;
+      -h|--help)
+        cat <<'EOF'
+Usage: biggest [-n COUNT | --number COUNT] [-p PATTERN | --pattern PATTERN]
+
+  -n, --number   Number of entries to show (default: 20)
+  -p, --pattern  Glob-style pattern to match names (default: *)
+  -h, --help     Show this help and exit
+
+The command scans up to three directory levels below the current
+directory, includes hidden files and directories, and prints the
+largest files/directories sorted by size. Sizes are sorted using
+du -sk (numeric) and displayed using du -sh (human-readable).
+EOF
+        return 0
+        ;;
+      --)
+        shift
+        break
+        ;;
+      -*)
+        print -u2 "biggest: unknown option: $1"
+        return 1
+        ;;
+      *)
+        # Ignore unexpected positional args for now
+        break
+        ;;
+    esac
+  done
+
+  # Validate count
+  if ! [[ "$count" == <-> ]]; then
+    print -u2 "biggest: COUNT must be a positive integer"
+    return 1
+  fi
+
+  # Core logic: depth 1–3, files and dirs, include hidden, suppress errors
+  find . -mindepth 1 -maxdepth 3 -name "$pattern" -print0 2>/dev/null \
+    | xargs -0 -n 100 du -sk 2>/dev/null \
+    | sort -nr \
+    | head -n "$count" \
+    | cut -f2- \
+    | tr '\n' '\0' \
+    | xargs -0 -I{} du -sh "{}" 2>/dev/null \
+    | awk '{
+        size=$1
+        $1=""
+        sub(/^ /,"")
+        # green size, blue path
+        printf "\033[1;32m%-8s\033[0m \033[1;34m%s\033[0m\n", size, $0
+      }'
+}

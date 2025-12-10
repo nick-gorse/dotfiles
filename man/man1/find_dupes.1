@@ -1,0 +1,139 @@
+.TH FIND_DUPES 1 "December 2025" "find_dupes 1.0" "User Commands"
+.SH NAME
+find_dupes \- find duplicated lines across shell-related files
+.SH SYNOPSIS
+.B find_dupes
+.RI [ --maxdepth\ N | -d\ N ]
+.RI [ --regex\ PATTERN | -r\ PATTERN ]
+.RI [ --ignore-case | -i ]
+.SH DESCRIPTION
+.B find_dupes
+recursively searches for duplicated lines across files below the current
+directory. Only files with no extension, or with the extensions
+.BR .zsh ,
+.BR .sh ,
+.BR .zlogin
+or
+.BR .symlink
+are considered.
+
+Lines that are comments (first non\-whitespace character is
+.BR # ),
+blank or whitespace\-only lines, and lines shorter than five characters
+are ignored.
+
+The search is limited to a maximum directory recursion depth, and
+optionally to lines matching a supplied regular expression.
+.SH ARGUMENTS
+.TP
+.I maxdepth
+Maximum depth (integer) to pass to
+.BR find (1)
+via
+.B \-maxdepth .
+Depth 1 means the current directory only, 2 includes its immediate
+subdirectories, and so on.
+.TP
+.I regex
+An extended POSIX regular expression used to filter which lines are
+considered before duplicate detection. If omitted, all non\-comment,
+non\-blank lines of length at least five are considered.
+.SH OPTIONS
+.TP
+.BI --maxdepth\ N " , " -d\ N
+Set maximum recursion depth. Default is 3.
+
+.TP
+.BI --regex\ PATTERN " , " -r\ PATTERN
+Filter lines using the given POSIX extended regular expression.
+
+.TP
+.BR --ignore-case " , " -i
+Case-insensitive matching.
+.SH BEHAVIOUR
+The command operates in three phases:
+
+.IP 1. 3
+Find all regular files under the current directory up to
+.I maxdepth
+whose names either have no extension or end in
+.BR .zsh ,
+.BR .sh ,
+.BR .zlogin
+or
+.BR .symlink .
+
+.IP 2. 3
+For each file, run
+.BR grep (1)
+with the given
+.I regex
+and optional case\-insensitive flag, then use
+.BR awk (1)
+to:
+.RS
+.IP \(bu 2
+discard comment lines (first non\-whitespace character
+.BR # ),
+.IP \(bu 2
+discard blank or whitespace\-only lines,
+.IP \(bu 2
+discard lines whose length is less than five characters,
+.IP \(bu 2
+normalise line endings and remove stray carriage returns and non\-breaking spaces.
+.RE
+
+.IP 3. 3
+All remaining lines are grouped by their content. Any line that appears
+in more than one file (or more than once across all scanned files) is
+printed together with the list of file paths in which it occurs.
+
+.SH OUTPUT
+For each duplicated line, output is of the form:
+.PP
+.nf
+==== Duplicate line: "export DOTFILES=\\"${DOTFILES:-$HOME/.dotfiles}\\"" ====
+./zlogin.symlink
+./zshrc.symlink
+
+==== Duplicate line: "export outfile=\\"${outfile:-$HOME/zshrc-log.json}\\"" ====
+./zlogin.symlink
+./zshrc.symlink
+.fi
+.SH EXIT STATUS
+.TP
+.B 0
+Command completed successfully (whether or not any duplicates were found).
+.TP
+.B 1
+Usage error (missing
+.I maxdepth
+or invalid arguments).
+.SH EXAMPLES
+.TP
+Search up to depth 3 for any duplicated non\-comment lines:
+.PP
+.nf
+find_dupes 3
+.fi
+.TP
+Search up to depth 4, restricting to lines containing "export" (case\-sensitive):
+.PP
+.nf
+find_dupes 4 'export'
+.fi
+.TP
+Search up to depth 2, restricting to "export" lines case\-insensitively:
+.PP
+.nf
+find_dupes 2 'export' --ignore-case
+.fi
+.SH FILES
+.TP
+.I ~/.dotfiles/bin/find_dupes
+Autoloaded Zsh function implementing this command.
+.SH SEE ALSO
+.BR zsh (1),
+.BR grep (1),
+.BR awk (1),
+.BR find (1)

@@ -1,0 +1,79 @@
+.TH COMPINIT_DOCTOR 1 "2025-11-11" "compinit_doctor" "User Commands"
+.SH NAME
+compinit_doctor \- inspect, audit, diff, and rebuild zsh completion state
+.SH SYNOPSIS
+.B compinit_doctor
+.RI [ --status ]
+.RI [ --audit ]
+.RI [ --rebuild ]
+.RI [ --snap\ FILE ]
+.RI [ --diff\ FILE ]
+.RI [ --dump\ PATH ]
+.RI [ --json ]
+.RI [ --help ]
+.SH DESCRIPTION
+.B compinit_doctor
+is an autoloaded zsh function that diagnoses the shell completion system.
+It reports the zcompdump location and age, compiled dump presence, basic
+health of the completion setup, and can optionally rebuild the dump, snapshot
+the current
+.I $fpath
+and perform diffs against a previous snapshot.
+.SH OPTIONS
+.TP
+.BR --status , " -s"
+Show current compinit and zcompdump status (default action).
+.TP
+.BR --audit , " -a"
+Run
+.B compaudit
+and list insecure directories or files.
+.TP
+.BR --rebuild , " -r"
+Force
+.B compinit -i
+using the configured dump path and background
+.BR zcompile .
+.TP
+.BR --snap " " \fIFILE\fR , " -S " \fIFILE\fR
+Snapshot the current (sorted)
+.I $fpath
+to
+.IR FILE .
+.TP
+.BR --diff " " \fIFILE\fR , " -d " \fIFILE\fR
+Compare the current (sorted)
+.I $fpath
+to a snapshot
+.IR FILE ,
+reporting added and removed paths.
+.TP
+.BR --dump " " \fIPATH\fR , " -D " \fIPATH\fR
+Override the zcompdump path (default:
+.IR $XDG_CACHE_HOME/zcompdump ).
+.TP
+.BR --json , " -j"
+Emit the status as a single JSON object (machine readable).
+.TP
+.BR --help , " -h"
+Show usage.
+.SH ENVIRONMENT
+.TP
+.B ZCOMP_DUMP_PATH
+Overrides the zcompdump file path.
+.SH FILES
+.TP
+.I ~/.cache/zcompdump
+Default zcompdump file read by
+.BR compinit .
+.TP
+.I ~/.cache/zcompdump.zwc
+Optional compiled dump file created by
+.BR zcompile .
+.SH EXIT STATUS
+Returns 0 on success; non\-zero on argument or runtime errors.
+.SH SEE ALSO
+.BR zsh (1),
+.BR compinit (1),
+.BR compaudit (1),
+.BR zcompile (1)
