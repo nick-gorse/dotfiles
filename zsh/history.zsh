@@ -1,4 +1,8 @@
-call_file $HOMEBREW_PREFIX/share/zsh-history-substring-search/zsh-history-substring-search.zsh "history substring"
+if [[ -x "$HOMEBREW_PREFIX/share/zsh-history-substring-search/zsh-history-substring-search.zsh" ]]; then
+    call_file $HOMEBREW_PREFIX/share/zsh-history-substring-search/zsh-history-substring-search.zsh "history substring"
+else
+    call_file $ZSH_CUSTOM/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh "history substring"
+fi
 HISTFILE=$HOME/.zsh_history
 SAVEHIST=5000
 HISTSIZE=5000

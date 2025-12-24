@@ -100,7 +100,7 @@ confe() {
     keybindings "$ZDOTDIR/keybindings.zsh"
     options     "$ZDOTDIR/options.zsh"
     path        "$ZDOTDIR/path.zsh"
-    packages    "$DOTFILES/antidote/zsh_packages.txt"
+    packages    "$DOTFILES/antidote/zsh_plugins.txt"
     ssh         "$HOME/.ssh/config"
     brewfile    "$DOTFILES/00-homebrew/Brewfile"
   )

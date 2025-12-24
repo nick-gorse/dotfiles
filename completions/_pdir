@@ -1,0 +1,28 @@
+#compdef pdir
+
+_pdir_projects() {
+  local ctx base
+  ctx="$(docker context show 2>/dev/null)"
+  [[ -z "$ctx" ]] && return 0
+
+  # Respect DOCKER_DIR override (same as your dcsctl behavior)
+  base="${DOCKER_DIR:-$HOME/.dcs}"
+  base="$base/$ctx/compose"
+  [[ -d "$base" ]] || return 0
+
+  local -a ignored projects
+  ignored=(shared '@Recycle' '@Recently-Snapshot' '.DS_Store')
+
+  projects=()
+  local dir name
+  for dir in "$base"/*; do
+    [[ -d "$dir" ]] || continue
+    name="${dir:t}"
+    (( ${ignored[(I)$name]} )) && continue
+    projects+=("$name")
+  done
+
+  _describe -t dcs-projects 'projects' projects
+}
+
+_arguments -C '1:project:_pdir_projects'

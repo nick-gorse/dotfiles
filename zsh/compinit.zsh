@@ -5,7 +5,7 @@
 # - Stale path: source *completion*.zsh (+ local rc), then compinit -i
 # ==================================================================
 
-autoload -U compinit
+
 
 # ensure these options before compinit
 setopt complete_aliases nobgnice
@@ -30,6 +30,8 @@ local _fast=0
 if [[ ${_zcd}(#qNmh-${ZCOMP_TTL_HOURS}) || ${_zcd}.zwc(#qNmh-${ZCOMP_TTL_HOURS}) ]]; then
   _fast=1
 fi
+
+autoload -U compinit
 
 if (( _fast )); then
   compinit -C -d "$_zcd"

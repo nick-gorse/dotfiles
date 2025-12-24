@@ -1,6 +1,7 @@
+
 typeset -gU fpath
 
-fpath=($DOTFILES/zsh/plugins/zsh-completions/src $fpath)
+# fpath=($DOTFILES/zsh/plugins/zsh-completions/src $fpath)
 fpath=($(brew --prefix)/share/zsh/site-functions $fpath)
 
 # Define excluded directory names (just names, not full paths)
@@ -22,4 +23,4 @@ done
 
 autoload -U $DOTFILES/bin/*(:t)
 
-
+export MANPATH="$HOME/.dotfiles/man:$MANPATH"

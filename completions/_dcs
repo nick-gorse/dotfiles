@@ -1,0 +1,11 @@
+#compdef dcs
+
+# dcs is a shim to dcsctl, so reuse the same completion.
+# This ensures `dcs …` and `dcsctl …` behave identically.
+
+_dcs() {
+  autoload -Uz _dcsctl
+  _dcsctl "$@"
+}
+
+_dcs "$@"

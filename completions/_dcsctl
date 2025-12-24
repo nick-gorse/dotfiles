@@ -1,0 +1,284 @@
+#compdef dcsctl
+
+# --- helpers ---------------------------------------------------------------
+
+_dcsctl__docker_contexts() {
+  local -a ctxs
+  ctxs=(${(f)"$(command docker context ls --format '{{.Name}}' 2>/dev/null)"})
+  _describe -t docker-contexts 'docker contexts' ctxs
+}
+
+_dcsctl__current_context() {
+  command docker context show 2>/dev/null
+}
+
+_dcsctl__projects() {
+  local ctx base
+  ctx="$(_dcsctl__current_context)"
+  [[ -z "$ctx" ]] && return 0
+
+  base="$HOME/.dcs/$ctx/compose"
+  [[ -d "$base" ]] || return 0
+
+  local -a ignored projects
+  ignored=(shared '@Recycle' '@Recently-Snapshot' '.DS_Store')
+
+  projects=()
+  local dir name
+  for dir in "$base"/*; do
+    [[ -d "$dir" ]] || continue
+    name="${dir:t}"
+    (( ${ignored[(I)$name]} )) && continue
+    projects+=("$name")
+  done
+
+  _describe -t dcs-projects 'projects' projects
+}
+
+_dcsctl__secret_names_from_dir() {
+  local ctx proj base projdir secretdir
+  ctx="$(_dcsctl__current_context)"
+  [[ -z "$ctx" ]] && return 1
+
+  proj="${words[4]}"   # dcsctl secret add <project> <name>
+  [[ -z "$proj" ]] && return 1
+
+  base="$HOME/.dcs/$ctx/compose"
+  projdir="$base/$proj"
+  secretdir="$projdir/secrets"
+  [[ -d "$secretdir" ]] || return 1
+
+  local -a names
+  names=()
+  local f n
+  for f in "$secretdir"/*.txt; do
+    [[ -f "$f" ]] || continue
+    n="${f:t}"
+    n="${n%.txt}"
+    names+=("$n")
+  done
+
+  (( ${#names} == 0 )) && return 1
+  _describe -t dcs-secrets 'secret names' names
+}
+
+# Fetch services for a given project by asking docker compose for the resolved config.
+_dcsctl__services() {
+  local ctx proj base projdir
+  ctx="$(_dcsctl__current_context)"
+  [[ -z "$ctx" ]] && return 1
+
+  proj="${words[3]}"   # dcsctl run <project> ...
+  [[ -z "$proj" ]] && return 1
+
+  base="$HOME/.dcs/$ctx/compose"
+  projdir="$base/$proj"
+  [[ -d "$projdir" ]] || return 1
+
+  local env1 env2 env3
+  env1="$projdir/.env"
+  env2="$projdir/service.env"
+  env3="$projdir/service.secrets.env"
+
+  [[ -f "$env1" && -f "$env2" && -f "$env3" && -f "$projdir/docker-compose.yml" ]] || return 1
+
+  local -a svcs
+  svcs=(${(f)"$(
+    command docker --context "$ctx" compose \
+      --project-directory "$projdir" \
+      --project-name "$proj" \
+      --env-file "$env1" \
+      --env-file "$env2" \
+      --env-file "$env3" \
+      config --services 2>/dev/null
+  )"})
+
+  (( ${#svcs} == 0 )) && return 1
+  _describe -t dcs-services 'services' svcs
+}
+
+# Heuristic: decide if we are in a position where a service name is expected.
+_dcsctl__maybe_complete_service() {
+  local subcmd cur
+  subcmd="${words[4]}"   # dcsctl run <project> <subcmd> ...
+  cur="${words[CURRENT]}"
+
+  [[ "$cur" == -* ]] && return 1
+
+  case "$subcmd" in
+    logs|ps|stop|start|restart|up|pull|build|rm|kill|pause|unpause|top|exec)
+      _dcsctl__services
+      return $?
+      ;;
+  esac
+
+  return 1
+}
+
+# Delegate completion to docker after we reconstruct words as docker compose ...
+_dcsctl__docker_compose_delegate() {
+  local ctx proj base projdir
+  ctx="$(_dcsctl__current_context)"
+  [[ -z "$ctx" ]] && return 1
+
+  proj="${words[3]}"
+  [[ -z "$proj" ]] && return 1
+
+  base="$HOME/.dcs/$ctx/compose"
+  projdir="$base/$proj"
+
+  local -a dc_words
+  dc_words=(docker --context "$ctx" compose --project-directory "$projdir" --project-name "$proj")
+
+  if (( ${#words} >= 4 )); then
+    dc_words+=("${words[@]:3}")  # from 4th element
+  fi
+
+  local -a save_words
+  local save_cword
+  save_words=("${words[@]}")
+  save_cword=$CURRENT
+
+  words=("${dc_words[@]}")
+  CURRENT=${#words}
+
+  autoload -Uz _docker
+  _docker
+
+  words=("${save_words[@]}")
+  CURRENT=$save_cword
+}
+
+# File completion helper (used by import compose-path and --env-file)
+_dcsctl__files() {
+  _files
+}
+
+# --- main completion -------------------------------------------------------
+
+_dcsctl() {
+  local -a subcmds
+  subcmds=(
+    'new:Create a new project scaffold'
+    'verify:Verify and repair project structure'
+    'run:Run docker compose for a project'
+    'edit:Edit project files in $EDITOR'
+    'secret:Manage project secrets'
+    'import:Import an existing docker-compose.yml into a DCS project'
+    'context:Manage DCS control-plane contexts'
+    'help:Show help for a command'
+  )
+
+  if (( CURRENT == 2 )); then
+    _describe -t commands 'dcsctl commands' subcmds
+    return
+  fi
+
+  local cmd
+  cmd="${words[2]}"
+
+  case "$cmd" in
+    new)
+      _arguments -C \
+        '1:command:(new)' \
+        '2:project name:_dcsctl__projects' \
+        && return
+      ;;
+
+    verify)
+      _arguments -C \
+        '1:command:(verify)' \
+        '--strict[Fail if compose violates template contract]' \
+        '2:project name:_dcsctl__projects' \
+        && return
+      ;;
+
+    edit)
+      _arguments -C \
+        '1:command:(edit)' \
+        '(-e --env -r --runtime -s --secret)'{-e,--env}'[Edit .env]' \
+        '(-e --env -r --runtime -s --secret)'{-r,--runtime}'[Edit service.env]' \
+        '(-e --env -r --runtime -s --secret)'{-s,--secret}'[Edit service.secrets.env]' \
+        '2:project name:_dcsctl__projects' \
+        && return
+      ;;
+
+    run)
+      if (( CURRENT == 3 )); then
+        _dcsctl__projects
+        return
+      fi
+
+      if (( CURRENT >= 5 )); then
+        _dcsctl__maybe_complete_service && return
+      fi
+
+      _dcsctl__docker_compose_delegate
+      return
+      ;;
+
+    secret)
+      if (( CURRENT == 3 )); then
+        _describe -t secret-subcmds 'secret commands' \
+          'add:Create/open secrets/<name>.txt in $EDITOR'
+        return
+      fi
+
+      local sub
+      sub="${words[3]}"
+      case "$sub" in
+        add)
+          if (( CURRENT == 4 )); then
+            _dcsctl__projects
+            return
+          fi
+          if (( CURRENT == 5 )); then
+            _dcsctl__secret_names_from_dir && return
+            return 0
+          fi
+          ;;
+      esac
+      ;;
+
+    import)
+      # dcsctl import <project> <compose-path> [--env-file <path>] [--strict]
+      _arguments -C \
+        '1:command:(import)' \
+        '--env-file[Additional env file to ingest]:env file:_files' \
+        '--strict[Fail if compose violates template contract after import]' \
+        '2:project name:_dcsctl__projects' \
+        '3:compose path:_files' \
+        && return
+      ;;
+
+    context)
+      if (( CURRENT == 3 )); then
+        _describe -t context-subcmds 'context commands' \
+          'init:Initialize ~/.dcs/<context> with env.system and compose/'
+        return
+      fi
+
+      local sub
+      sub="${words[3]}"
+      case "$sub" in
+        init)
+          if (( CURRENT == 4 )); then
+            _dcsctl__docker_contexts
+            return
+          fi
+          ;;
+      esac
+      ;;
+
+    help)
+      if (( CURRENT == 3 )); then
+        _describe -t commands 'dcsctl commands' subcmds
+        return
+      fi
+      ;;
+  esac
+
+  _describe -t commands 'dcsctl commands' subcmds
+}
+
+_dcsctl "$@"

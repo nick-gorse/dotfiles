@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 
 cd "$(dirname "$0")/.."
 DOTFILES_ROOT=$(pwd -P)
@@ -26,7 +26,7 @@ fail () {
 }
 
 setup_gitconfig () {
-  if ! [ -f %HOME/.gitconfig.local ]
+  if ! [ -f ${HOME}/.gitconfig.local ]
   then
     info 'setup gitconfig'
 

@@ -17,14 +17,14 @@ alias ldot='ls -ld .* --sd'
 
 # disk usage
 alias df='df -H'
-alias du='du -ch'
-alias biggest='du -s ./* | sort -nr | awk '\''{print $2}'\'' | xargs du -sh'
+# alias du='du -ch'
+# alias biggest='du -s ./* | sort -nr | awk '\''{print $2}'\'' | xargs du -sh'
 alias dux='du -x --max-depth=1 | sort -n'
 alias dud='du -d 1 -h'
 alias duf='du -sh *'
 
 # misc
-alias please=sudo
+alias please='sudo $(fc -ln -1)'	
 alias zshrc='${EDITOR:-vim} "${ZDOTDIR:-$HOME}"/.zshrc'
 alias zbench='for i in {1..10}; do /usr/bin/time zsh -lic exit; done'
 alias cls="clear && printf '\e[3J'"
@@ -36,14 +36,16 @@ alias print-functions='print -l ${(k)functions[(I)[^_]*]} | sort'
 
 alias dot='cd $HOME/.dotfiles/'
 alias dotz='cd $HOME/.dotfiles/zsh'
-alias szrc='subl $HOME/.dotfiles/zsh/zshrc.symlink'
+if command -v subl >/dev/null 2>&1; then
+	alias szrc='subl $HOME/.dotfiles/zsh/zshrc.symlink'
+fi
 alias vzrc='vim $HOME/.dotfiles/zsh/zshrc.symlink'
 alias rl!='exec zsh'
 alias s_alias='subl $DOTFILES/zsh/alias.zsh'
 alias packages='subl $DOTFILES/antidote/zsh_plugins.txt'
 alias mkcd='foo(){ mkdir -p "$1"; cd "$1" }; foo '
-alias touchv='foa(){ touch "$1"; vim "$1" }; foa '
-alias touchs='foa(){ touch "$1"; subl "$1" }; foa '
+alias touchs='foa(){ touch "$1"; '${EDITOR:-vim}' "$1" }; foa '
+# alias touchs='foa(){ touch "$1"; subl "$1" }; foa '
 alias sub='subl -w'
 alias e='$EDITOR'
 alias lsub='$EDITOR $_'
@@ -66,8 +68,6 @@ alias 9='cd -9'
 alias wget='wget -c'
 alias mkdir='mkdir -p'
 alias mount='mount |column -t'
-alias path='echo -e ${PATH//:/\\n}'
-alias fpath='echo -e ${FPATH//:/\\n}'
 alias -g ±=~
 # alias zup='zplug update && zplug load --compile'
 # alias zinstall='zplug install && zplug load --compile'
