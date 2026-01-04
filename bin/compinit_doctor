@@ -30,11 +30,7 @@ compinit_doctor() {
 
   # -------- helpers --------
   __mtime() {
-    [[ -e $1 ]] || return 1
-    case "$(uname)" in
-      Darwin) stat -f %m -- "$1" 2>/dev/null;;
-      *)      stat -c %Y -- "$1" 2>/dev/null;;
-    esac
+    [[ -e $1 ]] && stat -c %Y -- "$1" 2>/dev/null || return 1
   }
   __age_human() {
     local mt now delta
@@ -63,7 +59,7 @@ compinit_doctor() {
       print ${#miss}
     )"
     print -r -- "  completion funcs  : $(__count_comps)"
-    print -r -- "  compinit present  : $(( $+functions[compinit] || $+commands[compinit] )) && print yes || print no"
+    print -r -- "  compinit present  : $((($+functions[compinit] || $+commands[compinit])) && print "yes" || print "no")"
   }
 
   __print_status_json() {

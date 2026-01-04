@@ -6,10 +6,10 @@
 # Profiling
 [[ "$ZPROFRC" -ne 1 ]] || zmodload zsh/zprof
 alias zprofrc="ZPROFRC=1 zsh"
-
+typeset -g POWERLEVEL9K_INSTANT_PROMPT=off
 
 # Ensure globals
-export DOTFILES="${DOTFILES:-$HOME/.dotfiles}"
+export DOTFILES="${DOTFILES:=$HOME/.dotfiles}"
 export outfile="${outfile:-$HOME/zshrc-log.json}"
 : > "$outfile"  # clear old log
 

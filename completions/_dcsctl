@@ -12,12 +12,17 @@ _dcsctl__current_context() {
   command docker context show 2>/dev/null
 }
 
+_dcsctl__control_plane_base() {
+  # Match dcsctl logic: base is $DOCKER_DIR if set, else ~/.dcs
+  print -r -- "${DOCKER_DIR:-$HOME/.dcs}"
+}
+
 _dcsctl__projects() {
   local ctx base
   ctx="$(_dcsctl__current_context)"
   [[ -z "$ctx" ]] && return 0
 
-  base="$HOME/.dcs/$ctx/compose"
+  base="$(_dcsctl__control_plane_base)/$ctx/compose"
   [[ -d "$base" ]] || return 0
 
   local -a ignored projects
@@ -43,7 +48,7 @@ _dcsctl__secret_names_from_dir() {
   proj="${words[4]}"   # dcsctl secret add <project> <name>
   [[ -z "$proj" ]] && return 1
 
-  base="$HOME/.dcs/$ctx/compose"
+  base="$(_dcsctl__control_plane_base)/$ctx/compose"
   projdir="$base/$proj"
   secretdir="$projdir/secrets"
   [[ -d "$secretdir" ]] || return 1
@@ -71,7 +76,7 @@ _dcsctl__services() {
   proj="${words[3]}"   # dcsctl run <project> ...
   [[ -z "$proj" ]] && return 1
 
-  base="$HOME/.dcs/$ctx/compose"
+  base="$(_dcsctl__control_plane_base)/$ctx/compose"
   projdir="$base/$proj"
   [[ -d "$projdir" ]] || return 1
 
@@ -124,7 +129,7 @@ _dcsctl__docker_compose_delegate() {
   proj="${words[3]}"
   [[ -z "$proj" ]] && return 1
 
-  base="$HOME/.dcs/$ctx/compose"
+  base="$(_dcsctl__control_plane_base)/$ctx/compose"
   projdir="$base/$proj"
 
   local -a dc_words
@@ -149,11 +154,6 @@ _dcsctl__docker_compose_delegate() {
   CURRENT=$save_cword
 }
 
-# File completion helper (used by import compose-path and --env-file)
-_dcsctl__files() {
-  _files
-}
-
 # --- main completion -------------------------------------------------------
 
 _dcsctl() {
@@ -162,10 +162,16 @@ _dcsctl() {
     'new:Create a new project scaffold'
     'verify:Verify and repair project structure'
     'run:Run docker compose for a project'
+    'up:Alias for run <project> up -d'
+    'down:Alias for run <project> down'
+    'ls:Alias for docker compose ls'
+    'dir:Print the resolved compose project directory'
     'edit:Edit project files in $EDITOR'
     'secret:Manage project secrets'
     'import:Import an existing docker-compose.yml into a DCS project'
     'context:Manage DCS control-plane contexts'
+    'reload:Down, rebuild and up all containers within a DCS project'
+    'rename:Rename and update a DCS project'
     'help:Show help for a command'
   )
 
@@ -193,16 +199,6 @@ _dcsctl() {
         && return
       ;;
 
-    edit)
-      _arguments -C \
-        '1:command:(edit)' \
-        '(-e --env -r --runtime -s --secret)'{-e,--env}'[Edit .env]' \
-        '(-e --env -r --runtime -s --secret)'{-r,--runtime}'[Edit service.env]' \
-        '(-e --env -r --runtime -s --secret)'{-s,--secret}'[Edit service.secrets.env]' \
-        '2:project name:_dcsctl__projects' \
-        && return
-      ;;
-
     run)
       if (( CURRENT == 3 )); then
         _dcsctl__projects
@@ -215,6 +211,43 @@ _dcsctl() {
 
       _dcsctl__docker_compose_delegate
       return
+      ;;
+
+    up)
+      _arguments -C \
+        '1:command:(up)' \
+        '2:project name:_dcsctl__projects' \
+        && return
+      ;;
+
+    down)
+      _arguments -C \
+        '1:command:(down)' \
+        '2:project name:_dcsctl__projects' \
+        && return
+      ;;
+
+    ls)
+      _arguments -C \
+        '1:command:(ls)' \
+        && return
+      ;;
+
+    dir)
+      _arguments -C \
+        '1:command:(dir)' \
+        '2:project name:_dcsctl__projects' \
+        && return
+      ;;
+
+    edit)
+      _arguments -C \
+        '1:command:(edit)' \
+        '(-e --env -r --runtime -s --secret)'{-e,--env}'[Edit .env]' \
+        '(-e --env -r --runtime -s --secret)'{-r,--runtime}'[Edit service.env]' \
+        '(-e --env -r --runtime -s --secret)'{-s,--secret}'[Edit service.secrets.env]' \
+        '2:project name:_dcsctl__projects' \
+        && return
       ;;
 
     secret)
@@ -241,7 +274,6 @@ _dcsctl() {
       ;;
 
     import)
-      # dcsctl import <project> <compose-path> [--env-file <path>] [--strict]
       _arguments -C \
         '1:command:(import)' \
         '--env-file[Additional env file to ingest]:env file:_files' \
@@ -268,6 +300,21 @@ _dcsctl() {
           fi
           ;;
       esac
+      ;;
+      
+    reload)
+      _arguments -C \
+        '1:command:(reload)' \
+        '2:project name:_dcsctl__projects' \
+        && return
+      ;;
+
+    rename)
+      _arguments -C \
+        '1:command:(rename)' \
+        '2:project name:_dcsctl__projects' \
+        '3:new project name:' \
+        && return
       ;;
 
     help)

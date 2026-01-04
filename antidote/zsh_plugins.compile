@@ -22,10 +22,18 @@ fpath+=( "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/plugins/mise" )
 zsh-defer source "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/plugins/mise/mise.plugin.zsh"
 fpath+=( "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/plugins/pip" )
 zsh-defer source "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/plugins/pip/pip.plugin.zsh"
+fpath+=( "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/plugins/golang" )
+zsh-defer source "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/plugins/golang/golang.plugin.zsh"
+fpath+=( "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/plugins/git" )
+zsh-defer source "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/plugins/git/git.plugin.zsh"
 fpath+=( "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/custom/plugins/dotbare" )
 zsh-defer source "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/custom/plugins/dotbare/dotbare.plugin.zsh"
 fpath+=( "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/custom/plugins/you-should-use" )
 zsh-defer source "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/custom/plugins/you-should-use/you-should-use.plugin.zsh"
 fpath+=( "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/plugins/aliases" )
 zsh-defer source "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/plugins/aliases/aliases.plugin.zsh"
+fpath+=( "$HOME/Library/Caches/antidote/joshskidmore/zsh-fzf-history-search" )
+source "$HOME/Library/Caches/antidote/joshskidmore/zsh-fzf-history-search/zsh-fzf-history-search.plugin.zsh"
+fpath+=( "$HOME/Library/Caches/antidote/mattmc3/zfunctions" )
+source "$HOME/Library/Caches/antidote/mattmc3/zfunctions/zfunctions.plugin.zsh"
 export PATH="$HOME/Library/Caches/antidote/romkatv/zsh-bench:$PATH"

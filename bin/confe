@@ -96,7 +96,7 @@ confe() {
 
   # Associative array: topic → file path
   local -A CONFE_FILES=(
-    alias       "$ZDOTDIR/aliases.zsh"
+    alias       "$ZDOTDIR/alias.zsh"
     keybindings "$ZDOTDIR/keybindings.zsh"
     options     "$ZDOTDIR/options.zsh"
     path        "$ZDOTDIR/path.zsh"
@@ -126,3 +126,5 @@ confe() {
     confe_stage_file "$file" || return $?
   fi
 }
+
+confe ${1:-ssh}

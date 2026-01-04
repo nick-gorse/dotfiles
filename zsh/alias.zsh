@@ -1,6 +1,6 @@
 # mask built-ins with better defaults
 alias ping='ping -c 5'
-alias vi=vim
+alias vi=nvim
 alias grep="${aliases[grep]:-grep} --exclude-dir={.git,.vscode}"
 if command -v kitten >/dev/null 2>&1; then
 	alias ssh='foa(){ kitten ssh "$1" }; foa '
@@ -69,6 +69,7 @@ alias wget='wget -c'
 alias mkdir='mkdir -p'
 alias mount='mount |column -t'
 alias -g ±=~
+alias sess='${EDITOR} $HOME/.config/kitty/sessions/${DCS_PROJ_NAME:?error}.session'
 # alias zup='zplug update && zplug load --compile'
 # alias zinstall='zplug install && zplug load --compile'
 # alias -s {zsh,symlink}=subl

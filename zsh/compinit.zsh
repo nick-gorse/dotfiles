@@ -11,7 +11,15 @@
 setopt complete_aliases nobgnice
 
 # dump location + TTL
-local _zcd="${XDG_CACHE_HOME:-$HOME/.cache}/zcompdump"
+export ZSH_COMPDUMP="${XDG_CACHE_HOME:-$HOME/.cache}/zcomp"
+local _zcd="${ZSH_COMPDUMP:-$HOME/.cache/zcomp}/zcompdump"
+
+# Guard if file missing
+[[ ! -r "$ZSH_COMPDUMP" ]] && {
+  print -u2 "comp_init: missing or unreadable: $ZSH_COMPDUMP"
+  return 1
+}
+typeset -g -r ZSH_COMPDUMP
 local ZCOMP_TTL_HOURS="${ZCOMP_TTL_HOURS:-20}"
 
 # collect completion files from the already-built `config_files` list
@@ -63,7 +71,7 @@ zstyle ':completion:*' completer _extensions _complete _approximate
 
 # Use cache for commands using cache
 zstyle ':completion:*' use-cache on
-zstyle ':completion:*' cache-path $zcompdump
+zstyle ':completion:*' cache-path $ZSH_COMPDUMP
 # Complete the alias when _expand_alias is used as a function
 zstyle ':completion:*' complete true
 

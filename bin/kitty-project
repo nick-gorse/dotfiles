@@ -1,0 +1,25 @@
+#!/usr/bin/env zsh
+set -euo pipefail
+
+SESS_DIR="$HOME/.config/kitty/sessions"
+
+launch() {
+  nohup kitty "$@" >/dev/null 2>&1 &
+  disown
+}
+
+if [[ -n "${1:-$DCS_PROJ_NAME}" ]]; then
+  launch --session "${SESS_DIR}/${1:-$DCS_PROJ_NAME}.session"
+fi
+
+cwd="$(pwd -P)"
+#
+#if [[ "$cwd" == "$HOME/dev/dcsctl"* ]]; then
+#  launch --session "${SESS_DIR}/dcsctl.session"
+#elif [[ "$cwd" == "$HOME/PAN_Macbook/cycling-climbs"* ]]; then
+#  launch --session "${SESS_DIR}/cycling.session"
+#else
+#  launch --directory "$cwd"
+#fi
+
+
