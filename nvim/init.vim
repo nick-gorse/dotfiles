@@ -1,0 +1,52 @@
+filetype on
+filetype off
+
+packloadall
+set autowrite
+set mouse=a
+
+set number
+set relativenumber
+
+" Brackets Highlighting Colors
+hi MatchParen cterm=none ctermbg=black ctermfg=white
+
+" Errors/BadSpellings Higlighing Colors
+:highlight clear SpellBad
+
+" CUSOR SETUP
+let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+let &t_SR = "\<Esc>]50;CursorShape=5\x7"
+let &t_EI = "\<Esc>]50;CursorShape=6\x7"
+
+" TAB SETUPS
+set tabstop=4       " The width of a TAB is set to 4.
+                    " Still it is a \t. It is just that
+                    " Vim will interpret it to be having
+                    " a width of 4.
+
+set shiftwidth=4    " Indents will have a width of 4
+
+set softtabstop=4
+set expandtab       " Expand TABs to spaces
+
+" Search
+set hlsearch        "Highlight Search Result
+set ignorecase      "Ignore case when searching
+set incsearch
+set smartcase       "Automatically switch search to case-sensitive when search query contains an uppercase letter
+
+set wildmenu
+set showmatch
+nnoremap gV `[v`]
+set t_Co=256   " This is may or may not needed.
+
+set background=light
+colorscheme PaperColor
+
+syntax enable
+set title
+set autoindent
+filetype plugin indent on
+set foldmethod=marker
+set nofoldenable
