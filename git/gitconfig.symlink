@@ -11,3 +11,7 @@
 	email = nick@olb42.com
 [core]
 	excludesFile = ~/.gitignore
+[webui]
+	autoupdate = true
+[alias]
+	webui = !/Users/ngorse/.git-webui/release/libexec/git-core/git-webui

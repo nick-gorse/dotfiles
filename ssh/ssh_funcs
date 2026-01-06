@@ -1,4 +1,4 @@
-#!/usr/local/bin/zsh
+#!/usr/bin/env zsh
 function help {
 		printf "Usage: sshconfig [-h, --help] [-V, --version] [-a, --add-port <port(s)>]\n\n" 
 		printf "  %-30s\n" "Options Avaliable" 
