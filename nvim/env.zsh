@@ -1,2 +1,2 @@
-export VIM=$HOME/.dotfiles/nvim
-export VIMRUNTIME=$HOME/.config/nvim/runtime
+#export VIM=$HOME/.dotfiles/nvim
+#export VIMRUNTIME=$HOME/.config/nvim/runtime

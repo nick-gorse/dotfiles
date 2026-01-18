@@ -15,3 +15,6 @@
 	autoupdate = true
 [alias]
 	webui = !/Users/ngorse/.git-webui/release/libexec/git-core/git-webui
+	st = "!f(){ git status --ignored --untracked-file; }; f"
+[instaweb]
+	browser = open

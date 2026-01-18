@@ -8,7 +8,7 @@ fi
 
 # more ways to ls
 if command -v colorls >/dev/null 2>&1; then
-	alias ls='colorls -A --sd' 
+	alias ls='colorls -A --sd'
 	alias ll='colorls -lA --sd'
 	alias la='colorls -lAh --sd'
 fi
@@ -24,7 +24,7 @@ alias dud='du -d 1 -h'
 alias duf='du -sh *'
 
 # misc
-alias please='sudo $(fc -ln -1)'	
+alias please='sudo $(fc -ln -1)'
 alias zshrc='${EDITOR:-vim} "${ZDOTDIR:-$HOME}"/.zshrc'
 alias zbench='for i in {1..10}; do /usr/bin/time zsh -lic exit; done'
 alias cls="clear && printf '\e[3J'"
