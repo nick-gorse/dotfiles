@@ -160,7 +160,7 @@ _dcsctl() {
   local -a subcmds
   subcmds=(
     'new:Create a new project scaffold'
-    'verify:Verify and repair project structure'
+    'verify:Verify and enforce host permissions for appdata bind mounts'
     'run:Run docker compose for a project'
     'up:Alias for run <project> up -d'
     'down:Alias for run <project> down'
@@ -186,16 +186,15 @@ _dcsctl() {
   case "$cmd" in
     new)
       _arguments -C \
-        '1:command:(new)' \
-        '2:project name:_dcsctl__projects' \
+        '(-v --verify)'{-v,--verify}'[Run verification after creating the project]' \
+        '--verbose[Verbose output for verification (used with --verify)]' \
+        '1:project name:' \
         && return
       ;;
-
     verify)
       _arguments -C \
-        '1:command:(verify)' \
-        '--strict[Fail if compose violates template contract]' \
-        '2:project name:_dcsctl__projects' \
+        '--verbose[Show current vs expected ownership/mode while verifying (QNAP only)]' \
+        '1:project name:_dcsctl__projects' \
         && return
       ;;
 
@@ -212,11 +211,10 @@ _dcsctl() {
       _dcsctl__docker_compose_delegate
       return
       ;;
-
     up)
       _arguments -C \
-        '1:command:(up)' \
-        '2:project name:_dcsctl__projects' \
+        '(-v --verify)'{-v,--verify}'[Run `dcsctl verify` before running docker compose]' \
+        '1:project name:_dcsctl__projects' \
         && return
       ;;
 
