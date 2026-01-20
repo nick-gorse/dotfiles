@@ -17,3 +17,4 @@ zsh/.zcomp*
 */*.compile
 zsh/.zsh_sessions*
 zsh/.zsh_history
+antidote/zsh_plugins.compile

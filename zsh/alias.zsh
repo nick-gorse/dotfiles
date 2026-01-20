@@ -2,7 +2,7 @@
 alias ping='ping -c 5'
 alias vi=nvim
 alias grep="${aliases[grep]:-grep} --exclude-dir={.git,.vscode}"
-if command -v kitten >/dev/null 2>&1; then
+if command -v kitten >/dev/null 2>&1 && [[ -z "$SSH_CONNECTION" ]]; then
 	alias ssh='foa(){ kitten ssh "$1" }; foa '
 fi
 
@@ -39,19 +39,19 @@ alias dotz='cd $HOME/.dotfiles/zsh'
 if command -v subl >/dev/null 2>&1; then
 	alias szrc='subl $HOME/.dotfiles/zsh/zshrc.symlink'
 fi
-alias vzrc='vim $HOME/.dotfiles/zsh/zshrc.symlink'
+alias vzrc='nvim $HOME/.dotfiles/zsh/.zshrc'
 alias rl!='exec zsh'
 alias s_alias='subl $DOTFILES/zsh/alias.zsh'
-alias packages='subl $DOTFILES/antidote/zsh_plugins.txt'
+alias packages='${EDITOR:-nvim} $DOTFILES/antidote/zsh_plugins.txt'
 alias mkcd='foo(){ mkdir -p "$1"; cd "$1" }; foo '
-alias touchs='foa(){ touch "$1"; '${EDITOR:-vim}' "$1" }; foa '
+alias touchs='foa(){ touch "$1"; '${EDITOR:-nvim}' "$1" }; foa '
 # alias touchs='foa(){ touch "$1"; subl "$1" }; foa '
 alias sub='subl -w'
 alias e='$EDITOR'
 alias lsub='$EDITOR $_'
 alias vl='less $_'
 alias cv='cat $_'
-alias jc='vim $HOME/.virtualenvs/jupyter/etc/jupyter/jupyter_lab_config.py'
+alias jc='nvim $HOME/.virtualenvs/jupyter/etc/jupyter/jupyter_lab_config.py'
 alias icloud='cd $HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/'
 alias ppip='noglob python -m pip'
 alias d='dirs -v | head -10'
@@ -73,3 +73,4 @@ alias sess='${EDITOR} $HOME/.config/kitty/sessions/${DCS_PROJ_NAME:?error}.sessi
 # alias zup='zplug update && zplug load --compile'
 # alias zinstall='zplug install && zplug load --compile'
 # alias -s {zsh,symlink}=subl
+alias lg=lazygit

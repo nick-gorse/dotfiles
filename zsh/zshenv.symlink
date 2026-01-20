@@ -3,7 +3,11 @@
 # zshenv — Earliest Initialisation
 # ===============================================================
 
-typeset -rg INIT_PATH=$PATH
+#typeset -rg INIT_PATH=$PATH
+#typeset -rg INIT_EDITOR=$EDITOR
+#typeset -rg EDITOR=vi
+#print "${EDITOR:?no editor} - ${INIT_EDITOR:?no init}"
+
 export ZDOTDIR="$HOME/.dotfiles/zsh"
 export DOTFILES="$HOME/.dotfiles"
 
