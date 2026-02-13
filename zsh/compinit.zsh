@@ -11,8 +11,8 @@
 setopt complete_aliases nobgnice
 
 # dump location + TTL
-export ZSH_COMPDUMP="${XDG_CACHE_HOME:-$HOME/.cache}/zcomp"
-local _zcd="${ZSH_COMPDUMP:-$HOME/.cache/zcomp}/zcompdump"
+export ZSH_COMPDUMP="${XDG_CACHE_HOME:-$HOME/.cache}/zcomp/zcompdump"
+local _zcd="${ZSH_COMPDUMP:-$HOME/.cache/zcomp/zcompdump}"
 
 # Guard if file missing
 [[ ! -r "$ZSH_COMPDUMP" ]] && {
@@ -55,7 +55,7 @@ fi
 
 unset _zcd _completion_files _fast _have_local_comp ZCOMP_TTL_HOURS
 
-# _comp_options+=(globdots) # With hidden files
+_comp_options+=(globdots) # With hidden files
 
 # +---------+
 # | Options |
@@ -71,7 +71,7 @@ zstyle ':completion:*' completer _extensions _complete _approximate
 
 # Use cache for commands using cache
 zstyle ':completion:*' use-cache on
-zstyle ':completion:*' cache-path $ZSH_COMPDUMP
+zstyle ':completion:*' cache-path  ${ZSH_COMPDUMP:h}
 # Complete the alias when _expand_alias is used as a function
 zstyle ':completion:*' complete true
 
@@ -80,10 +80,6 @@ bindkey '^Xa' alias-expension
 zstyle ':completion:alias-expension:*' completer _expand_alias
 
 # Use cache for commands which use it
-
-# Allow you to select in a menu
-zstyle ':completion:*' menu select
-
 # Autocomplete options for cd instead of directory stack
 zstyle ':completion:*' complete-options true
 
@@ -113,3 +109,23 @@ zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 
 zstyle ':completion:*' keep-prefix true
 
 zstyle -e ':completion:*:(ssh|scp|sftp|rsh|rsync):hosts' hosts 'reply=(${=${${(f)"$(cat {/etc/ssh_,~/.ssh/known_}hosts(|2)(N) /dev/null)"}%%[# ]*}//,/ })'
+
+# disable sort when completing `git checkout`
+zstyle ':completion:*:git-checkout:*' sort false
+# set descriptions format to enable group support
+# NOTE: don't use escape sequences (like '%F{red}%d%f') here, fzf-tab will ignore them
+zstyle ':completion:*:descriptions' format '[%d]'
+# set list-colors to enable filename colorizing
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+# force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
+zstyle ':completion:*' menu no
+# preview directory's content with eza when completing cd
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
+# custom fzf flags
+# NOTE: fzf-tab does not follow FZF_DEFAULT_OPTS by default
+zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --bind=tab:accept
+# To make fzf-tab follow FZF_DEFAULT_OPTS.
+# NOTE: This may lead to unexpected behavior since some flags break this plugin. See Aloxaf/fzf-tab#455.
+zstyle ':fzf-tab:*' use-fzf-default-opts yes
+# switch group using `<` and `>`
+zstyle ':fzf-tab:*' switch-group '<' '>'

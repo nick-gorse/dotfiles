@@ -11,6 +11,7 @@
 	email = nick@olb42.com
 [core]
 	excludesFile = ~/.gitignore
+	pager = delta
 [webui]
 	autoupdate = true
 [alias]
@@ -18,3 +19,9 @@
 	st = "!f(){ git status --ignored --untracked-file; }; f"
 [instaweb]
 	browser = open
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true
+[merge]
+	conflictStyle = zdiff3

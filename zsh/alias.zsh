@@ -3,12 +3,21 @@ alias ping='ping -c 5'
 alias vi=nvim
 alias grep="${aliases[grep]:-grep} --exclude-dir={.git,.vscode}"
 if command -v kitten >/dev/null 2>&1 && [[ -z "$SSH_CONNECTION" ]]; then
-	alias ssh='foa(){ kitten ssh "$1" }; foa '
+	alias s='foa(){ kitten ssh "$1" }; foa '
 fi
 
 # more ways to ls
-if command -v colorls >/dev/null 2>&1; then
-	alias ls='colorls -A --sd'
+if command -v eza >/dev/null 2>&1; then
+  alias ls='eza $eza_params'
+  alias l='eza --git-ignore $eza_params'
+  alias ll='eza --all --header --long $eza_params'
+  alias llm='eza --all --header --long --sort=modified $eza_params'
+  alias la='eza -lbhHigUmuSa'
+  alias lx='eza -lbhHigUmuSa@'
+  alias lt='eza --tree $eza_params'
+  alias tree='eza --tree $eza_params'
+elif command -v colorls >/dev/null 2>&1; then
+	alias ls='colorls -A --sd --hyperlink --gs'
 	alias ll='colorls -lA --sd'
 	alias la='colorls -lAh --sd'
 fi
@@ -34,8 +43,6 @@ alias print-fpath='echo -e ${FPATH//:/\\n}'
 alias print-path='echo -e ${PATH//:/\\n}'
 alias print-functions='print -l ${(k)functions[(I)[^_]*]} | sort'
 
-alias dot='cd $HOME/.dotfiles/'
-alias dotz='cd $HOME/.dotfiles/zsh'
 if command -v subl >/dev/null 2>&1; then
 	alias szrc='subl $HOME/.dotfiles/zsh/zshrc.symlink'
 fi
@@ -68,9 +75,11 @@ alias 9='cd -9'
 alias wget='wget -c'
 alias mkdir='mkdir -p'
 alias mount='mount |column -t'
-alias -g ±=~
+#alias -g ±=~
 alias sess='${EDITOR} $HOME/.config/kitty/sessions/${DCS_PROJ_NAME:?error}.session'
 # alias zup='zplug update && zplug load --compile'
 # alias zinstall='zplug install && zplug load --compile'
-# alias -s {zsh,symlink}=subl
+#alias -s {zsh,yml,conf}=o_vim
 alias lg=lazygit
+alias pan_id="foo(){ kitty @ ls --match-tab=state:self --match='cmdline:^nvim'  | jq '.[0].tabs[0].id' }; foo"
+alias clear_ssh='kitty @ action close_shared_ssh_connections'

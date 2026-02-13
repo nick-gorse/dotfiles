@@ -1,0 +1,15 @@
+#autoload
+dot () {
+    _dotfiles="${DOTFILES:-$HOME/.dotfiles}"
+    if [ $# -eq 1 ]; then
+        if [[ -d "${_dotfiles}/$1" ]]; then
+            cd "${_dotfiles}/$1"
+        else
+            echo "no dir $1 in ${_dotfiles}"
+        fi
+    else
+	cd "${_dotfiles}"
+    fi
+    eza --grid --git-ignore --all --header --grid --no-permissions --no-filesize --no-time --no-user --icons --git --hyperlink
+
+}

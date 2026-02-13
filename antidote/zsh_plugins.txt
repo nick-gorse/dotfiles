@@ -10,9 +10,10 @@ mattmc3/zephyr path:plugins/macos conditional:is-macos
 
 # Oh-my-zsh dependency management
 getantidote/use-omz
-ohmyzsh/ohmyzsh path:lib
+#ohmyzsh/ohmyzsh path:lib
 #ohmyzsh/ohmyzsh path:plugins/macos conditional:is-macos
 ohmyzsh/ohmyzsh path:plugins/asdf kind:defer
+ohmyzsh/ohmyzsh path:custom/plugins/fzf-tab kind:defer
 ohmyzsh/ohmyzsh path:plugins/mise kind:defer
 ohmyzsh/ohmyzsh path:plugins/pip kind:defer
 ohmyzsh/ohmyzsh path:plugins/golang kind:defer

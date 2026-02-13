@@ -1,0 +1,6 @@
+#autoload
+o_vim () {
+	local _filename=$(realpath "${1}")
+
+	nvim --server 127.0.0.1:7777 --remote "${_filename}"
+}

@@ -4,9 +4,6 @@ brew "bat"
 brew "bzip2"
 brew "openssl@3"
 brew "unbound"
-brew "qemu"
-brew "lima"
-brew "colima", restart_service: true
 brew "docker"
 brew "docker-buildx"
 brew "docker-compose"
@@ -42,26 +39,25 @@ brew "ffmpeg"
 brew "git-lfs"
 brew "rsync"
 brew "gh"
-brew "tmux"
+brew "mise"
+brew "uv"
 cask "visual-studio-code"
-cask "1password"  
+cask "1password" if OS.mac?
 cask "1password-cli"
-cask "macvim-app"
-cask "notunes"
+cask "notunes" if OS.mac?
 cask "sublime-text" if OS.mac?
 cask "chatgpt" if OS.mac?
 cask "sublime-merge" if OS.mac?
 cask "unity-hub" if OS.mac?
-cask "raycast"
-cask "whatsapp"
-cask "spotify"
-cask "zoom"
-cask "postman"
+cask "raycast" if OS.mac?
+cask "whatsapp" if OS.mac?
+cask "spotify" if OS.mac?
+cask "zoom" if OS.mac?
+cask "postman" if OS.mac?
 cask "jetbrains-toolbox" if OS.mac?
 cask "nordvpn" if OS.mac?
 cask "dash" if OS.mac?
 cask "vlc"
-cask "warp" if OS.mac?
 mas "1Password for Safari", id: 1569813296
 mas "Amphetamine", id: 937984704
 mas "Boop", id: 1518425043

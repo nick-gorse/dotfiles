@@ -1,0 +1,6 @@
+#autoload
+o_panel(){
+ local _fi
+ _fi=$(realpath "$1")
+ /Users/ngorse/.config/kitty/nvim_panel "${_fi}"
+}

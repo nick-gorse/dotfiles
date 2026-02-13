@@ -51,7 +51,7 @@ confe() {
   # Main executable for editing – define here.
   # You can also override with CONFE_EDIT_CMD in your env.
   local edit_cmd=${CONFE_EDIT_CMD:-${EDITOR:-vim}}
-  [[ -z $edit_cmd ]] && edit_cmd=vim
+  [[ -z $edit_cmd ]] && edit_cmd=nvim
 
   local do_backup=false
   local do_staged=false
@@ -120,6 +120,9 @@ confe() {
 
   # Main dummy command – you replace by setting edit_cmd / CONFE_EDIT_CMD
   eval "$edit_cmd" $file(:P) || return $?
+  if [[ "${file}(:e)" == "zsh" ]]; then
+    source $file(:P)
+  fi
 
   # Stage changes if requested
   if $do_staged; then
