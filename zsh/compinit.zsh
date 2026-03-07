@@ -11,7 +11,10 @@
 setopt complete_aliases nobgnice
 
 # dump location + TTL
-export ZSH_COMPDUMP="${XDG_CACHE_HOME:-$HOME/.cache}/zcomp/zcompdump"
+local _zcomp_loc="${XDG_CACHE_HOME:-$HOME/.cache}/zcomp/zcompdump"
+if [[ "${ZSH_COMPDUMP}" != "${_zcomp_loc}" ]]; then
+    typeset -g -r ZSH_COMPDUMP="${_zcomp_loc}"
+fi
 local _zcd="${ZSH_COMPDUMP:-$HOME/.cache/zcomp/zcompdump}"
 
 # Guard if file missing
@@ -19,8 +22,9 @@ local _zcd="${ZSH_COMPDUMP:-$HOME/.cache/zcomp/zcompdump}"
   print -u2 "comp_init: missing or unreadable: $ZSH_COMPDUMP"
   return 1
 }
-typeset -g -r ZSH_COMPDUMP
 local ZCOMP_TTL_HOURS="${ZCOMP_TTL_HOURS:-20}"
+typeset -g ZCOMP_DUMP_PATH=${ZSH_COMPDUMP}
+
 
 # collect completion files from the already-built `config_files` list
 typeset -a _completion_files
@@ -47,7 +51,7 @@ else
   (( _have_local_comp )) && source "$HOME/.local_comp_rc"
   local f
   for f in "${_completion_files[@]}"; do
-    source "$f"
+    call_file "$f" "${f:h:t}"
   done
   compinit -i -d "$_zcd"
   { zcompile "$_zcd" 2>/dev/null } &!
@@ -56,7 +60,9 @@ fi
 unset _zcd _completion_files _fast _have_local_comp ZCOMP_TTL_HOURS
 
 _comp_options+=(globdots) # With hidden files
-
+if [[ ! $(command -v antidote) ]] && [[ -d $DOTFILES/oh-my-zsh ]]; then
+    call_file $DOTFILES/oh-my-zsh/completion.zsh "omz-comp"
+fi
 # +---------+
 # | Options |
 # +---------+
@@ -108,24 +114,32 @@ zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 
 
 zstyle ':completion:*' keep-prefix true
 
-zstyle -e ':completion:*:(ssh|scp|sftp|rsh|rsync):hosts' hosts 'reply=(${=${${(f)"$(cat {/etc/ssh_,~/.ssh/known_}hosts(|2)(N) /dev/null)"}%%[# ]*}//,/ })'
+
+# Better SSH/Rsync/SCP Autocomplete
+zstyle ':completion:*:(scp|rsync):*' tag-order ' hosts:-ipaddr:ip\ address hosts:-host:host files'
+zstyle ':completion:*:(ssh|scp|rsync):*:hosts-host' ignored-patterns '*(.|:)*' loopback ip6-loopback localhost ip6-localhost broadcasthost
+#zstyle ':completion:*:(ssh|scp|rsync):*:hosts-ipaddr' ignored-patterns '^(<->.<->.<->.<->|(|::)([[:xdigit:].]##:(#c,2))##(|%*))' '127.0.0.<->' '255.255.255.255' '::1' 'fe80::*'
+
+# Allow for autocomplete to be case insensitive
+zstyle ':completion:*' matcher-list '' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' \
+  '+l:|?=** r:|?=**'
 
 # disable sort when completing `git checkout`
-zstyle ':completion:*:git-checkout:*' sort false
+#zstyle ':completion:*:git-checkout:*' sort false
 # set descriptions format to enable group support
 # NOTE: don't use escape sequences (like '%F{red}%d%f') here, fzf-tab will ignore them
 zstyle ':completion:*:descriptions' format '[%d]'
 # set list-colors to enable filename colorizing
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 # force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
-zstyle ':completion:*' menu no
+#zstyle ':completion:*' menu no
 # preview directory's content with eza when completing cd
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
+#zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
 # custom fzf flags
 # NOTE: fzf-tab does not follow FZF_DEFAULT_OPTS by default
-zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --bind=tab:accept
+#zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --bind=tab:accept
 # To make fzf-tab follow FZF_DEFAULT_OPTS.
 # NOTE: This may lead to unexpected behavior since some flags break this plugin. See Aloxaf/fzf-tab#455.
-zstyle ':fzf-tab:*' use-fzf-default-opts yes
+#zstyle ':fzf-tab:*' use-fzf-default-opts yes
 # switch group using `<` and `>`
-zstyle ':fzf-tab:*' switch-group '<' '>'
+#zstyle ':fzf-tab:*' switch-group '<' '>'

@@ -1,7 +1,7 @@
 if command -v brew >/dev/null 2>&1; then
   FZF_PREFIX=$(brew --prefix fzf)
 elif [[ -x $HOME/.fzf/bin/fzf ]]; then
-  FZF_PREFIX=$$HOME/.fzf
+  FZF_PREFIX=$HOME/.fzf
   PATH="${PATH:+${PATH}:}${(F)FZF_PREFIX}/bin"
 fi
 if [[ -n "${FZF_PREFIX}" ]]; then

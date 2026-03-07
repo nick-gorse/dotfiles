@@ -1,0 +1,14 @@
+#autoload
+
+dotpush() {
+  local host="$1"
+  rsync -azc \
+    --update \
+    --backup --suffix='.bak' \
+    --filter=':- .gitignore' \
+    --exclude='.git/' \
+    -e ssh \
+    "$DOTFILES/$2" \
+    "$host:~/.dotfiles/"
+}
+

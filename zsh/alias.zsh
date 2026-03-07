@@ -1,9 +1,14 @@
 # mask built-ins with better defaults
 alias ping='ping -c 5'
-alias vi=nvim
+if command -v nvim >/dev/null 2>&1; then
+    alias vi=nvim
+    alias vim=nvim
+fi
 alias grep="${aliases[grep]:-grep} --exclude-dir={.git,.vscode}"
 if command -v kitten >/dev/null 2>&1 && [[ -z "$SSH_CONNECTION" ]]; then
 	alias s='foa(){ kitten ssh "$1" }; foa '
+elif command -v it2ssh >/dev/null 2>&1 && [[ -z "$SSH_CONNECTION" ]]; then
+	alias s='foa(){ it2ssh "$1" }; foa '
 fi
 
 # more ways to ls
@@ -17,11 +22,11 @@ if command -v eza >/dev/null 2>&1; then
   alias lt='eza --tree $eza_params'
   alias tree='eza --tree $eza_params'
 elif command -v colorls >/dev/null 2>&1; then
-	alias ls='colorls -A --sd --hyperlink --gs'
-	alias ll='colorls -lA --sd'
-	alias la='colorls -lAh --sd'
+    alias ls='colorls -A --sd --hyperlink --gs'
+    alias ll='colorls -lA --sd'
+    alias la='colorls -lAh --sd'
 fi
-alias lsa="ls -aG --sd"
+alias lsa="ls -a"
 alias ldot='ls -ld .* --sd'
 
 # disk usage
@@ -46,19 +51,19 @@ alias print-functions='print -l ${(k)functions[(I)[^_]*]} | sort'
 if command -v subl >/dev/null 2>&1; then
 	alias szrc='subl $HOME/.dotfiles/zsh/zshrc.symlink'
 fi
-alias vzrc='nvim $HOME/.dotfiles/zsh/.zshrc'
+alias vzrc='vim $HOME/.dotfiles/zsh/.zshrc'
 alias rl!='exec zsh'
 alias s_alias='subl $DOTFILES/zsh/alias.zsh'
-alias packages='${EDITOR:-nvim} $DOTFILES/antidote/zsh_plugins.txt'
+alias packages='${EDITOR:-vim} $DOTFILES/antidote/zsh_plugins.txt'
 alias mkcd='foo(){ mkdir -p "$1"; cd "$1" }; foo '
-alias touchs='foa(){ touch "$1"; '${EDITOR:-nvim}' "$1" }; foa '
+alias touchs='foa(){ touch "$1"; '${EDITOR:-vim}' "$1" }; foa '
 # alias touchs='foa(){ touch "$1"; subl "$1" }; foa '
 alias sub='subl -w'
 alias e='$EDITOR'
 alias lsub='$EDITOR $_'
 alias vl='less $_'
 alias cv='cat $_'
-alias jc='nvim $HOME/.virtualenvs/jupyter/etc/jupyter/jupyter_lab_config.py'
+alias jc='vim $HOME/.virtualenvs/jupyter/etc/jupyter/jupyter_lab_config.py'
 alias icloud='cd $HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/'
 alias ppip='noglob python -m pip'
 alias d='dirs -v | head -10'
@@ -81,5 +86,8 @@ alias sess='${EDITOR} $HOME/.config/kitty/sessions/${DCS_PROJ_NAME:?error}.sessi
 # alias zinstall='zplug install && zplug load --compile'
 #alias -s {zsh,yml,conf}=o_vim
 alias lg=lazygit
-alias pan_id="foo(){ kitty @ ls --match-tab=state:self --match='cmdline:^nvim'  | jq '.[0].tabs[0].id' }; foo"
+alias pan_id="foo(){ kitty @ ls --match-tab=state:self --match='cmdline:^vim'  | jq '.[0].tabs[0].id' }; foo"
 alias clear_ssh='kitty @ action close_shared_ssh_connections'
+alias -g NE='2> /dev/null'
+alias -g NS='>/dev/null'
+alias -g NN='>/dev/null 2>&1'

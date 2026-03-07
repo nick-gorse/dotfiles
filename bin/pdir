@@ -1,7 +1,7 @@
 #autoload
 pdir() {
   local proj
-  proj="${PROJECT:-$1}"
+  proj="${PROJECT:-$@}"
   [[ -z "$proj" ]] && { print -u2 "usage: pdir <project>"; return 2; }
-  cd -- "$(dcsctl dir "$proj")" || return
+  cd -- "$(dcsctl dir ${(As./.)proj})" || return
 }

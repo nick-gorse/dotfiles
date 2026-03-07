@@ -19,6 +19,10 @@ if [[ ! `typeset -f call_file` ]]; then
   source "$DOTFILES/bin/call_file"
 fi
 
+#if [[ -e "${HOME}/zsh-defer/zsh-defer.plugin.zsh" ]]; then
+#    call_file ${HOME}/zsh-defer/zsh-defer.plugin.zsh
+#fi
+
 if [[ "$WARP_IS_LOCAL_SHELL_SESSION" -eq 1 ]]; then
   printf '\eP$f{"hook": "SourcedRcFileForWarp", "value": { "shell": "zsh"}}\x9c'
 #else

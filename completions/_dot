@@ -1,0 +1,12 @@
+#compdef dot
+
+_dot() {
+  local -a dirs
+  local _dotfiles="${DOTFILES:-$HOME/.dotfiles}"
+
+  [[ -d "$_dotfiles" ]] || return 1
+
+  dirs=(${(f)"$(print -rl -- $_dotfiles/*(/N:t))"})
+
+  _describe 'dotfiles subdirectory' dirs
+}

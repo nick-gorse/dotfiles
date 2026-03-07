@@ -13,8 +13,8 @@ _dcsctl__current_context() {
 }
 
 _dcsctl__control_plane_base() {
-  # Match dcsctl logic: base is $DOCKER_DIR if set, else ~/.dcs
-  print -r -- "${DOCKER_DIR:-$HOME/.dcs}"
+  # Match dcsctl logic: base is $DCS_ROOT if set, else ~/.dcs
+  print -r -- "${DCS_ROOT:-$HOME/.dcs}"
 }
 
 _dcsctl__projects() {
@@ -65,6 +65,48 @@ _dcsctl__secret_names_from_dir() {
 
   (( ${#names} == 0 )) && return 1
   _describe -t dcs-secrets 'secret names' names
+}
+
+# List service subdirectories in a swarm-mode project.
+# Takes one argument: the project name.
+_dcsctl__swarm_services() {
+  local ctx proj base projdir svcdir
+  ctx="$(_dcsctl__current_context)"
+  [[ -z "$ctx" ]] && return 1
+
+  proj="$1"
+  [[ -z "$proj" ]] && return 1
+
+  base="$(_dcsctl__control_plane_base)/$ctx/compose"
+  projdir="$base/$proj"
+  svcdir="$projdir/services"
+  [[ -d "$svcdir" ]] || return 1
+
+  local -a svcs
+  svcs=()
+  local dir name
+  for dir in "$svcdir"/*/; do
+    [[ -d "$dir" ]] || continue
+    name="${dir:t}"
+    svcs+=("$name")
+  done
+
+  (( ${#svcs} == 0 )) && return 1
+  _describe -t dcs-swarm-services 'services' svcs
+}
+
+# Detect whether a project is in swarm mode (has services/ dir).
+_dcsctl__is_swarm() {
+  local ctx proj base projdir
+  ctx="$(_dcsctl__current_context)"
+  [[ -z "$ctx" ]] && return 1
+
+  proj="$1"
+  [[ -z "$proj" ]] && return 1
+
+  base="$(_dcsctl__control_plane_base)/$ctx/compose"
+  projdir="$base/$proj"
+  [[ -d "$projdir/services" ]]
 }
 
 # Fetch services for a given project by asking docker compose for the resolved config.
@@ -154,6 +196,29 @@ _dcsctl__docker_compose_delegate() {
   CURRENT=$save_cword
 }
 
+# Helper for edit --service completion: extract the project arg from the command
+# line and complete swarm service names.
+_dcsctl__swarm_services_for_edit() {
+  local proj=""
+  local i
+  for (( i=3; i <= ${#words}; i++ )); do
+    local w="${words[$i]}"
+    case "$w" in
+      -e|--env|-r|--runtime|-s|--secret) ;;
+      --service) (( i++ )) ;;  # skip the next arg (the service value)
+      -*) ;;
+      *)
+        if [[ -z "$proj" ]]; then
+          proj="$w"
+        fi
+        ;;
+    esac
+  done
+
+  [[ -z "$proj" ]] && return 1
+  _dcsctl__swarm_services "$proj"
+}
+
 # --- main completion -------------------------------------------------------
 
 _dcsctl() {
@@ -161,13 +226,16 @@ _dcsctl() {
   subcmds=(
     'new:Create a new project scaffold'
     'verify:Verify and enforce host permissions for appdata bind mounts'
-    'run:Run docker compose for a project'
-    'up:Alias for run <project> up -d'
-    'down:Alias for run <project> down'
+    'run:Run docker compose for a project (compose mode)'
+    'up:Alias for run <project> up -d (compose mode)'
+    'down:Bring down a project (compose or swarm)'
+    'stop:Scale all services to 0 replicas (swarm projects only)'
+    'deploy:Merge service fragments and deploy as Docker Swarm stack'
     'ls:Alias for docker compose ls'
-    'dir:Print the resolved compose project directory'
+    'dir:Print the project directory, or a service directory in a swarm project'
     'edit:Edit project files in $EDITOR'
     'secret:Manage project secrets'
+    'service:Manage services within a swarm project'
     'import:Import an existing docker-compose.yml into a DCS project'
     'context:Manage DCS control-plane contexts'
     'reload:Down, rebuild and up all containers within a DCS project'
@@ -188,9 +256,12 @@ _dcsctl() {
       _arguments -C \
         '(-v --verify)'{-v,--verify}'[Run verification after creating the project]' \
         '--verbose[Verbose output for verification (used with --verify)]' \
+        '--compose[Create flat single-compose layout (legacy)]' \
+        '--service[Initial service name for swarm layout]:service name:' \
         '1:project name:' \
         && return
       ;;
+
     verify)
       _arguments -C \
         '--verbose[Show current vs expected ownership/mode while verifying (QNAP only)]' \
@@ -211,6 +282,7 @@ _dcsctl() {
       _dcsctl__docker_compose_delegate
       return
       ;;
+
     up)
       _arguments -C \
         '(-v --verify)'{-v,--verify}'[Run `dcsctl verify` before running docker compose]' \
@@ -220,31 +292,47 @@ _dcsctl() {
 
     down)
       _arguments -C \
-        '1:command:(down)' \
-        '2:project name:_dcsctl__projects' \
+        '1:project name:_dcsctl__projects' \
+        && return
+      ;;
+
+    stop)
+      _arguments -C \
+        '1:project name:_dcsctl__projects' \
+        && return
+      ;;
+
+    deploy)
+      _arguments -C \
+        '(-v --verify)'{-v,--verify}'[Run verification before deploying]' \
+        '--verbose[Verbose verification output]' \
+        '1:project name:_dcsctl__projects' \
         && return
       ;;
 
     ls)
-      _arguments -C \
-        '1:command:(ls)' \
-        && return
+      return
       ;;
 
     dir)
-      _arguments -C \
-        '1:command:(dir)' \
-        '2:project name:_dcsctl__projects' \
-        && return
+      if (( CURRENT == 3 )); then
+        _dcsctl__projects
+        return
+      fi
+      if (( CURRENT == 4 )); then
+        local proj="${words[3]}"
+        _dcsctl__swarm_services "$proj" && return
+        return 0
+      fi
       ;;
 
     edit)
       _arguments -C \
-        '1:command:(edit)' \
         '(-e --env -r --runtime -s --secret)'{-e,--env}'[Edit .env]' \
         '(-e --env -r --runtime -s --secret)'{-r,--runtime}'[Edit service.env]' \
         '(-e --env -r --runtime -s --secret)'{-s,--secret}'[Edit service.secrets.env]' \
-        '2:project name:_dcsctl__projects' \
+        '--service[Target a specific service (swarm mode)]:service name:_dcsctl__swarm_services_for_edit' \
+        '1:project name:_dcsctl__projects' \
         && return
       ;;
 
@@ -271,13 +359,43 @@ _dcsctl() {
       esac
       ;;
 
+    service)
+      if (( CURRENT == 3 )); then
+        local -a service_subcmds
+        service_subcmds=(
+          'add:Add a new service to a swarm project'
+          'ls:List services in a swarm project'
+        )
+        _describe -t service-subcmds 'service commands' service_subcmds
+        return
+      fi
+
+      local sub
+      sub="${words[3]}"
+      case "$sub" in
+        add)
+          if (( CURRENT == 4 )); then
+            _dcsctl__projects
+            return
+          fi
+          # CURRENT == 5: free-form service name, no completions needed
+          ;;
+        ls)
+          if (( CURRENT == 4 )); then
+            _dcsctl__projects
+            return
+          fi
+          ;;
+      esac
+      ;;
+
     import)
       _arguments -C \
-        '1:command:(import)' \
         '--env-file[Additional env file to ingest]:env file:_files' \
         '--strict[Fail if compose violates template contract after import]' \
-        '2:project name:_dcsctl__projects' \
-        '3:compose path:_files' \
+        '--swarm[Import as swarm project, splitting services into per-service fragments]' \
+        '1:project name:_dcsctl__projects' \
+        '2:compose path:_files' \
         && return
       ;;
 
@@ -299,19 +417,17 @@ _dcsctl() {
           ;;
       esac
       ;;
-      
+
     reload)
       _arguments -C \
-        '1:command:(reload)' \
-        '2:project name:_dcsctl__projects' \
+        '1:project name:_dcsctl__projects' \
         && return
       ;;
 
     rename)
       _arguments -C \
-        '1:command:(rename)' \
-        '2:project name:_dcsctl__projects' \
-        '3:new project name:' \
+        '1:project name:_dcsctl__projects' \
+        '2:new project name:' \
         && return
       ;;
 

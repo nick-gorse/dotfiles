@@ -1,0 +1,1960 @@
+#compdef but
+
+autoload -U is-at-least
+
+_but() {
+    typeset -A opt_args
+    typeset -a _arguments_options
+    local ret=1
+
+    if is-at-least 5.2; then
+        _arguments_options=(-s -S -C)
+    else
+        _arguments_options=(-s -C)
+    fi
+
+    local context curcontext="$curcontext" state line
+    _arguments "${_arguments_options[@]}" : \
+'-C+[Run as if gitbutler-cli was started in PATH instead of the current working directory]:PATH:_files' \
+'--current-dir=[Run as if gitbutler-cli was started in PATH instead of the current working directory]:PATH:_files' \
+'(-j --json)-f+[Explicitly control how output should be formatted]:FORMAT:((human\:"The output to write is supposed to be for human consumption, and can be more verbose"
+shell\:"The output should be suitable for shells, and assigning the major result to variables so that it can be reused in subsequent CLI invocations"
+json\:"Output detailed information as JSON for tool consumption"
+none\:"Do not output anything, like redirecting to /dev/null"))' \
+'(-j --json)--format=[Explicitly control how output should be formatted]:FORMAT:((human\:"The output to write is supposed to be for human consumption, and can be more verbose"
+shell\:"The output should be suitable for shells, and assigning the major result to variables so that it can be reused in subsequent CLI invocations"
+json\:"Output detailed information as JSON for tool consumption"
+none\:"Do not output anything, like redirecting to /dev/null"))' \
+'*-t[Enable tracing for debug and performance information printed to stderr]' \
+'*--trace[Enable tracing for debug and performance information printed to stderr]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'-V[Print version]' \
+'--version[Print version]' \
+'::source_or_path -- Source entity for rub operation (when no subcommand is specified). If no target is specified, this is treated as a path to open on the GUI:_default' \
+'::target -- Target entity for rub operation (when no subcommand is specified):_default' \
+":: :_but_commands" \
+"*::: :->but" \
+&& ret=0
+    case $state in
+    (but)
+        words=($line[3] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:but-command-$line[3]:"
+        case $line[3] in
+            (status)
+_arguments "${_arguments_options[@]}" : \
+'-f[Determines whether the committed files should be shown as well]' \
+'-v[Show verbose output with commit author and timestamp]' \
+'--verbose[Show verbose output with commit author and timestamp]' \
+'-r[Forces a sync of pull requests from the forge before showing status]' \
+'--refresh-prs[Forces a sync of pull requests from the forge before showing status]' \
+'-u[Show detailed list of upstream commits that haven'\''t been integrated yet]' \
+'--upstream[Show detailed list of upstream commits that haven'\''t been integrated yet]' \
+'--no-hint[Disable hints about available commands at the end of output]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(rub)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':source -- The source entity to combine:_default' \
+':target -- The target entity to combine with the source:_default' \
+&& ret=0
+;;
+(diff)
+_arguments "${_arguments_options[@]}" : \
+'(--no-tui)--tui[Open an interactive TUI diff viewer]' \
+'(--tui)--no-tui[Disable the interactive TUI diff viewer (overrides but.ui.tui config)]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'::target -- The CLI ID of the entity to show the diff for:_default' \
+&& ret=0
+;;
+(show)
+_arguments "${_arguments_options[@]}" : \
+'-v[Show full commit messages and files changed for each commit]' \
+'--verbose[Show full commit messages and files changed for each commit]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':commit -- The commit ID (short or full SHA), branch name, or CLI ID to show details for:_default' \
+&& ret=0
+;;
+(setup)
+_arguments "${_arguments_options[@]}" : \
+'--init[Initialize a new git repository with an empty commit if one doesn'\''t exist.]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(teardown)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(pull)
+_arguments "${_arguments_options[@]}" : \
+'-c[Only check the status without updating (equivalent to the old but base check)]' \
+'--check[Only check the status without updating (equivalent to the old but base check)]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(branch)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+":: :_but__branch_commands" \
+"*::: :->branch" \
+&& ret=0
+
+    case $state in
+    (branch)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:but-branch-command-$line[1]:"
+        case $line[1] in
+            (new)
+_arguments "${_arguments_options[@]}" : \
+'-a+[Anchor point - either a commit ID or branch name to create the new branch from]:ANCHOR:_default' \
+'--anchor=[Anchor point - either a commit ID or branch name to create the new branch from]:ANCHOR:_default' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'::branch_name -- Name of the new branch:_default' \
+&& ret=0
+;;
+(delete)
+_arguments "${_arguments_options[@]}" : \
+'-f[Force deletion without confirmation]' \
+'--force[Force deletion without confirmation]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':branch_name -- Name of the branch to delete:_default' \
+&& ret=0
+;;
+(list)
+_arguments "${_arguments_options[@]}" : \
+'(-r --remote)-l[Show only local branches]' \
+'(-r --remote)--local[Show only local branches]' \
+'(-l --local)-r[Show only remote branches]' \
+'(-l --local)--remote[Show only remote branches]' \
+'-a[Show all branches (not just active + 20 most recent)]' \
+'--all[Show all branches (not just active + 20 most recent)]' \
+'--no-ahead[Don'\''t calculate and show number of commits ahead of base (faster)]' \
+'--review[Fetch and display review information (PRs, MRs, etc.)]' \
+'--no-check[Don'\''t check if each branch merges cleanly into upstream]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'::filter -- Filter branches by name (case-insensitive substring match):_default' \
+&& ret=0
+;;
+(show)
+_arguments "${_arguments_options[@]}" : \
+'-r[Fetch and display review information]' \
+'--review[Fetch and display review information]' \
+'-f[Show files modified in each commit with line counts]' \
+'--files[Show files modified in each commit with line counts]' \
+'--ai[Generate AI summary of the branch changes]' \
+'--check[Check if the branch merges cleanly into upstream and identify conflicting commits]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':branch_id -- CLI ID or name of the branch to show:_default' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+(worktree)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+":: :_but__worktree_commands" \
+"*::: :->worktree" \
+&& ret=0
+
+    case $state in
+    (worktree)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:but-worktree-command-$line[1]:"
+        case $line[1] in
+            (new)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':reference -- The reference (branch, commit, etc.) to create the worktree from:_default' \
+&& ret=0
+;;
+(list)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(integrate)
+_arguments "${_arguments_options[@]}" : \
+'--target=[The target reference to integrate into (defaults to the reference the worktree was created from)]:TARGET:_default' \
+'--dry[Perform a dry run without making changes]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':path -- The path or name of the worktree to integrate:_default' \
+&& ret=0
+;;
+(destroy)
+_arguments "${_arguments_options[@]}" : \
+'--reference[Treat the target as a reference instead of a path]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':target -- The path to the worktree to destroy, or a reference to destroy all worktrees created from it:_default' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+(mark)
+_arguments "${_arguments_options[@]}" : \
+'-d[Deletes a mark]' \
+'--delete[Deletes a mark]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':target -- The target entity that will be marked:_default' \
+&& ret=0
+;;
+(unmark)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(gui)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(.)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(commit)
+_arguments "${_arguments_options[@]}" : \
+'(--message-file)-m+[Commit message]:MESSAGE:_default' \
+'(--message-file)--message=[Commit message]:MESSAGE:_default' \
+'(-m --message)--message-file=[Read commit message from file]:FILE:_files' \
+'(-m --message --message-file)-i+[Generate commit message using AI with optional user summary. Use --ai by itself or --ai="your instructions" (equals sign required for value)]' \
+'(-m --message --message-file)--ai=[Generate commit message using AI with optional user summary. Use --ai by itself or --ai="your instructions" (equals sign required for value)]' \
+'(-o --only)*-p+[Uncommitted file or hunk CLI IDs to include in the commit. Can be specified multiple times or as comma-separated values. If not specified, all uncommitted changes (or changes staged to the target branch) are committed]:CHANGES:_default' \
+'(-o --only)*--changes=[Uncommitted file or hunk CLI IDs to include in the commit. Can be specified multiple times or as comma-separated values. If not specified, all uncommitted changes (or changes staged to the target branch) are committed]:CHANGES:_default' \
+'-c[Whether to create a new branch for this commit. If the branch name given matches an existing branch, that branch will be used instead. If no branch name is given, a new branch with a generated name will be created]' \
+'--create[Whether to create a new branch for this commit. If the branch name given matches an existing branch, that branch will be used instead. If no branch name is given, a new branch with a generated name will be created]' \
+'-o[Only commit staged files, not unstaged files]' \
+'--only[Only commit staged files, not unstaged files]' \
+'-n[Bypass pre-commit hooks]' \
+'--no-hooks[Bypass pre-commit hooks]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'::branch -- Branch CLI ID or name to derive the stack to commit to:_default' \
+":: :_but__commit_commands" \
+"*::: :->commit" \
+&& ret=0
+
+    case $state in
+    (commit)
+        words=($line[2] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:but-commit-command-$line[2]:"
+        case $line[2] in
+            (empty)
+_arguments "${_arguments_options[@]}" : \
+'--before=[Insert the blank commit before this commit or branch]:BEFORE:_default' \
+'--after=[Insert the blank commit after this commit or branch]:AFTER:_default' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'::target -- The target commit or branch to insert relative to:_default' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+(push)
+_arguments "${_arguments_options[@]}" : \
+'*-a+[Add hashtag(s) to change (Gerrit). Can be used multiple times]:TAG:_default' \
+'*--hashtag=[Add hashtag(s) to change (Gerrit). Can be used multiple times]:TAG:_default' \
+'(--tb)-t+[Add custom topic to change (Gerrit). At most one topic can be set]:TOPIC:_default' \
+'(--tb)--topic=[Add custom topic to change (Gerrit). At most one topic can be set]:TOPIC:_default' \
+'-f[Force push even if it'\''s not fast-forward]' \
+'--with-force[Force push even if it'\''s not fast-forward]' \
+'-s[Skip force push protection checks]' \
+'--skip-force-push-protection[Skip force push protection checks]' \
+'-r[Run pre-push hooks]' \
+'--run-hooks[Run pre-push hooks]' \
+'(-y --ready)-w[Mark change as work-in-progress (Gerrit). Mutually exclusive with --ready]' \
+'(-y --ready)--wip[Mark change as work-in-progress (Gerrit). Mutually exclusive with --ready]' \
+'(-w --wip)-y[Mark change as ready for review (Gerrit). This is the default state]' \
+'(-w --wip)--ready[Mark change as ready for review (Gerrit). This is the default state]' \
+'(-t --topic)--tb[Use branch name as topic (Gerrit)]' \
+'-p[Mark change as private (Gerrit)]' \
+'--private[Mark change as private (Gerrit)]' \
+'-d[Show what would be pushed without actually pushing]' \
+'--dry-run[Show what would be pushed without actually pushing]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'::branch_id -- Branch name or CLI ID to push. If not specified, will list all branches and prompt for selection in interactive mode:_default' \
+&& ret=0
+;;
+(reword)
+_arguments "${_arguments_options[@]}" : \
+'(-f --format)-m+[The new commit message or branch name. If not provided, opens an editor]:MESSAGE:_default' \
+'(-f --format)--message=[The new commit message or branch name. If not provided, opens an editor]:MESSAGE:_default' \
+'(-m --message)-f[Format the existing commit message to 72-char line wrapping without opening an editor]' \
+'(-m --message)--format[Format the existing commit message to 72-char line wrapping without opening an editor]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':target -- Commit ID to edit the message for, or branch ID to rename:_default' \
+&& ret=0
+;;
+(oplog)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+":: :_but__oplog_commands" \
+"*::: :->oplog" \
+&& ret=0
+
+    case $state in
+    (oplog)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:but-oplog-command-$line[1]:"
+        case $line[1] in
+            (list)
+_arguments "${_arguments_options[@]}" : \
+'--since=[Start from this oplog SHA instead of the head]:SINCE:_default' \
+'-s[Show only on-demand snapshot entries]' \
+'--snapshot[Show only on-demand snapshot entries]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(snapshot)
+_arguments "${_arguments_options[@]}" : \
+'-m+[Message to include with the snapshot]:MESSAGE:_default' \
+'--message=[Message to include with the snapshot]:MESSAGE:_default' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(restore)
+_arguments "${_arguments_options[@]}" : \
+'-f[Skip confirmation prompt]' \
+'--force[Skip confirmation prompt]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':oplog_sha -- Oplog SHA to restore to:_default' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+(undo)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(absorb)
+_arguments "${_arguments_options[@]}" : \
+'--dry-run[Show the absorption plan without making any changes]' \
+'-n[Create new commits, instead of amending existing ones. This is useful when you want to preserve existing commits and add new ones for the absorbed changes]' \
+'--new[Create new commits, instead of amending existing ones. This is useful when you want to preserve existing commits and add new ones for the absorbed changes]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'::source -- If the Source is an uncommitted change - the change will be absorbed. If the Source is a stack - anything staged to the stack will be absorbed accordingly. If not provided, everything that is uncommitted will be absorbed:_default' \
+&& ret=0
+;;
+(discard)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':id -- The ID of the file or hunk to discard (as shown in but status):_default' \
+&& ret=0
+;;
+(pr)
+_arguments "${_arguments_options[@]}" : \
+'-d[Whether to create reviews as a draft]' \
+'--draft[Whether to create reviews as a draft]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+":: :_but__pr_commands" \
+"*::: :->pr" \
+&& ret=0
+
+    case $state in
+    (pr)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:but-pr-command-$line[1]:"
+        case $line[1] in
+            (new)
+_arguments "${_arguments_options[@]}" : \
+'(-F --file -t --default)-m+[review title and description. The first line is the title, the rest is the description]:MESSAGE:_default' \
+'(-F --file -t --default)--message=[review title and description. The first line is the title, the rest is the description]:MESSAGE:_default' \
+'(-m --message -t --default)-F+[Read review title and description from file. The first line is the title, the rest is the description]:FILE:_files' \
+'(-m --message -t --default)--file=[Read review title and description from file. The first line is the title, the rest is the description]:FILE:_files' \
+'-f[Force push even if it'\''s not fast-forward (defaults to true)]' \
+'--with-force[Force push even if it'\''s not fast-forward (defaults to true)]' \
+'-s[Skip force push protection checks]' \
+'--skip-force-push-protection[Skip force push protection checks]' \
+'-r[Run pre-push hooks (defaults to true)]' \
+'--run-hooks[Run pre-push hooks (defaults to true)]' \
+'-t[Use the default content for the review title and description, skipping any prompts. If the branch contains only a single commit, the commit message will be used]' \
+'--default[Use the default content for the review title and description, skipping any prompts. If the branch contains only a single commit, the commit message will be used]' \
+'-d[Whether to create reviews as a draft]' \
+'--draft[Whether to create reviews as a draft]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'::branch -- The branch to create a review for:_default' \
+&& ret=0
+;;
+(template)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'::template_path -- Path to the review template file within the repository:_default' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+(review)
+_arguments "${_arguments_options[@]}" : \
+'-d[Whether to create reviews as a draft]' \
+'--draft[Whether to create reviews as a draft]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+":: :_but__pr_commands" \
+"*::: :->pr" \
+&& ret=0
+
+    case $state in
+    (pr)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:but-pr-command-$line[1]:"
+        case $line[1] in
+            (new)
+_arguments "${_arguments_options[@]}" : \
+'(-F --file -t --default)-m+[review title and description. The first line is the title, the rest is the description]:MESSAGE:_default' \
+'(-F --file -t --default)--message=[review title and description. The first line is the title, the rest is the description]:MESSAGE:_default' \
+'(-m --message -t --default)-F+[Read review title and description from file. The first line is the title, the rest is the description]:FILE:_files' \
+'(-m --message -t --default)--file=[Read review title and description from file. The first line is the title, the rest is the description]:FILE:_files' \
+'-f[Force push even if it'\''s not fast-forward (defaults to true)]' \
+'--with-force[Force push even if it'\''s not fast-forward (defaults to true)]' \
+'-s[Skip force push protection checks]' \
+'--skip-force-push-protection[Skip force push protection checks]' \
+'-r[Run pre-push hooks (defaults to true)]' \
+'--run-hooks[Run pre-push hooks (defaults to true)]' \
+'-t[Use the default content for the review title and description, skipping any prompts. If the branch contains only a single commit, the commit message will be used]' \
+'--default[Use the default content for the review title and description, skipping any prompts. If the branch contains only a single commit, the commit message will be used]' \
+'-d[Whether to create reviews as a draft]' \
+'--draft[Whether to create reviews as a draft]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'::branch -- The branch to create a review for:_default' \
+&& ret=0
+;;
+(template)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'::template_path -- Path to the review template file within the repository:_default' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+(mr)
+_arguments "${_arguments_options[@]}" : \
+'-d[Whether to create reviews as a draft]' \
+'--draft[Whether to create reviews as a draft]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+":: :_but__pr_commands" \
+"*::: :->pr" \
+&& ret=0
+
+    case $state in
+    (pr)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:but-pr-command-$line[1]:"
+        case $line[1] in
+            (new)
+_arguments "${_arguments_options[@]}" : \
+'(-F --file -t --default)-m+[review title and description. The first line is the title, the rest is the description]:MESSAGE:_default' \
+'(-F --file -t --default)--message=[review title and description. The first line is the title, the rest is the description]:MESSAGE:_default' \
+'(-m --message -t --default)-F+[Read review title and description from file. The first line is the title, the rest is the description]:FILE:_files' \
+'(-m --message -t --default)--file=[Read review title and description from file. The first line is the title, the rest is the description]:FILE:_files' \
+'-f[Force push even if it'\''s not fast-forward (defaults to true)]' \
+'--with-force[Force push even if it'\''s not fast-forward (defaults to true)]' \
+'-s[Skip force push protection checks]' \
+'--skip-force-push-protection[Skip force push protection checks]' \
+'-r[Run pre-push hooks (defaults to true)]' \
+'--run-hooks[Run pre-push hooks (defaults to true)]' \
+'-t[Use the default content for the review title and description, skipping any prompts. If the branch contains only a single commit, the commit message will be used]' \
+'--default[Use the default content for the review title and description, skipping any prompts. If the branch contains only a single commit, the commit message will be used]' \
+'-d[Whether to create reviews as a draft]' \
+'--draft[Whether to create reviews as a draft]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'::branch -- The branch to create a review for:_default' \
+&& ret=0
+;;
+(template)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'::template_path -- Path to the review template file within the repository:_default' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+(refresh-remote-data)
+_arguments "${_arguments_options[@]}" : \
+'--fetch[Whether to also refresh git fetch from the remote]' \
+'--pr[Whether to also refresh Pull Requests from the forge]' \
+'--ci[Whether to also refresh CI status from the forge]' \
+'--updates[Whether to also check for application updates]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(mcp)
+_arguments "${_arguments_options[@]}" : \
+'-i[Starts the internal MCP server which has more granular tools]' \
+'--internal[Starts the internal MCP server which has more granular tools]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(claude)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+":: :_but__claude_commands" \
+"*::: :->claude" \
+&& ret=0
+
+    case $state in
+    (claude)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:but-claude-command-$line[1]:"
+        case $line[1] in
+            (pre-tool)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(post-tool)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(stop)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(last)
+_arguments "${_arguments_options[@]}" : \
+'-o+[Offset to skip N most recent messages (positive integer)]:OFFSET:_default' \
+'--offset=[Offset to skip N most recent messages (positive integer)]:OFFSET:_default' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+(cursor)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+":: :_but__cursor_commands" \
+"*::: :->cursor" \
+&& ret=0
+
+    case $state in
+    (cursor)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:but-cursor-command-$line[1]:"
+        case $line[1] in
+            (after-edit)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(stop)
+_arguments "${_arguments_options[@]}" : \
+'--nightly[]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+(actions)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+":: :_but__actions_commands" \
+"*::: :->actions" \
+&& ret=0
+
+    case $state in
+    (actions)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:but-actions-command-$line[1]:"
+        case $line[1] in
+            (handle-changes)
+_arguments "${_arguments_options[@]}" : \
+'-d+[A context describing the changes that are currently uncommitted]:DESCRIPTION:_default' \
+'--description=[A context describing the changes that are currently uncommitted]:DESCRIPTION:_default' \
+'--description=[A context describing the changes that are currently uncommitted]:DESCRIPTION:_default' \
+'--handler=[Which handler is to be used for the operation. Different handles would have different behavior]:HANDLER:((simple\:"Handles changes in a simple way"))' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+(metrics)
+_arguments "${_arguments_options[@]}" : \
+'--command-name=[]:COMMAND_NAME:(init absorb discard status stf rub diff show commit commit-empty push reword oplog-list oplog-snapshot restore undo gui base-fetch base-check pull branch-new branch-delete branch-list branch-show branch-unapply branch-apply claude-pre-tool claude-post-tool claude-stop cursor-after-edit cursor-stop worktree mark unmark forge-auth forge-list-users forge-forget pr-new pr-template completions alias-check alias-add alias-remove refresh-remote-data resolve update merge skill-install skill-check pick unknown)' \
+'--props=[]:PROPS:_default' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(completions)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'::shell -- The shell to generate completions for, or the one extracted from the SHELL environment variable:(bash elvish fish powershell zsh)' \
+&& ret=0
+;;
+(update)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+":: :_but__update_commands" \
+"*::: :->update" \
+&& ret=0
+
+    case $state in
+    (update)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:but-update-command-$line[1]:"
+        case $line[1] in
+            (check)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(suppress)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'::days -- Number of days to suppress (1-30, default\: 1):_default' \
+&& ret=0
+;;
+(install)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'::target -- What to install\: "nightly", "release", or a version like "0.18.7":_default' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+(alias)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+":: :_but__alias_commands" \
+"*::: :->alias" \
+&& ret=0
+
+    case $state in
+    (alias)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:but-alias-command-$line[1]:"
+        case $line[1] in
+            (list)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(add)
+_arguments "${_arguments_options[@]}" : \
+'-g[Store the alias globally (in ~/.gitconfig) instead of locally]' \
+'--global[Store the alias globally (in ~/.gitconfig) instead of locally]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':name -- The name of the alias to create:_default' \
+':value -- The command and arguments that the alias should expand to:_default' \
+&& ret=0
+;;
+(remove)
+_arguments "${_arguments_options[@]}" : \
+'-g[Remove from global config (in ~/.gitconfig) instead of local]' \
+'--global[Remove from global config (in ~/.gitconfig) instead of local]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':name -- The name of the alias to remove:_default' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+(config)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+":: :_but__config_commands" \
+"*::: :->config" \
+&& ret=0
+
+    case $state in
+    (config)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:but-config-command-$line[1]:"
+        case $line[1] in
+            (user)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+":: :_but__config__user_commands" \
+"*::: :->user" \
+&& ret=0
+
+    case $state in
+    (user)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:but-config-user-command-$line[1]:"
+        case $line[1] in
+            (set)
+_arguments "${_arguments_options[@]}" : \
+'-g[Set the configuration globally instead of locally]' \
+'--global[Set the configuration globally instead of locally]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':key -- The configuration key to set:((name\:"Git user name (user.name)"
+email\:"Git user email (user.email)"
+editor\:"Git editor (core.editor)"))' \
+':value -- The value to set:_default' \
+&& ret=0
+;;
+(unset)
+_arguments "${_arguments_options[@]}" : \
+'-g[Unset the global configuration instead of local]' \
+'--global[Unset the global configuration instead of local]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':key -- The configuration key to unset:((name\:"Git user name (user.name)"
+email\:"Git user email (user.email)"
+editor\:"Git editor (core.editor)"))' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+(forge)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+":: :_but__config__forge_commands" \
+"*::: :->forge" \
+&& ret=0
+
+    case $state in
+    (forge)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:but-config-forge-command-$line[1]:"
+        case $line[1] in
+            (auth)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(list-users)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(forget)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'::username -- The username of the forge account to forget. If not provided, you'\''ll be prompted to select which account(s) to forget:_default' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+(target)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'::branch -- New target branch to set (e.g., "origin/main"):_default' \
+&& ret=0
+;;
+(metrics)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'::status -- Whether metrics are enabled:(enable disable)' \
+&& ret=0
+;;
+(ui)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+":: :_but__config__ui_commands" \
+"*::: :->ui" \
+&& ret=0
+
+    case $state in
+    (ui)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:but-config-ui-command-$line[1]:"
+        case $line[1] in
+            (set)
+_arguments "${_arguments_options[@]}" : \
+'-g[Set the configuration globally instead of locally]' \
+'--global[Set the configuration globally instead of locally]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':key -- The configuration key to set:((tui\:"Use the interactive TUI for diff by default (but.ui.tui)"))' \
+':value -- The value to set (true/false or 1/0):_default' \
+&& ret=0
+;;
+(unset)
+_arguments "${_arguments_options[@]}" : \
+'-g[Unset the global configuration instead of local]' \
+'--global[Unset the global configuration instead of local]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':key -- The configuration key to unset:((tui\:"Use the interactive TUI for diff by default (but.ui.tui)"))' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+        esac
+    ;;
+esac
+;;
+(resolve)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'::commit -- Commit ID to enter resolution mode for (when no subcommand is provided):_default' \
+":: :_but__resolve_commands" \
+"*::: :->resolve" \
+&& ret=0
+
+    case $state in
+    (resolve)
+        words=($line[2] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:but-resolve-command-$line[2]:"
+        case $line[2] in
+            (status)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(finish)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(cancel)
+_arguments "${_arguments_options[@]}" : \
+'-f[Forcibly remove any changes made]' \
+'--force[Forcibly remove any changes made]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+(fetch)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(squash)
+_arguments "${_arguments_options[@]}" : \
+'-m+[Provide a new commit message for the resulting commit]:MESSAGE:_default' \
+'--message=[Provide a new commit message for the resulting commit]:MESSAGE:_default' \
+'-i+[Generate commit message using AI with optional user summary or instructions. Use --ai by itself or --ai="your instructions" (equals sign required for value)]' \
+'--ai=[Generate commit message using AI with optional user summary or instructions. Use --ai by itself or --ai="your instructions" (equals sign required for value)]' \
+'-d[Drop source commit messages and keep only the target commit'\''s message]' \
+'--drop-message[Drop source commit messages and keep only the target commit'\''s message]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'*::commits -- Commit identifiers, a range (commit1..commit2), or a branch name:_default' \
+&& ret=0
+;;
+(uncommit)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':source -- Commit ID or file-in-commit ID to uncommit:_default' \
+&& ret=0
+;;
+(amend)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':file -- File ID to amend:_default' \
+':commit -- Commit ID to amend into:_default' \
+&& ret=0
+;;
+(merge)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':branch -- Branch ID or name to merge:_default' \
+&& ret=0
+;;
+(move)
+_arguments "${_arguments_options[@]}" : \
+'-a[Move the commit after (above) the target instead of before (below)]' \
+'--after[Move the commit after (above) the target instead of before (below)]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':source_commit -- Commit ID to move:_default' \
+':target -- Target commit ID or branch name:_default' \
+&& ret=0
+;;
+(pick)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':source -- The commit SHA, CLI ID, or unapplied branch name to cherry-pick from:_default' \
+'::target_branch -- The target virtual branch to apply the commit(s) to:_default' \
+&& ret=0
+;;
+(unapply)
+_arguments "${_arguments_options[@]}" : \
+'-f[Force unapply without confirmation]' \
+'--force[Force unapply without confirmation]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':identifier -- CLI ID or name of the branch/stack to unapply:_default' \
+&& ret=0
+;;
+(apply)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':branch_name -- Name of the branch to apply:_default' \
+&& ret=0
+;;
+(stage)
+_arguments "${_arguments_options[@]}" : \
+'-b+[Branch to stage to (for interactive mode)]:BRANCH:_default' \
+'--branch=[Branch to stage to (for interactive mode)]:BRANCH:_default' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'::file_or_hunk -- File or hunk ID to stage:_default' \
+'::branch_pos -- Branch to stage to (positional):_default' \
+&& ret=0
+;;
+(unstage)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':file_or_hunk -- File or hunk ID to unstage:_default' \
+'::branch -- Branch ID to unstage from (optional, for validation):_default' \
+&& ret=0
+;;
+(skill)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+":: :_but__skill_commands" \
+"*::: :->skill" \
+&& ret=0
+
+    case $state in
+    (skill)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:but-skill-command-$line[1]:"
+        case $line[1] in
+            (install)
+_arguments "${_arguments_options[@]}" : \
+'-p+[Custom path where to install the skill (relative to repository root or absolute). Outside a repository, relative paths require --global]:PATH:_default' \
+'--path=[Custom path where to install the skill (relative to repository root or absolute). Outside a repository, relative paths require --global]:PATH:_default' \
+'-g[Install the skill globally instead of in the current repository]' \
+'--global[Install the skill globally instead of in the current repository]' \
+'-d[Automatically detect where to install by finding existing installation]' \
+'--detect[Automatically detect where to install by finding existing installation]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(check)
+_arguments "${_arguments_options[@]}" : \
+'(-l --local)-g[Only check global installations (in home directory)]' \
+'(-l --local)--global[Only check global installations (in home directory)]' \
+'(-g --global)-l[Only check local installations (in current repository)]' \
+'(-g --global)--local[Only check local installations (in current repository)]' \
+'-u[Automatically update any outdated skills found]' \
+'--update[Automatically update any outdated skills found]' \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+(help)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(onboarding)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(eval-hook)
+_arguments "${_arguments_options[@]}" : \
+'-j[Whether to use JSON output format]' \
+'--json[Whether to use JSON output format]' \
+'--status-after[After a mutation command completes, also output workspace status]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+}
+
+(( $+functions[_but_commands] )) ||
+_but_commands() {
+    local commands; commands=(
+'status:Overview of the project workspace state.' \
+'rub:Combines two entities together to perform an operation like amend, squash, stage, or move.' \
+'diff:Displays the diff of changes in the repo.' \
+'show:Shows detailed information about a commit or branch.' \
+'setup:Sets up a GitButler project from a git repository in the current directory.' \
+'teardown:Exit GitButler mode and return to normal Git workflow.' \
+'pull:Updates all applied branches to be up to date with the target branch.' \
+'branch:Commands for managing branches.' \
+'worktree:Commands for managing worktrees.' \
+'mark:Mark a commit or branch for auto-stage or auto-commit.' \
+'unmark:Removes any marks from the workspace' \
+'gui:Open the GitButler GUI for the current project.' \
+'.:Open the GitButler GUI for the current project.' \
+'commit:Commit changes to a stack.' \
+'push:Push changes in a branch to remote.' \
+'reword:Edit the commit message of the specified commit.' \
+'oplog:Commands for viewing and managing operation history.' \
+'undo:Undo the last operation by reverting to the previous snapshot.' \
+'absorb:Amends changes into the appropriate commits where they belong.' \
+'discard:Discard uncommitted changes from the worktree.' \
+'pr:Commands for creating and managing reviews on a forge, e.g. GitHub PRs or GitLab MRs' \
+'review:Commands for creating and managing reviews on a forge, e.g. GitHub PRs or GitLab MRs' \
+'mr:Commands for creating and managing reviews on a forge, e.g. GitHub PRs or GitLab MRs' \
+'refresh-remote-data:Trigger a refresh of remote data fetching from the remote, Pull Requests, and CI status.' \
+'mcp:AI\: Starts up the MCP server.' \
+'claude:AI\: Claude hooks' \
+'cursor:AI\: Cursor hooks' \
+'actions:INTERNAL\: GitButler Actions are automated tasks (like macros) that can be performed on a repository.' \
+'metrics:INTERNAL\: If metrics are permitted, this subcommand handles posthog event creation.' \
+'completions:UTILITY\: Generate shell completion scripts for the specified or inferred shell.' \
+'update:Manage GitButler CLI and app updates.' \
+'alias:Manage command aliases.' \
+'config:View and manage GitButler configuration.' \
+'resolve:Resolve conflicts in a commit.' \
+'fetch:Hidden command that redirects to \`but pull --check\`' \
+'squash:Squash commits together.' \
+'uncommit:Uncommit changes from a commit or file-in-commit to the unstaged area.' \
+'amend:Amend a file change into a specific commit and rebases any dependent commits.' \
+'merge:Merge a branch into your local target branch.' \
+'move:Move a commit to a different location in the stack.' \
+'pick:Cherry-pick a commit from an unapplied branch into an applied virtual branch.' \
+'unapply:Unapply a branch from the workspace.' \
+'apply:Apply a branch to the workspace.' \
+'stage:Stages a file or hunk to a specific branch.' \
+'unstage:Unstages a file or hunk from a branch.' \
+'skill:Manage Claude AI skills for GitButler.' \
+'help:Show help information grouped by category.' \
+'onboarding:INTERNAL\: First-run onboarding that shows metrics info and marks onboarding complete' \
+'eval-hook:AI\: Claude Code hook for workspace awareness and skill activation.' \
+    )
+    _describe -t commands 'but commands' commands "$@"
+}
+(( $+functions[_but__absorb_commands] )) ||
+_but__absorb_commands() {
+    local commands; commands=()
+    _describe -t commands 'but absorb commands' commands "$@"
+}
+(( $+functions[_but__actions_commands] )) ||
+_but__actions_commands() {
+    local commands; commands=(
+'handle-changes:Automatically handles the changes in the repository, creating a commit with the provided context' \
+    )
+    _describe -t commands 'but actions commands' commands "$@"
+}
+(( $+functions[_but__actions__handle-changes_commands] )) ||
+_but__actions__handle-changes_commands() {
+    local commands; commands=()
+    _describe -t commands 'but actions handle-changes commands' commands "$@"
+}
+(( $+functions[_but__alias_commands] )) ||
+_but__alias_commands() {
+    local commands; commands=(
+'list:List all configured aliases (default)' \
+'add:Add a new alias' \
+'remove:Remove an existing alias' \
+    )
+    _describe -t commands 'but alias commands' commands "$@"
+}
+(( $+functions[_but__alias__add_commands] )) ||
+_but__alias__add_commands() {
+    local commands; commands=()
+    _describe -t commands 'but alias add commands' commands "$@"
+}
+(( $+functions[_but__alias__list_commands] )) ||
+_but__alias__list_commands() {
+    local commands; commands=()
+    _describe -t commands 'but alias list commands' commands "$@"
+}
+(( $+functions[_but__alias__remove_commands] )) ||
+_but__alias__remove_commands() {
+    local commands; commands=()
+    _describe -t commands 'but alias remove commands' commands "$@"
+}
+(( $+functions[_but__amend_commands] )) ||
+_but__amend_commands() {
+    local commands; commands=()
+    _describe -t commands 'but amend commands' commands "$@"
+}
+(( $+functions[_but__apply_commands] )) ||
+_but__apply_commands() {
+    local commands; commands=()
+    _describe -t commands 'but apply commands' commands "$@"
+}
+(( $+functions[_but__branch_commands] )) ||
+_but__branch_commands() {
+    local commands; commands=(
+'new:Creates a new branch in the workspace' \
+'delete:Deletes a branch from the workspace' \
+'list:List the branches in the repository' \
+'show:Show commits ahead of base for a specific branch' \
+    )
+    _describe -t commands 'but branch commands' commands "$@"
+}
+(( $+functions[_but__branch__delete_commands] )) ||
+_but__branch__delete_commands() {
+    local commands; commands=()
+    _describe -t commands 'but branch delete commands' commands "$@"
+}
+(( $+functions[_but__branch__list_commands] )) ||
+_but__branch__list_commands() {
+    local commands; commands=()
+    _describe -t commands 'but branch list commands' commands "$@"
+}
+(( $+functions[_but__branch__new_commands] )) ||
+_but__branch__new_commands() {
+    local commands; commands=()
+    _describe -t commands 'but branch new commands' commands "$@"
+}
+(( $+functions[_but__branch__show_commands] )) ||
+_but__branch__show_commands() {
+    local commands; commands=()
+    _describe -t commands 'but branch show commands' commands "$@"
+}
+(( $+functions[_but__claude_commands] )) ||
+_but__claude_commands() {
+    local commands; commands=(
+'pre-tool:' \
+'post-tool:' \
+'stop:' \
+'last:Get the last user message (for testing purposes)' \
+    )
+    _describe -t commands 'but claude commands' commands "$@"
+}
+(( $+functions[_but__claude__last_commands] )) ||
+_but__claude__last_commands() {
+    local commands; commands=()
+    _describe -t commands 'but claude last commands' commands "$@"
+}
+(( $+functions[_but__claude__post-tool_commands] )) ||
+_but__claude__post-tool_commands() {
+    local commands; commands=()
+    _describe -t commands 'but claude post-tool commands' commands "$@"
+}
+(( $+functions[_but__claude__pre-tool_commands] )) ||
+_but__claude__pre-tool_commands() {
+    local commands; commands=()
+    _describe -t commands 'but claude pre-tool commands' commands "$@"
+}
+(( $+functions[_but__claude__stop_commands] )) ||
+_but__claude__stop_commands() {
+    local commands; commands=()
+    _describe -t commands 'but claude stop commands' commands "$@"
+}
+(( $+functions[_but__commit_commands] )) ||
+_but__commit_commands() {
+    local commands; commands=(
+'empty:Insert a blank commit before or after the specified commit.' \
+    )
+    _describe -t commands 'but commit commands' commands "$@"
+}
+(( $+functions[_but__commit__empty_commands] )) ||
+_but__commit__empty_commands() {
+    local commands; commands=()
+    _describe -t commands 'but commit empty commands' commands "$@"
+}
+(( $+functions[_but__completions_commands] )) ||
+_but__completions_commands() {
+    local commands; commands=()
+    _describe -t commands 'but completions commands' commands "$@"
+}
+(( $+functions[_but__config_commands] )) ||
+_but__config_commands() {
+    local commands; commands=(
+'user:View and configure user information (name, email, editor)' \
+'forge:View and manage forge configuration' \
+'target:View or set the target branch' \
+'metrics:View or set metrics collection' \
+'ui:View and configure UI preferences' \
+    )
+    _describe -t commands 'but config commands' commands "$@"
+}
+(( $+functions[_but__config__forge_commands] )) ||
+_but__config__forge_commands() {
+    local commands; commands=(
+'auth:Authenticate with your forge provider (currently only GitHub is supported)' \
+'list-users:List authenticated forge accounts known to GitButler' \
+'forget:Forget a previously authenticated forge account' \
+    )
+    _describe -t commands 'but config forge commands' commands "$@"
+}
+(( $+functions[_but__config__forge__auth_commands] )) ||
+_but__config__forge__auth_commands() {
+    local commands; commands=()
+    _describe -t commands 'but config forge auth commands' commands "$@"
+}
+(( $+functions[_but__config__forge__forget_commands] )) ||
+_but__config__forge__forget_commands() {
+    local commands; commands=()
+    _describe -t commands 'but config forge forget commands' commands "$@"
+}
+(( $+functions[_but__config__forge__list-users_commands] )) ||
+_but__config__forge__list-users_commands() {
+    local commands; commands=()
+    _describe -t commands 'but config forge list-users commands' commands "$@"
+}
+(( $+functions[_but__config__metrics_commands] )) ||
+_but__config__metrics_commands() {
+    local commands; commands=()
+    _describe -t commands 'but config metrics commands' commands "$@"
+}
+(( $+functions[_but__config__target_commands] )) ||
+_but__config__target_commands() {
+    local commands; commands=()
+    _describe -t commands 'but config target commands' commands "$@"
+}
+(( $+functions[_but__config__ui_commands] )) ||
+_but__config__ui_commands() {
+    local commands; commands=(
+'set:Set a UI configuration value' \
+'unset:Unset (remove) a UI configuration value' \
+    )
+    _describe -t commands 'but config ui commands' commands "$@"
+}
+(( $+functions[_but__config__ui__set_commands] )) ||
+_but__config__ui__set_commands() {
+    local commands; commands=()
+    _describe -t commands 'but config ui set commands' commands "$@"
+}
+(( $+functions[_but__config__ui__unset_commands] )) ||
+_but__config__ui__unset_commands() {
+    local commands; commands=()
+    _describe -t commands 'but config ui unset commands' commands "$@"
+}
+(( $+functions[_but__config__user_commands] )) ||
+_but__config__user_commands() {
+    local commands; commands=(
+'set:Set a user configuration value' \
+'unset:Unset (remove) a user configuration value' \
+    )
+    _describe -t commands 'but config user commands' commands "$@"
+}
+(( $+functions[_but__config__user__set_commands] )) ||
+_but__config__user__set_commands() {
+    local commands; commands=()
+    _describe -t commands 'but config user set commands' commands "$@"
+}
+(( $+functions[_but__config__user__unset_commands] )) ||
+_but__config__user__unset_commands() {
+    local commands; commands=()
+    _describe -t commands 'but config user unset commands' commands "$@"
+}
+(( $+functions[_but__cursor_commands] )) ||
+_but__cursor_commands() {
+    local commands; commands=(
+'after-edit:' \
+'stop:' \
+    )
+    _describe -t commands 'but cursor commands' commands "$@"
+}
+(( $+functions[_but__cursor__after-edit_commands] )) ||
+_but__cursor__after-edit_commands() {
+    local commands; commands=()
+    _describe -t commands 'but cursor after-edit commands' commands "$@"
+}
+(( $+functions[_but__cursor__stop_commands] )) ||
+_but__cursor__stop_commands() {
+    local commands; commands=()
+    _describe -t commands 'but cursor stop commands' commands "$@"
+}
+(( $+functions[_but__diff_commands] )) ||
+_but__diff_commands() {
+    local commands; commands=()
+    _describe -t commands 'but diff commands' commands "$@"
+}
+(( $+functions[_but__discard_commands] )) ||
+_but__discard_commands() {
+    local commands; commands=()
+    _describe -t commands 'but discard commands' commands "$@"
+}
+(( $+functions[_but__eval-hook_commands] )) ||
+_but__eval-hook_commands() {
+    local commands; commands=()
+    _describe -t commands 'but eval-hook commands' commands "$@"
+}
+(( $+functions[_but__fetch_commands] )) ||
+_but__fetch_commands() {
+    local commands; commands=()
+    _describe -t commands 'but fetch commands' commands "$@"
+}
+(( $+functions[_but__gui_commands] )) ||
+_but__gui_commands() {
+    local commands; commands=()
+    _describe -t commands 'but gui commands' commands "$@"
+}
+(( $+functions[_but__help_commands] )) ||
+_but__help_commands() {
+    local commands; commands=()
+    _describe -t commands 'but help commands' commands "$@"
+}
+(( $+functions[_but__mark_commands] )) ||
+_but__mark_commands() {
+    local commands; commands=()
+    _describe -t commands 'but mark commands' commands "$@"
+}
+(( $+functions[_but__mcp_commands] )) ||
+_but__mcp_commands() {
+    local commands; commands=()
+    _describe -t commands 'but mcp commands' commands "$@"
+}
+(( $+functions[_but__merge_commands] )) ||
+_but__merge_commands() {
+    local commands; commands=()
+    _describe -t commands 'but merge commands' commands "$@"
+}
+(( $+functions[_but__metrics_commands] )) ||
+_but__metrics_commands() {
+    local commands; commands=()
+    _describe -t commands 'but metrics commands' commands "$@"
+}
+(( $+functions[_but__move_commands] )) ||
+_but__move_commands() {
+    local commands; commands=()
+    _describe -t commands 'but move commands' commands "$@"
+}
+(( $+functions[_but__onboarding_commands] )) ||
+_but__onboarding_commands() {
+    local commands; commands=()
+    _describe -t commands 'but onboarding commands' commands "$@"
+}
+(( $+functions[_but__oplog_commands] )) ||
+_but__oplog_commands() {
+    local commands; commands=(
+'list:List operation history.' \
+'snapshot:Create an on-demand snapshot with optional message' \
+'restore:Restore to a specific oplog snapshot.' \
+    )
+    _describe -t commands 'but oplog commands' commands "$@"
+}
+(( $+functions[_but__oplog__list_commands] )) ||
+_but__oplog__list_commands() {
+    local commands; commands=()
+    _describe -t commands 'but oplog list commands' commands "$@"
+}
+(( $+functions[_but__oplog__restore_commands] )) ||
+_but__oplog__restore_commands() {
+    local commands; commands=()
+    _describe -t commands 'but oplog restore commands' commands "$@"
+}
+(( $+functions[_but__oplog__snapshot_commands] )) ||
+_but__oplog__snapshot_commands() {
+    local commands; commands=()
+    _describe -t commands 'but oplog snapshot commands' commands "$@"
+}
+(( $+functions[_but__pick_commands] )) ||
+_but__pick_commands() {
+    local commands; commands=()
+    _describe -t commands 'but pick commands' commands "$@"
+}
+(( $+functions[_but__pr_commands] )) ||
+_but__pr_commands() {
+    local commands; commands=(
+'new:Create a new review for a branch. If no branch is specified, you will be prompted to select one. If there is only one branch without a review, you will be asked to confirm' \
+'template:Configure the template to use for review descriptions. This will list all available templates found in the repository and allow you to select one' \
+    )
+    _describe -t commands 'but pr commands' commands "$@"
+}
+(( $+functions[_but__pr__new_commands] )) ||
+_but__pr__new_commands() {
+    local commands; commands=()
+    _describe -t commands 'but pr new commands' commands "$@"
+}
+(( $+functions[_but__pr__template_commands] )) ||
+_but__pr__template_commands() {
+    local commands; commands=()
+    _describe -t commands 'but pr template commands' commands "$@"
+}
+(( $+functions[_but__pull_commands] )) ||
+_but__pull_commands() {
+    local commands; commands=()
+    _describe -t commands 'but pull commands' commands "$@"
+}
+(( $+functions[_but__push_commands] )) ||
+_but__push_commands() {
+    local commands; commands=()
+    _describe -t commands 'but push commands' commands "$@"
+}
+(( $+functions[_but__refresh-remote-data_commands] )) ||
+_but__refresh-remote-data_commands() {
+    local commands; commands=()
+    _describe -t commands 'but refresh-remote-data commands' commands "$@"
+}
+(( $+functions[_but__resolve_commands] )) ||
+_but__resolve_commands() {
+    local commands; commands=(
+'status:Show the status of conflict resolution, listing remaining conflicted files' \
+'finish:Finalize conflict resolution and return to workspace mode' \
+'cancel:Cancel conflict resolution and return to workspace mode' \
+    )
+    _describe -t commands 'but resolve commands' commands "$@"
+}
+(( $+functions[_but__resolve__cancel_commands] )) ||
+_but__resolve__cancel_commands() {
+    local commands; commands=()
+    _describe -t commands 'but resolve cancel commands' commands "$@"
+}
+(( $+functions[_but__resolve__finish_commands] )) ||
+_but__resolve__finish_commands() {
+    local commands; commands=()
+    _describe -t commands 'but resolve finish commands' commands "$@"
+}
+(( $+functions[_but__resolve__status_commands] )) ||
+_but__resolve__status_commands() {
+    local commands; commands=()
+    _describe -t commands 'but resolve status commands' commands "$@"
+}
+(( $+functions[_but__reword_commands] )) ||
+_but__reword_commands() {
+    local commands; commands=()
+    _describe -t commands 'but reword commands' commands "$@"
+}
+(( $+functions[_but__rub_commands] )) ||
+_but__rub_commands() {
+    local commands; commands=()
+    _describe -t commands 'but rub commands' commands "$@"
+}
+(( $+functions[_but__setup_commands] )) ||
+_but__setup_commands() {
+    local commands; commands=()
+    _describe -t commands 'but setup commands' commands "$@"
+}
+(( $+functions[_but__show_commands] )) ||
+_but__show_commands() {
+    local commands; commands=()
+    _describe -t commands 'but show commands' commands "$@"
+}
+(( $+functions[_but__skill_commands] )) ||
+_but__skill_commands() {
+    local commands; commands=(
+'install:Install the GitButler CLI skill files for Coding agents' \
+'check:Check if installed GitButler skills are up to date with the CLI version' \
+    )
+    _describe -t commands 'but skill commands' commands "$@"
+}
+(( $+functions[_but__skill__check_commands] )) ||
+_but__skill__check_commands() {
+    local commands; commands=()
+    _describe -t commands 'but skill check commands' commands "$@"
+}
+(( $+functions[_but__skill__install_commands] )) ||
+_but__skill__install_commands() {
+    local commands; commands=()
+    _describe -t commands 'but skill install commands' commands "$@"
+}
+(( $+functions[_but__squash_commands] )) ||
+_but__squash_commands() {
+    local commands; commands=()
+    _describe -t commands 'but squash commands' commands "$@"
+}
+(( $+functions[_but__stage_commands] )) ||
+_but__stage_commands() {
+    local commands; commands=()
+    _describe -t commands 'but stage commands' commands "$@"
+}
+(( $+functions[_but__status_commands] )) ||
+_but__status_commands() {
+    local commands; commands=()
+    _describe -t commands 'but status commands' commands "$@"
+}
+(( $+functions[_but__teardown_commands] )) ||
+_but__teardown_commands() {
+    local commands; commands=()
+    _describe -t commands 'but teardown commands' commands "$@"
+}
+(( $+functions[_but__unapply_commands] )) ||
+_but__unapply_commands() {
+    local commands; commands=()
+    _describe -t commands 'but unapply commands' commands "$@"
+}
+(( $+functions[_but__uncommit_commands] )) ||
+_but__uncommit_commands() {
+    local commands; commands=()
+    _describe -t commands 'but uncommit commands' commands "$@"
+}
+(( $+functions[_but__undo_commands] )) ||
+_but__undo_commands() {
+    local commands; commands=()
+    _describe -t commands 'but undo commands' commands "$@"
+}
+(( $+functions[_but__unmark_commands] )) ||
+_but__unmark_commands() {
+    local commands; commands=()
+    _describe -t commands 'but unmark commands' commands "$@"
+}
+(( $+functions[_but__unstage_commands] )) ||
+_but__unstage_commands() {
+    local commands; commands=()
+    _describe -t commands 'but unstage commands' commands "$@"
+}
+(( $+functions[_but__update_commands] )) ||
+_but__update_commands() {
+    local commands; commands=(
+'check:Check if a new version of the GitButler CLI is available' \
+'suppress:Suppress update notifications temporarily' \
+'install:Install or update the GitButler desktop application' \
+    )
+    _describe -t commands 'but update commands' commands "$@"
+}
+(( $+functions[_but__update__check_commands] )) ||
+_but__update__check_commands() {
+    local commands; commands=()
+    _describe -t commands 'but update check commands' commands "$@"
+}
+(( $+functions[_but__update__install_commands] )) ||
+_but__update__install_commands() {
+    local commands; commands=()
+    _describe -t commands 'but update install commands' commands "$@"
+}
+(( $+functions[_but__update__suppress_commands] )) ||
+_but__update__suppress_commands() {
+    local commands; commands=()
+    _describe -t commands 'but update suppress commands' commands "$@"
+}
+(( $+functions[_but__worktree_commands] )) ||
+_but__worktree_commands() {
+    local commands; commands=(
+'new:Create a new worktree from a reference' \
+'list:List all worktrees' \
+'integrate:Integrate a worktree' \
+'destroy:Destroy worktree(s)' \
+    )
+    _describe -t commands 'but worktree commands' commands "$@"
+}
+(( $+functions[_but__worktree__destroy_commands] )) ||
+_but__worktree__destroy_commands() {
+    local commands; commands=()
+    _describe -t commands 'but worktree destroy commands' commands "$@"
+}
+(( $+functions[_but__worktree__integrate_commands] )) ||
+_but__worktree__integrate_commands() {
+    local commands; commands=()
+    _describe -t commands 'but worktree integrate commands' commands "$@"
+}
+(( $+functions[_but__worktree__list_commands] )) ||
+_but__worktree__list_commands() {
+    local commands; commands=()
+    _describe -t commands 'but worktree list commands' commands "$@"
+}
+(( $+functions[_but__worktree__new_commands] )) ||
+_but__worktree__new_commands() {
+    local commands; commands=()
+    _describe -t commands 'but worktree new commands' commands "$@"
+}
+
+if [ "$funcstack[1]" = "_but" ]; then
+    _but "$@"
+else
+    compdef _but but
+fi

@@ -8,8 +8,13 @@ dot () {
             echo "no dir $1 in ${_dotfiles}"
         fi
     else
-	cd "${_dotfiles}"
+        cd "${_dotfiles}"
     fi
-    eza --grid --git-ignore --all --header --grid --no-permissions --no-filesize --no-time --no-user --icons --git --hyperlink
-
+    if command -v eza >/dev/null 2>&1; then
+        eza --grid --git-ignore --all --header --grid --no-permissions --no-filesize --no-time --no-user --icons --git --hyperlink
+    elif command -v colorls >/dev/null 2>&1; then
+        colorls -A --sd --hyperlink --gs
+    else
+        ls -a --color=auto
+    fi
 }

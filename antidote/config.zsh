@@ -1,4 +1,3 @@
-# ${ZDOTDIR:-~}/.zshrc
 if [[ "$WARP_IS_LOCAL_SHELL_SESSION" -ne 1 ]]; then
   # Set the root name of the plugins files (.txt and .zsh) antidote will use.
   zsh_plugins=${DOTFILES}/antidote/zsh_plugins
@@ -12,13 +11,11 @@ if [[ "$WARP_IS_LOCAL_SHELL_SESSION" -ne 1 ]]; then
 
   ZSH=$(antidote path ohmyzsh/ohmyzsh)
   zstyle ':antidote:bundle' use-friendly-names 'yes'
-
-  # Generate a new static file whenever .zsh_plugins.txt is updated.
-  if [[ ! ${zsh_plugins}.compile -nt ${zsh_plugins}.txt ]]; then
-    antidote bundle <${zsh_plugins}.txt >|${zsh_plugins}.compile
+  zstyle ':antidote:static' file "${DOTFILES}/antidote/zsh_plugins"
+  zstyle ':antidote:static' zcompile 'yes'
+  if [[ ! ${zsh_plugins} -nt ${zsh_plugins}.txt ]]; then
+      echo "${$(antidote bundle <${zsh_plugins}.txt)//source/call_file}" >|${zsh_plugins}
+      #antidote bundle <${zsh_plugins}.txt >|${zsh_plugins}.compile
   fi
-
-  # Source your static plugins file.
-
-  call_file ${zsh_plugins}.compile "antidote_plugin"
+  call_file ${zsh_plugins} "antidote_plugin"
 fi

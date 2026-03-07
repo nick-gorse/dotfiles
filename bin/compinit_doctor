@@ -8,7 +8,7 @@ compinit_doctor() {
   zmodload -F zsh/datetime 2>/dev/null || true
 
   # -------- defaults --------
-  local dump="${ZCOMP_DUMP_PATH:-${XDG_CACHE_HOME:-$HOME/.cache}/zcompdump}"
+  local dump="${ZSH_COMPDUMP:-${XDG_CACHE_HOME:-$HOME/.cache}/zcompdump}"
   local action=status json=0 snap_file="" diff_file=""
 
   # -------- arg parse --------
@@ -108,7 +108,7 @@ compinit_doctor() {
     {
       print "# compinit_doctor snapshot"
       print "# date: $(date +'%Y-%m-%d %H:%M:%S %z')"
-      printf "%s\n" "${(os)fpath[@]}"
+      printf "%s\n" "${(o)fpath[@]}"
     } >| "$file"
     print -r -- "Snapshot written: $file"
   }
@@ -119,7 +119,7 @@ compinit_doctor() {
     local -a snap cur added removed
     snap=(${(f)"$(<"$file")"})
     snap=(${snap:#\#*})
-    cur=(${(os)fpath})
+    cur=(${(o)fpath})
     local -Ua _S _C
     _S=("${snap[@]}"); _C=("${cur[@]}")
     local s c

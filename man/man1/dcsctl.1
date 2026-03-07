@@ -1,0 +1,342 @@
+.TH DCSCTL 1 "2026" "User Commands"
+.SH NAME
+dcsctl \- control-plane CLI for Docker Compose and Docker Swarm stacks
+.SH SYNOPSIS
+.B dcsctl
+\fIcommand\fR [\fIarguments\fR] [\fIflags\fR]
+.SH DESCRIPTION
+.B dcsctl
+provides a structured control-plane for managing Docker Compose and Docker
+Swarm projects. It enforces a consistent file and directory layout,
+manages environment variable layering across stack and per-service
+scopes, handles bind-mount permission enforcement, and supports
+deploying to Docker Swarm with automatic compose fragment merging
+and variable resolution.
+.PP
+Projects operate in one of two modes:
+.TP
+.B compose mode
+(legacy) A flat layout with a single
+.I docker-compose.yml
+at the project root and shared
+.IR service.env / service.secrets.env
+files. Managed with
+.BR "dcsctl run" ", " "dcsctl up" ", " "dcsctl down" .
+.TP
+.B swarm mode
+(default for new projects) Each service lives in its own subdirectory
+under
+.IR services/ ,
+with per-service compose fragments and env files. At deploy time,
+fragments are merged, environment variables resolved, and the result
+written as
+.I docker-compose.resolved.yml
+for use with
+.BR "docker stack deploy" .
+Managed with
+.BR "dcsctl deploy" " and " "dcsctl down" .
+.PP
+Mode is detected automatically: if a project has a
+.I services/
+directory, it is treated as swarm mode; otherwise compose mode.
+.SH PROJECT LAYOUT
+.SS Swarm mode (default)
+.nf
+    ~/.dcs/<context>/compose/<project>/
+    \(ba\(em .env                          stack-level orchestration vars
+    \(ba\(em services/
+    \(ba   \(ba\(em traefik/
+    \(ba   \(ba   \(ba\(em compose.yml          service compose fragment
+    \(ba   \(ba   \(ba\(em service.env          service runtime config
+    \(ba   \(ba   \(ba\(em service.secrets.env  service secrets
+    \(ba   \(ba\(em app/
+    \(ba       \(ba\(em compose.yml
+    \(ba       \(ba\(em service.env
+    \(ba       \(ba\(em service.secrets.env
+    \(ba\(em docker-compose.resolved.yml   generated at deploy time
+    \(ba\(em secrets/
+    \(ba\(em .gitignore
+.fi
+.SS Compose mode (legacy)
+.nf
+    ~/.dcs/<context>/compose/<project>/
+    \(ba\(em docker-compose.yml
+    \(ba\(em .env
+    \(ba\(em service.env
+    \(ba\(em service.secrets.env
+    \(ba\(em secrets/
+    \(ba\(em .gitignore
+.fi
+.SH COMMANDS
+.SS Project creation
+.TP
+.BI "dcsctl new " "project " "[flags]"
+Create a new project. By default creates a swarm-mode layout with an
+initial service named
+.BR app .
+.RS
+.TP
+.B \-\-compose
+Create a legacy flat compose layout instead.
+.TP
+.BI \-\-service " name"
+Name the initial service (default:
+.BR app ).
+Only applies in swarm mode.
+.TP
+.BR \-v ", " \-\-verify
+Run verification after creating the project.
+.TP
+.B \-\-verbose
+Verbose verification output (used with
+.BR \-\-verify ).
+.RE
+.SS Deployment
+.TP
+.BI "dcsctl deploy " "project " "[flags]"
+Merge all service compose fragments, resolve environment variables,
+write
+.IR docker-compose.resolved.yml ,
+and run
+.BR "docker stack deploy" .
+Only available for swarm-mode projects.
+.RS
+.TP
+.BR \-v ", " \-\-verify
+Run verification before deploying.
+.TP
+.B \-\-verbose
+Verbose verification output.
+.RE
+.TP
+.BI "dcsctl up " "project " "[flags]"
+Alias for
+.BR "dcsctl run " "\fIproject\fR up -d" .
+Only available for compose-mode projects. Swarm-mode projects should
+use
+.BR "dcsctl deploy" .
+.RS
+.TP
+.BR \-v ", " \-\-verify
+Run verification before starting.
+.RE
+.TP
+.BI "dcsctl stop " project
+Scale all services in a deployed swarm stack to 0 replicas, leaving the
+stack definition in place. Use
+.BR "dcsctl deploy"
+to resume. Only available for swarm-mode projects.
+.TP
+.BI "dcsctl down " project
+Bring down a project. For compose-mode projects, runs
+.BR "docker compose down" .
+For swarm-mode projects, runs
+.BR "docker stack rm" .
+.TP
+.BI "dcsctl run " "project " "[docker compose args...]"
+Run docker compose with the project's context and environment files.
+Compose-mode only. All arguments after the project name are passed
+directly to
+.BR "docker compose" .
+.TP
+.BI "dcsctl reload " project
+Down, rebuild, then up a project (compose mode).
+.SS Service management
+.TP
+.BI "dcsctl service add " "project service-name"
+Add a new service to a swarm-mode project. Creates the service
+subdirectory with compose fragment template, service.env, and
+service.secrets.env.
+.TP
+.BI "dcsctl service ls " project
+List services in a swarm-mode project.
+.SS Verification
+.TP
+.BI "dcsctl verify " "project " "[flags]"
+Verify and enforce host permissions for bind-mounted appdata
+directories. Applies compose fixups (docker.sock group_add,
+single-service normalization). For swarm-mode projects, checks
+all service fragments.
+.RS
+.TP
+.B \-\-verbose
+Show current vs expected ownership/mode while verifying.
+.RE
+.SS Editing
+.TP
+.BI "dcsctl edit " "project " "[flags]"
+Open a project file in
+.BR $EDITOR .
+Defaults to the compose file.
+.RS
+.TP
+.BR \-e ", " \-\-env
+Edit the stack-level .env file.
+.TP
+.BR \-r ", " \-\-runtime
+Edit service.env (or per-service service.env if
+.B \-\-service
+is specified).
+.TP
+.BR \-s ", " \-\-secret
+Edit service.secrets.env (or per-service service.secrets.env if
+.B \-\-service
+is specified).
+.TP
+.BI \-\-service " name"
+Target a specific service's files (swarm mode). When combined with
+.B \-\-env
+, always edits the stack-level .env.
+.RE
+.SS Secrets
+.TP
+.BI "dcsctl secret add " "project name"
+Create or edit
+.IR secrets/<name>.txt
+in
+.BR $EDITOR .
+.SS Import
+.TP
+.BI "dcsctl import " "project compose-path " "[flags]"
+Import an existing docker-compose.yml into a DCS project.
+Routes environment variables to the appropriate DCS layers.
+.RS
+.TP
+.BI \-\-env\-file " path"
+Additional env file to ingest alongside env_file references
+found in the compose.
+.TP
+.B \-\-strict
+Fail if the compose violates the template contract after import.
+.TP
+.B \-\-swarm
+Import as a swarm project, splitting each service into its own
+subdirectory under
+.IR services/ .
+.RE
+.SS Project management
+.TP
+.BI "dcsctl rename " "project new-name"
+Rename a project directory and update all env metadata references.
+.TP
+.BI "dcsctl dir " "project " "[service]"
+Print the resolved compose project directory path. If
+.I service
+is specified and the project is in swarm mode, prints the path to
+.IR services/<service>
+instead.
+.TP
+.B dcsctl ls
+List all running compose stacks (alias for
+.BR "docker compose ls" ).
+.SS Context management
+.TP
+.BI "dcsctl context init " "[context]"
+Initialize
+.I ~/.dcs/<context>
+with
+.I env.system
+and
+.IR compose/ .
+If no context is specified, uses the current Docker context.
+.SH ENVIRONMENT
+.TP
+.B DCS_ROOT
+Base directory for all DCS contexts. Defaults to
+.IR ~/.dcs .
+.TP
+.B DCS_CONTEXT_ROOT
+Override the context root directory. Defaults to
+.IR $DCS_ROOT/<context> .
+.TP
+.B EDITOR
+Editor used by
+.B edit
+and
+.B secret add
+commands. Falls back to
+.BR vi .
+.SH FILES
+.TP
+.I ~/.dcs/<context>/env.system
+Context-level environment overrides (HOST_DATA_ROOT, APPDATA_UID, etc.).
+.TP
+.I ~/.dcs/<context>/compose/<project>/.env
+Stack-level orchestration variables (DCS_PROJ_NAME, DCS_STACK_NAME,
+DCS_NET_NAME, HOST_DATA_ROOT, BASE_DIR).
+.TP
+.I services/*/compose.yml
+Per-service compose fragments (swarm mode).
+.TP
+.I services/*/service.env
+Per-service runtime configuration (swarm mode).
+.TP
+.I services/*/service.secrets.env
+Per-service secrets (swarm mode). Not committed to version control.
+.TP
+.I docker-compose.resolved.yml
+Fully resolved compose file generated by
+.BR deploy .
+All variables substituted, env_file directives inlined. Not committed
+to version control.
+.SH EXIT STATUS
+.TP
+0
+Success.
+.TP
+>0
+Failure. Error message printed to stderr.
+.SH EXAMPLES
+Create a new swarm-mode project:
+.PP
+.nf
+    dcsctl new mystack
+.fi
+.PP
+Create with a custom initial service name:
+.PP
+.nf
+    dcsctl new mystack --service traefik
+.fi
+.PP
+Create a legacy compose-mode project:
+.PP
+.nf
+    dcsctl new mystack --compose
+.fi
+.PP
+Add a service to a swarm project:
+.PP
+.nf
+    dcsctl service add mystack redis
+.fi
+.PP
+Deploy a swarm project:
+.PP
+.nf
+    dcsctl deploy mystack
+    dcsctl deploy mystack --verify
+.fi
+.PP
+Edit a specific service's env:
+.PP
+.nf
+    dcsctl edit mystack --service traefik --runtime
+.fi
+.PP
+Import an existing compose as a swarm project:
+.PP
+.nf
+    dcsctl import mystack /path/to/docker-compose.yml --swarm
+.fi
+.PP
+Run docker compose commands (compose mode):
+.PP
+.nf
+    dcsctl run myapp logs -f
+    dcsctl up myapp --verify
+    dcsctl down myapp
+.fi
+.SH SEE ALSO
+.BR docker (1),
+.BR docker-compose (1)

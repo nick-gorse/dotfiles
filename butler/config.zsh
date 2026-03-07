@@ -1,1 +1,3 @@
-eval "$(but completions zsh)"
+if command -v but; then
+    eval "$(but completions zsh)"
+
