@@ -4,18 +4,14 @@ else
     call_file $ZSH_CUSTOM/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh "history substring"
 fi
 HISTFILE=$HOME/.zsh_history
-SAVEHIST=5000
-HISTSIZE=5000
+SAVEHIST=100000
+HISTSIZE=100000
 HISTIGNORE=ls:ll:cd:pwd:..:...:htop:reload:r:la 
 setopt inc_append_history
 setopt hist_ignore_all_dups
-setopt append_history                   # adds history
-setopt hist_save_no_dups
 setopt histignorespace
 setopt extended_history
 setopt share_history
-setopt hist_expire_dups_first
-setopt hist_ignore_dups
 setopt hist_verify
 setopt hist_reduce_blanks
 

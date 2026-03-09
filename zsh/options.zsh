@@ -1,6 +1,6 @@
 #{{{ Options
 
-# Report time stats of commands running longer than 20 sec
+# Report time stats of commands running longer than 5 sec
 REPORTTIME=5
 
 # in order to use #, ~ and ^ for filename generation grep word
@@ -30,8 +30,7 @@ setopt no_glob_dots
 # use zsh style word splitting
 setopt no_sh_word_split
 
-# use competion with aliases (brew and pip for instance)
-setopt completealiases
+# complete_aliases is set in compinit.zsh where it belongs
 
 # don't error out when unset parameters are used
 setopt unset

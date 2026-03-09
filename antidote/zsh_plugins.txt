@@ -1,6 +1,5 @@
 # .zsh_plugins.txt
 zsh-users/zsh-autosuggestions
-zsh-users/zsh-syntax-highlighting
 
 
 mattmc3/zephyr path:plugins/color

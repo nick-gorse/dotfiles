@@ -39,7 +39,7 @@ alias duf='du -sh *'
 
 # misc
 alias please='sudo $(fc -ln -1)'
-alias zshrc='${EDITOR:-vim} "${ZDOTDIR:-$HOME}"/.zshrc'
+alias zshrc='${EDITOR:-nvim} "${ZDOTDIR:-$HOME}"/.zshrc'
 alias zbench='for i in {1..10}; do /usr/bin/time zsh -lic exit; done'
 alias cls="clear && printf '\e[3J'"
 
@@ -48,23 +48,15 @@ alias print-fpath='echo -e ${FPATH//:/\\n}'
 alias print-path='echo -e ${PATH//:/\\n}'
 alias print-functions='print -l ${(k)functions[(I)[^_]*]} | sort'
 
-if command -v subl >/dev/null 2>&1; then
-	alias szrc='subl $HOME/.dotfiles/zsh/zshrc.symlink'
-fi
-alias vzrc='vim $HOME/.dotfiles/zsh/.zshrc'
 alias rl!='exec zsh'
-alias s_alias='subl $DOTFILES/zsh/alias.zsh'
 alias packages='${EDITOR:-vim} $DOTFILES/antidote/zsh_plugins.txt'
 alias mkcd='foo(){ mkdir -p "$1"; cd "$1" }; foo '
 alias touchs='foa(){ touch "$1"; '${EDITOR:-vim}' "$1" }; foa '
 # alias touchs='foa(){ touch "$1"; subl "$1" }; foa '
-alias sub='subl -w'
 alias e='$EDITOR'
 alias lsub='$EDITOR $_'
 alias vl='less $_'
 alias cv='cat $_'
-alias jc='vim $HOME/.virtualenvs/jupyter/etc/jupyter/jupyter_lab_config.py'
-alias icloud='cd $HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/'
 alias ppip='noglob python -m pip'
 alias d='dirs -v | head -10'
 alias 1='cd -'

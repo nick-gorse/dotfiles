@@ -23,16 +23,8 @@ fi
 #    call_file ${HOME}/zsh-defer/zsh-defer.plugin.zsh
 #fi
 
-if [[ "$WARP_IS_LOCAL_SHELL_SESSION" -eq 1 ]]; then
-  printf '\eP$f{"hook": "SourcedRcFileForWarp", "value": { "shell": "zsh"}}\x9c'
-#else
-#  if [[ "$ZPROFRC" -ne 1 ]]; then
-#    if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-      #source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-      pass
-#    fi
-#  fi
-fi
+
+
    # Use extended globbing syntax.
 
 # load envrc from $HOME

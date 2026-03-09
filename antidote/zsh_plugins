@@ -9,8 +9,6 @@ function {
 }
 fpath+=( "$HOME/Library/Caches/antidote/zsh-users/zsh-autosuggestions" )
 call_file "$HOME/Library/Caches/antidote/zsh-users/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh"
-fpath+=( "$HOME/Library/Caches/antidote/zsh-users/zsh-syntax-highlighting" )
-call_file "$HOME/Library/Caches/antidote/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh"
 fpath+=( "$HOME/Library/Caches/antidote/mattmc3/zephyr/plugins/color" )
 call_file "$HOME/Library/Caches/antidote/mattmc3/zephyr/plugins/color/color.plugin.zsh"
 fpath+=( "$HOME/Library/Caches/antidote/mattmc3/zephyr/plugins/helper" )
