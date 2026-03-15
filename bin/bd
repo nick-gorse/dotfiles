@@ -1,3 +1,5 @@
+#autoload
+
 bd () {
   (($#<1)) && {
     print -- "usage: $0 <name-of-any-parent-directory>"
@@ -61,4 +63,3 @@ _bd () {
   done
   reply=($reply "/")
 }
-compctl -V directories -K _bd bd#   
