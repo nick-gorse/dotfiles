@@ -8,8 +8,8 @@
 #typeset -rg EDITOR=vi
 #print "${EDITOR:?no editor} - ${INIT_EDITOR:?no init}"
 
-export ZDOTDIR="$HOME/.dotfiles/zsh"
-export DOTFILES="$HOME/.dotfiles"
+typeset -g ZDOTDIR="$HOME/.dotfiles/zsh"
+typeset -g DOTFILES="$HOME/.dotfiles"
 
 
 # XDG
@@ -34,13 +34,13 @@ export XDG_PROJECTS_DIR=${XDG_PROJECTS_DIR:-$HOME/PAN_macbook}
 } __zsh_{config,user_data,cache}_dir XDG_{CONFIG,CACHE,DATA,STATE}_HOME XDG_{RUNTIME,PROJECTS}_DIR
 # export ZSH="/bin/zsh"  # removed: conflicts with antidote OMZ path (antidote sets this)
 # export PATH="$DOTFILES/bin:$PATH"
-export outfile="$HOME/zshrc-log.json"
+typeset -g outfile="$HOME/zshrc-log.json"
 export ZSH_CACHE_DIR=${XDG_CACHE_HOME:-$HOME/.cache}
 
 export LESSHISTFILE=-
 
 # Load call_file early
-if [[ -f "$DOTFILES/bin/call_file" ]]; then
+if [[ ! -f "$DOTFILES/bin/call_file" ]]; then
   source "$DOTFILES/bin/call_file"
 fi
 

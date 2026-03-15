@@ -55,8 +55,8 @@ bindkey -s '\e5' "!:4-4 \t"
 #}}}
 
 # Arrow keys navigation in the edit line
-bindkey "\e[1;5C" forward-word        # Ctrl+Right arrow -> forward one word
-bindkey "\e[1;5D" backward-word       # Ctrl+Left arrow -> backward one word
+bindkey "^[[1;3C" forward-word        # Ctrl+Right arrow -> forward one word
+bindkey "^[[1;3D" backward-word       # Ctrl+Left arrow -> backward one word
 
 bindkey "^?" backward-delete-char   # (optional, make Backspace more universal if needed)
 bindkey "^[[Z" undo                 # Shift+Tab to undo (from example)
