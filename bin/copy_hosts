@@ -22,7 +22,7 @@ copy_hosts() {
         done
 
         # Keep only hosts that exist in cp_hosts_default
-        cp_hosts=( "${cp_hosts_default:*cp_hosts_new}" )
+        cp_hosts=( ${cp_hosts_default:*cp_hosts_new} )
 
         # Skip the separator if present
         if (( $# > 0 )) && [[ "$1" == "--" ]]; then
