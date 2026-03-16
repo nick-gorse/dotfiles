@@ -19,3 +19,4 @@ zsh/.zcomp*
 zsh/.zsh_sessions*
 zsh/.zsh_history
 antidote/zsh_plugins.compile
+.claude/

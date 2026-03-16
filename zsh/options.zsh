@@ -38,7 +38,5 @@ setopt unset
 setopt interactivecomments
 
 
-setopt autonamedirs
-
 setopt ignoreeof
 #}}}

@@ -76,7 +76,7 @@ setopt AUTO_LIST            # Automatically list choices on ambiguous completion
 setopt COMPLETE_IN_WORD     # Complete from both ends of a word.
 
 # Define completers
-zstyle ':completion:*' completer _extensions _complete
+zstyle ':completion:*' completer _extensions _complete _dynamic_directory_name _ignored
 
 # Use cache for commands using cache
 zstyle ':completion:*' use-cache on
@@ -110,7 +110,8 @@ zstyle ':completion:*:*:*:*:default' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*:*:cd:*' tag-order local-directories directory-stack path-directories
 zstyle ':completion:*:*:cd:*:directory-stack' menu yes select
-zstyle ':completion:*:-tilde-:*' group-order 'named-directories' 'path-directories' 'users' 'expand'
+zstyle ':completion:*:-tilde-:*' group-order 'dynamic-directory-name' 'named-directories' 'path-directories' 'users' 'expand'
+
 zstyle ':completion:*' squeeze-slashes true
 
 # Ignore useless commands and functions

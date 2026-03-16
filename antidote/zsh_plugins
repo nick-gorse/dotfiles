@@ -23,16 +23,20 @@ if is-macos; then
 fi
 fpath+=( "$HOME/Library/Caches/antidote/getantidote/use-omz" )
 call_file "$HOME/Library/Caches/antidote/getantidote/use-omz/use-omz.plugin.zsh"
+if ! (( $+functions[zsh-defer] )); then
+  fpath+=( "$HOME/Library/Caches/antidote/romkatv/zsh-defer" )
+  call_file "$HOME/Library/Caches/antidote/romkatv/zsh-defer/zsh-defer.plugin.zsh"
+fi
 fpath+=( "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/plugins/sudo" )
-call_file "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/plugins/sudo/sudo.plugin.zsh"
+zsh-defer call_file "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/plugins/sudo/sudo.plugin.zsh"
 fpath+=( "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/plugins/mise" )
-call_file "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/plugins/mise/mise.plugin.zsh"
+zsh-defer call_file "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/plugins/mise/mise.plugin.zsh"
 fpath+=( "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/plugins/pip" )
-call_file "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/plugins/pip/pip.plugin.zsh"
+zsh-defer call_file "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/plugins/pip/pip.plugin.zsh"
 fpath+=( "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/custom/plugins/you-should-use" )
-call_file "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/custom/plugins/you-should-use/you-should-use.plugin.zsh"
+zsh-defer call_file "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/custom/plugins/you-should-use/you-should-use.plugin.zsh"
 fpath+=( "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/plugins/aliases" )
-call_file "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/plugins/aliases/aliases.plugin.zsh"
+zsh-defer call_file "$HOME/Library/Caches/antidote/ohmyzsh/ohmyzsh/plugins/aliases/aliases.plugin.zsh"
 fpath+=( "$HOME/Library/Caches/antidote/joshskidmore/zsh-fzf-history-search" )
 call_file "$HOME/Library/Caches/antidote/joshskidmore/zsh-fzf-history-search/zsh-fzf-history-search.plugin.zsh"
 fpath+=( "$HOME/Library/Caches/antidote/zsh-hooks/zsh-hooks" )
@@ -40,4 +44,4 @@ call_file "$HOME/Library/Caches/antidote/zsh-hooks/zsh-hooks/zsh-hooks.plugin.zs
 fpath+=( "$HOME/Library/Caches/antidote/mattmc3/zfunctions" )
 call_file "$HOME/Library/Caches/antidote/mattmc3/zfunctions/zfunctions.plugin.zsh"
 fpath+=( "$HOME/Library/Caches/antidote/zdharma-continuum/fast-syntax-highlighting" )
-call_file "$HOME/Library/Caches/antidote/zdharma-continuum/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
+zsh-defer call_file "$HOME/Library/Caches/antidote/zdharma-continuum/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
