@@ -4,11 +4,12 @@
 # ===============================================================
 
 # --- Ensure environment ---
-export DOTFILES="${DOTFILES:-$HOME/.dotfiles}"
-export outfile="${outfile:-$HOME/zshrc-log.json}"
-LOGFILE="$outfile"
+#export DOTFILES="${DOTFILES:-$HOME/.dotfiles}"
 
-if [[ ! `typeset -f call_file1` ]]; then
+#export outfile="${outfile:-$HOME/zshrc-log.json}"
+#LOGFILE="$outfile"
+
+if [[ ! `typeset -f call_file` ]]; then
   source "$HOME/.dotfiles/bin/call_file"
 fi
 
@@ -25,6 +26,10 @@ export PIP_DISABLE_PIP_VERSION_CHECK=1
 typeset -U path
 PATH=${(Rj/:/)${(us/:/)PATH}:#* *}
 export PATH
+
+if [[ "${GHOSTTY_QUICK_TERMINAL}" == 1 ]]; then
+    eval ${QT_RUN}
+fi
 
 # --- Timing summary from JSON log ---
 # if [[ -f "$LOGFILE" ]]; then

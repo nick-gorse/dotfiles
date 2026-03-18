@@ -11,16 +11,20 @@
 setopt complete_aliases nobgnice
 
 # dump location + TTL
-export ZSH_COMPDUMP="${XDG_CACHE_HOME:-$HOME/.cache}/zcomp/zcompdump"
+local _zcomp_loc="${XDG_CACHE_HOME:-$HOME/.cache}/zcomp/zcompdump"
+if [[ "${ZSH_COMPDUMP}" != "${_zcomp_loc}" ]]; then
+    typeset -g -r ZSH_COMPDUMP="${_zcomp_loc}"
+fi
 local _zcd="${ZSH_COMPDUMP:-$HOME/.cache/zcomp/zcompdump}"
 
 # Guard if file missing
-[[ ! -r "$ZSH_COMPDUMP" ]] && {
-  print -u2 "comp_init: missing or unreadable: $ZSH_COMPDUMP"
-  return 1
-}
-typeset -g -r ZSH_COMPDUMP
+#[[ ! -r "$ZSH_COMPDUMP" ]] && {
+#  print -u2 "comp_init: missing or unreadable: $ZSH_COMPDUMP"
+#  return 1
+#}
 local ZCOMP_TTL_HOURS="${ZCOMP_TTL_HOURS:-20}"
+typeset -g ZCOMP_DUMP_PATH=${ZSH_COMPDUMP}
+
 
 # collect completion files from the already-built `config_files` list
 typeset -a _completion_files
@@ -47,7 +51,7 @@ else
   (( _have_local_comp )) && source "$HOME/.local_comp_rc"
   local f
   for f in "${_completion_files[@]}"; do
-    source "$f"
+    call_file "$f" "${f:h:t}"
   done
   compinit -i -d "$_zcd"
   { zcompile "$_zcd" 2>/dev/null } &!
@@ -56,18 +60,23 @@ fi
 unset _zcd _completion_files _fast _have_local_comp ZCOMP_TTL_HOURS
 
 _comp_options+=(globdots) # With hidden files
+if [[ ! $(command -v antidote) ]] && [[ -d $DOTFILES/oh-my-zsh ]]; then
+    call_file $DOTFILES/oh-my-zsh/completion.zsh "omz-comp"
+fi
+
+
 
 # +---------+
 # | Options |
 # +---------+
 
 # setopt GLOB_COMPLETE      # Show autocompletion menu with globs
-# setopt MENU_COMPLETE        # Automatically highlight first element of completion menu
+setopt MENU_COMPLETE        # Automatically highlight first element of completion menu
 setopt AUTO_LIST            # Automatically list choices on ambiguous completion.
 setopt COMPLETE_IN_WORD     # Complete from both ends of a word.
 
 # Define completers
-zstyle ':completion:*' completer _extensions _complete _approximate
+zstyle ':completion:*' completer _extensions _complete _dynamic_directory_name _ignored
 
 # Use cache for commands using cache
 zstyle ':completion:*' use-cache on
@@ -80,8 +89,12 @@ bindkey '^Xa' alias-expension
 zstyle ':completion:alias-expension:*' completer _expand_alias
 
 # Use cache for commands which use it
+
+# Allow you to select in a menu
+zstyle ':completion:*' menu select
+
 # Autocomplete options for cd instead of directory stack
-zstyle ':completion:*' complete-options true
+zstyle ':completion:*' complete-options false
 
 zstyle ':completion:*' file-sort modification
 
@@ -93,10 +106,21 @@ zstyle ':completion:*:*:*:*:warnings' format ' %F{red}-- no matches found --%f'
 # zstyle ':completion:*:default' list-prompt '%S%M matches%s'
 # Colors for files and directory
 zstyle ':completion:*:*:*:*:default' list-colors ${(s.:.)LS_COLORS}
+# Directories
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*:*:cd:*' tag-order local-directories directory-stack path-directories
+zstyle ':completion:*:*:cd:*:directory-stack' menu yes select
+zstyle ':completion:*:-tilde-:*' group-order 'dynamic-directory-name' 'named-directories' 'path-directories' 'users' 'expand'
+
+zstyle ':completion:*' squeeze-slashes true
+
+# Ignore useless commands and functions
+zstyle ':completion:*:functions' ignored-patterns '(_*|pre(cmd|exec)|prompt_*)'
+zstyle ':completion:*:' ignored-patterns '(_*|pre(cmd|exec)|prompt_*)'
 
 # Only display some tags for the command cd
 zstyle ':completion:*:*:cd:*' tag-order local-directories directory-stack path-directories
-zstyle ':completion:*:complete:git:argument-1:' tag-order !aliases
+# zstyle ':completion:*:complete:git:argument-1:' tag-order !aliases
 
 # Required for completion to be in good groups (named after the tags)
 zstyle ':completion:*' group-name ''
@@ -110,22 +134,5 @@ zstyle ':completion:*' keep-prefix true
 
 zstyle -e ':completion:*:(ssh|scp|sftp|rsh|rsync):hosts' hosts 'reply=(${=${${(f)"$(cat {/etc/ssh_,~/.ssh/known_}hosts(|2)(N) /dev/null)"}%%[# ]*}//,/ })'
 
-# disable sort when completing `git checkout`
-zstyle ':completion:*:git-checkout:*' sort false
-# set descriptions format to enable group support
-# NOTE: don't use escape sequences (like '%F{red}%d%f') here, fzf-tab will ignore them
-zstyle ':completion:*:descriptions' format '[%d]'
-# set list-colors to enable filename colorizing
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-# force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
-zstyle ':completion:*' menu no
-# preview directory's content with eza when completing cd
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
-# custom fzf flags
-# NOTE: fzf-tab does not follow FZF_DEFAULT_OPTS by default
-zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --bind=tab:accept
-# To make fzf-tab follow FZF_DEFAULT_OPTS.
-# NOTE: This may lead to unexpected behavior since some flags break this plugin. See Aloxaf/fzf-tab#455.
-zstyle ':fzf-tab:*' use-fzf-default-opts yes
-# switch group using `<` and `>`
-zstyle ':fzf-tab:*' switch-group '<' '>'
+compctl -V directories -K _bd bd
+

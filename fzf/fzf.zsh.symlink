@@ -1,12 +1,12 @@
 # Setup fzf
 # ---------
 # [ -f ~/.fzf.zsh ] && call_file ~/.fzf.zsh "fzf"
-if [[ ! "$PATH" == *$(brew --prefix)/opt/fzf/bin* ]]; then
-  PATH="${PATH:+${PATH}:}${(f)$(brew --prefix)}/opt/fzf/bin"
+if [[ ! "$PATH" == *$(brew --prefix)/fzf/opt/bin* ]]; then
+  PATH="${PATH:+${PATH}:}${(f)$(brew --prefix fzf)}/bin"
 fi
 
 
 
 # Key bindings
 # ------------
-call_file $HOMEBREW_PREFIX/opt/fzf/shell/key-bindings.zsh "fzf"
+call_file $HOMEBREW_PREFIX/opt/fzf/shell/key-bindings.zsh "fzf-symlink"

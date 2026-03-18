@@ -1,0 +1,32 @@
+#!/usr/bin/env zsh
+# nvim-open — open a file (with optional line) in the session's nvim server
+#
+# Usage:
+#   nvim-open <path> [line]
+#
+# The nvim server is identified by $NVIM_SERVER, which is set per-session:
+#   - Local:   127.0.0.1:7777  (default in nvim/env.zsh)
+#   - nasng:   127.0.0.1:27777 (injected by ssh.conf)
+#   - mining:  127.0.0.1:17777
+#   - mininv:  127.0.0.1:37777
+#
+# Called from kitty hints:
+#   map ctrl+shift+p>n kitten hints --type=linenum --linenum-action=overlay \
+#       zsh -lic 'nvim-open {path} {line}'
+#
+# Called from nvim_panel.py for hyperlink-click-to-panel flow.
+
+set -euo pipefail
+
+NVIM_BIN="${NVIM_BIN:-/opt/homebrew/bin/nvim}"
+SERVER="${NVIM_SERVER:-127.0.0.1:7777}"
+FILE="${1:?nvim-open: file argument required}"
+LINE="${2:-}"
+
+# Open file in a new tab in the running nvim instance
+"$NVIM_BIN" --server "$SERVER" --remote-tab "$(realpath "$FILE")"
+
+# Jump to line if provided
+if [[ -n "$LINE" && "$LINE" =~ ^[0-9]+$ ]]; then
+  "$NVIM_BIN" --server "$SERVER" --remote-send "<C-\\><C-n>:${LINE}<CR>"
+fi

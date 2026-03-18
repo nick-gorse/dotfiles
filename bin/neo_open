@@ -1,0 +1,15 @@
+#autoload
+neo_open() {
+    if [[ -z $SSH_CONNECTION ]]; then
+        local _nport=127.0.0.1:7777
+        local _nfile="${1:A}"
+    else
+        local _nport=127.0.0.1:7778
+        local _nfile="scp://$(hostname)//${1:A}"
+    fi
+    cmd_args=( "nvim" "--server" "${_nport}" "--remote" "${_nfile}")
+    eval $cmd_args[@]
+    if kitty @ ls -m "env:PANEL" >/dev/null 2>&1; then
+        kitten @ --to ${KITTY_LISTEN_ON} resize-os-window --match env:PANEL --action=toggle-visibility
+    fi
+}

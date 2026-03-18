@@ -1,0 +1,62 @@
+#autoload
+#
+copy_hosts() {
+  local -a cp_hosts_default=( infra-dns-1 swarm-mgr-1 swarm-mgr-2 swarm-mgr-3 proxmox-01 )
+  local -a cp_hosts_new=()
+  local -a cp_hosts=()
+  local -a cp_sources=()
+  local saw_hosts=0
+
+  while (( $# > 0 )); do
+    case "$1" in
+      -h|--hosts)
+        saw_hosts=1
+        shift
+
+        # Collect host names until:
+        # - we hit "--"
+        # - or only one argument remains (treat that as a source)
+        while (( $# > 1 )) && [[ "$1" != "--" ]]; do
+          cp_hosts_new+=("$1")
+          shift
+        done
+
+        # Keep only hosts that exist in cp_hosts_default
+        cp_hosts=( ${cp_hosts_default:*cp_hosts_new} )
+
+        # Skip the separator if present
+        if (( $# > 0 )) && [[ "$1" == "--" ]]; then
+          shift
+        fi
+        ;;
+
+      --)
+        shift
+        cp_sources+=( "$@" )
+        break
+        ;;
+
+      *)
+        cp_sources+=("$1")
+        shift
+        ;;
+    esac
+  done
+
+  # No -h/--hosts provided: use defaults
+  if (( ! saw_hosts )); then
+    cp_hosts=( "${cp_hosts_default[@]}" )
+  fi
+
+  # Nothing valid matched from -h/--hosts: fall back to defaults
+  if (( saw_hosts )) && (( ${#cp_hosts[@]} == 0 )); then
+    cp_hosts=( "${cp_hosts_default[@]}" )
+  fi
+
+  for dotdir in "${cp_sources[@]}"; do
+    [[ -e "${DOTFILES}/${dotdir}" ]] || continue
+    for dothost in "${cp_hosts[@]}"; do
+      dotpush "$dothost" "$dotdir"
+    done
+  done
+}

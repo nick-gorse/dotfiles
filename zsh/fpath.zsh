@@ -1,6 +1,8 @@
 
 typeset -gU fpath
 
+[[ -d /usr/share/zsh/5.9/functions ]] && fpath=(/usr/share/zsh/5.9/functions $fpath)
+[[ -d /usr/share/zsh/functions ]] && fpath=(/usr/share/zsh/5.9/functions $fpath)
 # fpath=($DOTFILES/zsh/plugins/zsh-completions/src $fpath)
 fpath=($(brew --prefix)/share/zsh/site-functions $fpath)
 
