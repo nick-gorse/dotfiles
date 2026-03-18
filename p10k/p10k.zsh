@@ -18,6 +18,173 @@
 [[ ! -o 'no_brace_expand' ]] || p10k_config_opts+=('no_brace_expand')
 'builtin' 'setopt' 'no_aliases' 'no_sh_glob' 'brace_expand'
 
+############################################################
+# Docker context prompt segment for Powerlevel10k
+############################################################
+
+# Cached values used by the renderer only
+typeset -g P10K_DOCKER_SEGMENT_CTX=""
+typeset -g P10K_DOCKER_SEGMENT_HOST=""
+typeset -g P10K_DOCKER_SEGMENT_ENV=""
+typeset -g P10K_DOCKER_SEGMENT_COUNT=""
+typeset -g P10K_DOCKER_SEGMENT_FG=45
+typeset -g P10K_DOCKER_SEGMENT_ICON='🐳'
+typeset -g P10K_DOCKER_SEGMENT_CACHE_TIME=0
+
+# Refresh interval in seconds
+typeset -g P10K_DOCKER_SEGMENT_TTL=5
+
+# Enable/disable container count (0 = off, 1 = on)
+typeset -g P10K_DOCKER_SEGMENT_SHOW_COUNT=0
+
+# Helper: clear cache
+p10k-docker-segment-clear-cache() {
+  P10K_DOCKER_SEGMENT_CTX=""
+  P10K_DOCKER_SEGMENT_HOST=""
+  P10K_DOCKER_SEGMENT_ENV=""
+  P10K_DOCKER_SEGMENT_COUNT=""
+  P10K_DOCKER_SEGMENT_FG=45
+  P10K_DOCKER_SEGMENT_CACHE_TIME=0
+}
+
+# Refresh cache outside prompt rendering
+p10k_docker_segment_refresh() {
+  emulate -L zsh
+  setopt typeset_silent no_aliases pipefail
+
+  (( $+commands[docker] )) || return
+
+  local now=$EPOCHSECONDS
+  (( now - P10K_DOCKER_SEGMENT_CACHE_TIME < P10K_DOCKER_SEGMENT_TTL )) && return
+
+  local ctx inspect host fg env_label count
+  local docker_bin="command docker"
+
+  ctx=$(command docker context show 2>/dev/null) || return
+  [[ -n $ctx ]] || return
+
+  inspect=""
+  host=""
+  fg=45
+  env_label=""
+  count=""
+
+  # Only inspect when we might need host details.
+  inspect=$(command docker context inspect "$ctx" 2>/dev/null) || inspect=""
+
+  if [[ -n $inspect ]]; then
+    if (( $+commands[jq] )); then
+      host=$(print -r -- "$inspect" | jq -r '.[0].Endpoints.docker.Host // empty' 2>/dev/null)
+    fi
+
+    # Fallback if jq is not available
+    if [[ -z $host ]]; then
+      host=$(print -r -- "$inspect" | sed -n 's/.*"Host":[[:space:]]*"\([^"]*\)".*/\1/p' | head -n1)
+    fi
+  fi
+
+  # Environment classification
+  case "$ctx" in
+    *prod*|*Prod*|*PROD*)
+      fg=196
+      env_label="prod"
+      ;;
+    *stage*|*staging*|*Stage*|*STAGE*)
+      fg=214
+      env_label="staging"
+      ;;
+    *dev*|*Dev*|*DEV*)
+      fg=39
+      env_label="dev"
+      ;;
+    *swarm*|*Swarm*|*SWARM*)
+      fg=171
+      env_label="swarm"
+      ;;
+    default|desktop-linux|colima|orbstack|rancher-desktop)
+      fg=76
+      env_label="local"
+      ;;
+    *)
+      if [[ $host == unix://* || -z $host ]]; then
+        fg=76
+        env_label="local"
+      elif [[ $host == ssh://* || $host == tcp://* ]]; then
+        fg=81
+        env_label="remote"
+      else
+        fg=45
+        env_label=""
+      fi
+      ;;
+  esac
+
+  # Optional container count.
+  # This is the slow part, so keep it off by default and avoid it for remote contexts.
+  if (( P10K_DOCKER_SEGMENT_SHOW_COUNT )); then
+    if [[ -z $host || $host == unix://* ]]; then
+      count=$(command docker ps -q 2>/dev/null | wc -l | tr -d ' ')
+      [[ $count == <-> ]] || count=""
+    fi
+  fi
+
+  P10K_DOCKER_SEGMENT_CTX="$ctx"
+  P10K_DOCKER_SEGMENT_HOST="$host"
+  P10K_DOCKER_SEGMENT_ENV="$env_label"
+  P10K_DOCKER_SEGMENT_COUNT="$count"
+  P10K_DOCKER_SEGMENT_FG="$fg"
+  P10K_DOCKER_SEGMENT_CACHE_TIME=$now
+}
+
+# Main segment function: render cached values only
+prompt_docker_env() {
+  emulate -L zsh
+  setopt typeset_silent no_aliases pipefail
+
+  [[ -n $P10K_DOCKER_SEGMENT_CTX ]] || return
+
+  local width=$COLUMNS
+  local text="$P10K_DOCKER_SEGMENT_CTX"
+  local count_text=""
+  local host_text=""
+
+  [[ -n $P10K_DOCKER_SEGMENT_COUNT ]] && count_text=":$P10K_DOCKER_SEGMENT_COUNT"
+
+  if [[ $P10K_DOCKER_SEGMENT_HOST == ssh://* ]]; then
+    host_text=" @${P10K_DOCKER_SEGMENT_HOST#ssh://}"
+  elif [[ $P10K_DOCKER_SEGMENT_HOST == tcp://* ]]; then
+    host_text=" @${P10K_DOCKER_SEGMENT_HOST#tcp://}"
+  fi
+
+  if (( width >= 140 )); then
+    [[ -n $P10K_DOCKER_SEGMENT_ENV ]] && text+=" [$P10K_DOCKER_SEGMENT_ENV]"
+    [[ -n $count_text ]] && text+="$count_text"
+    [[ -n $host_text ]] && text+="$host_text"
+  elif (( width >= 110 )); then
+    [[ -n $P10K_DOCKER_SEGMENT_ENV ]] && text+=" [$P10K_DOCKER_SEGMENT_ENV]"
+    [[ -n $count_text ]] && text+="$count_text"
+  elif (( width >= 80 )); then
+    [[ -n $count_text ]] && text+="$count_text"
+  elif (( width >= 55 )); then
+    :
+  else
+    return
+  fi
+
+  p10k segment -f "$P10K_DOCKER_SEGMENT_FG" -i "$P10K_DOCKER_SEGMENT_ICON" -t "$text"
+}
+
+# Refresh before each prompt, but only if not already hooked
+if (( ! ${+functions[_p10k_docker_segment_precmd]} )); then
+  autoload -Uz add-zsh-hook
+
+  _p10k_docker_segment_precmd() {
+    p10k_docker_segment_refresh
+  }
+
+  add-zsh-hook precmd _p10k_docker_segment_precmd
+fi
+
 () {
   emulate -L zsh -o extended_glob
 
@@ -41,6 +208,7 @@
   # automatically hidden when the input line reaches it. Right prompt above the
   # last prompt line gets hidden if it would overlap with left prompt.
   typeset -g POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
+    docker_env
     status                  # exit code of the last command
     command_execution_time  # duration of the last command
     background_jobs         # presence of background jobs
@@ -86,7 +254,7 @@
     # nnn                     # nnn shell (https://github.com/jarun/nnn)
     # lf                      # lf shell (https://github.com/gokcehan/lf)
     # xplr                    # xplr shell (https://github.com/sayanarijit/xplr)
-    # vim_shell               # vim shell indicator (:sh)
+    vim_shell               # vim shell indicator (:sh)
     # midnight_commander      # midnight commander shell (https://midnight-commander.org/)
     # nix_shell               # nix shell (https://nixos.org/nixos/nix-pills/developing-with-nix-shell.html)
     # chezmoi_shell           # chezmoi shell (https://www.chezmoi.io/)
@@ -1642,6 +1810,7 @@
   function prompt_example() {
     p10k segment -f 208 -i '⭐' -t 'hello, %n'
   }
+
 
   # User-defined prompt segments may optionally provide an instant_prompt_* function. Its job
   # is to generate the prompt segment for display in instant prompt. See
