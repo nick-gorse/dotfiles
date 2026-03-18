@@ -1,7 +1,7 @@
 #autoload
 #
 copy_hosts() {
-  local -a cp_hosts_default=( infra-dns-1 swarm-mgr-1 swarm-mgr-2 swarm-mgr-3 )
+  local -a cp_hosts_default=( infra-dns-1 swarm-mgr-1 swarm-mgr-2 swarm-mgr-3 proxmox-01 )
   local -a cp_hosts_new=()
   local -a cp_hosts=()
   local -a cp_sources=()

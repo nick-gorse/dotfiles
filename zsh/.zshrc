@@ -19,6 +19,7 @@ if [[ ! `typeset -f call_file` ]]; then
   source "$DOTFILES/bin/call_file"
 fi
 
+POWERLEVEL9K_INSTANT_PROMPT=true
 #if [[ -e "${HOME}/zsh-defer/zsh-defer.plugin.zsh" ]]; then
 #    call_file ${HOME}/zsh-defer/zsh-defer.plugin.zsh
 #fi

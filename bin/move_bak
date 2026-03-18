@@ -1,0 +1,19 @@
+#autoload
+
+move_bak() {
+ emulate -L zsh
+ [[ -n $DEBUG_ZSH ]] && {
+     export PS4='+%N:%i> '
+     set -x
+ }
+ local _files
+ typeset -a bakfiles=($HOME/.dotfiles/**/*.bak(DN))
+ [[ ${#bakfiles} -gt 0 ]] || return 0
+ for _files in "${(@u)bakfiles:h}"; do
+    [[ -d ${_files//dotfiles/dotfiles-bak} ]] || eval "mkdir -p ${_files//dotfiles/dotfiles-bak}"
+ done
+ for _files in "${(@)bakfiles}"; do
+    eval "mv ${(A)_files} ${_files//dotfiles/dotfiles-bak}"
+ done
+ unset bakfiles
+}

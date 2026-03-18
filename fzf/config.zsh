@@ -9,3 +9,7 @@ if [[ -d "${FZF_PREFIX}" ]]; then
     call_file "${FZF_PREFIX}/shell/key-bindings.zsh" "fzf"
 fi
 
+
+if ! command -v fd >/dev/null 2>&1; then
+    command -v fdfind >/dev/null 2>&1 && ln -s $(which fdfind) $HOME/.local/bin/fd
+fi
