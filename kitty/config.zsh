@@ -9,12 +9,18 @@ if test -n "$KITTY_INSTALLATION_DIR"; then
     fi
 fi
 
+if [[ -z "$DOTFILES/kitty/logo/${$(hostname):l}.png" ]]; then
+    KITTY_LOGO_FILE=$DOTFILES/kitty/logo/default.png
+else
+    KITTY_LOGO_FILE=$DOTFILES/kitty/logo/${$(hostname):l}.png
+fi
+export KITTY_LOGO_FILE
+
 _change_kitty_logo () {
-   [[ -n $KITTY_WINDOW_ID ]] && kitten @ set-window-logo --match id:$KITTY_WINDOW_ID "$DOTFILES/kitty/logo/${$(hostname):l}.png"
+   [[ -n $KITTY_WINDOW_ID ]] && kitten @ set-window-logo --match id:$KITTY_WINDOW_ID $KITTY_LOGO_FILE
 }
 
 if [[ -n $KITTY_WINDOW_ID ]]; then
    autoload -Uz add-zsh-hook
    add-zsh-hook precmd _change_kitty_logo
 fi
-
