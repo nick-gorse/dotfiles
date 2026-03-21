@@ -1,4 +1,4 @@
-#compdef copy_files
+#compdef copy_hosts
 
 _copy_files() {
   local -a dirs
@@ -10,7 +10,7 @@ _copy_files() {
   cp_hosts_default=( $(_copy_files_ssh_hosts) )
 
   [[ -d "$_dotfiles" ]] || return 1
-  dirs=(${(f)"$(print -rl -- $_dotfiles/*(/N:t))"})
+  dirs=(${(f)"$(print -rl -- $_dotfiles/*(/ND:t))"})
 
   for (( i = 2; i < CURRENT; i++ )); do
     case "${words[i]}" in
@@ -44,46 +44,7 @@ _copy_files() {
 _copy_files_ssh_hosts() {
   local cfg="${HOME}/.ssh/config"
   [[ -r "$cfg" ]] || return 0
+  print -l "${(@)${(@)${(M@)${(f)$(<${cfg})}:%Host[^*.]##}//Host /}:#*(script|[56])}"
 
-  awk '
-    BEGIN {
-      in_block = 0
-      has_hostname = 0
-      aliases = ""
-    }
-
-    /^[[:space:]]*#/ { next }
-    /^[[:space:]]*$/ { next }
-
-    tolower($1) == "host" {
-      if (in_block && has_hostname && aliases != "") {
-        print aliases
-      }
-
-      in_block = 1
-      has_hostname = 0
-      aliases = ""
-
-      for (i = 2; i <= NF; i++) {
-        if ($i ~ /[*?\[]/) {
-          continue
-        }
-        aliases = aliases $i "\n"
-      }
-      next
-    }
-
-    in_block && tolower($1) == "hostname" {
-      has_hostname = 1
-      next
-    }
-
-    END {
-      if (in_block && has_hostname && aliases != "") {
-        print aliases
-      }
-    }
-  ' "$cfg" | awk '!seen[$0]++'
 }
-
 _copy_files "$@"

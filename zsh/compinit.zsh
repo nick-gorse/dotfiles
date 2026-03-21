@@ -24,6 +24,7 @@ local _zcd="${ZSH_COMPDUMP:-$HOME/.cache/zcomp/zcompdump}"
 #}
 local ZCOMP_TTL_HOURS="${ZCOMP_TTL_HOURS:-20}"
 typeset -g ZCOMP_DUMP_PATH=${ZSH_COMPDUMP}
+typeset -rg FPATH_COMP=$FPATH
 
 
 # collect completion files from the already-built `config_files` list
@@ -45,17 +46,17 @@ fi
 
 autoload -U compinit
 
-if (( _fast )); then
-  compinit -C -d "$_zcd"
-else
-  (( _have_local_comp )) && source "$HOME/.local_comp_rc"
-  local f
-  for f in "${_completion_files[@]}"; do
-    call_file "$f" "${f:h:t}"
-  done
-  compinit -i -d "$_zcd"
-  { zcompile "$_zcd" 2>/dev/null } &!
-fi
+#if (( _fast )); then
+#  compinit -C -d "$_zcd"
+#else
+#  (( _have_local_comp )) && source "$HOME/.local_comp_rc"
+#  local f
+#  for f in "${_completion_files[@]}"; do
+#    call_file "$f" "${f:h:t}"
+#  done
+#  compinit -i -d "$_zcd"
+#  { zcompile "$_zcd" 2>/dev/null } &!
+#fi
 
 unset _zcd _completion_files _fast _have_local_comp ZCOMP_TTL_HOURS
 
@@ -64,7 +65,7 @@ if [[ ! $(command -v antidote) ]] && [[ -d $DOTFILES/oh-my-zsh ]]; then
     call_file $DOTFILES/oh-my-zsh/completion.zsh "omz-comp"
 fi
 
-
+compinit -u
 
 # +---------+
 # | Options |
@@ -79,7 +80,7 @@ setopt COMPLETE_IN_WORD     # Complete from both ends of a word.
 zstyle ':completion:*' completer _extensions _complete _dynamic_directory_name _ignored
 
 # Use cache for commands using cache
-zstyle ':completion:*' use-cache on
+zstyle ':completion:*' use-cache off
 zstyle ':completion:*' cache-path  ${ZSH_COMPDUMP:h}
 # Complete the alias when _expand_alias is used as a function
 zstyle ':completion:*' complete true
@@ -132,7 +133,10 @@ zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 
 
 zstyle ':completion:*' keep-prefix true
 
-zstyle -e ':completion:*:(ssh|scp|sftp|rsh|rsync):hosts' hosts 'reply=(${=${${(f)"$(cat {/etc/ssh_,~/.ssh/known_}hosts(|2)(N) /dev/null)"}%%[# ]*}//,/ })'
+zstyle -e ':completion:*:(ssh|scp|sftp|rsh|rsync):hosts' hosts 'reply=(${(@)${(@)${(M@)${(f)$(<~/.ssh/config)}:%Host[^*.]##}//Host /}:#*(script|[56])})'
+zstyle ':completion:*:(ssh|scp|rsync):*' tag-order ' hosts:-ipaddr:ip\ address hosts:-host:host files'
+zstyle ':completion:*:(ssh|scp|rsync):*:hosts-host' ignored-patterns '*(.|:)*' loopback ip6-loopback localhost ip6-localhost broadcasthost
+zstyle ':completion:*:(ssh|scp|rsync):*:hosts-ipaddr' ignored-patterns '^(<->.<->.<->.<->|(|::)([[:xdigit:].]##:(#c,2))##(|%*))' '127.0.0.<->' '255.255.255.255' '::1' 'fe80::*'
 
 compctl -V directories -K _bd bd
 

@@ -1,0 +1,20 @@
+#compdef s
+#compdef copy_hosts
+
+_s() {
+  local -a avail_hosts
+
+  avail_hosts=( $(_copy_files_ssh_hosts) )
+
+  compadd -S '' "${avail_hosts[@]}"
+  return
+
+}
+
+_copy_files_ssh_hosts() {
+  local cfg="${HOME}/.ssh/config"
+  [[ -r "$cfg" ]] || return 0
+  print -l "${(@)${(@)${(M@)${(f)$(<${cfg})}:%Host[^*.]##}//Host /}:#*(script|[56])}"
+
+}
+_s "$@"
