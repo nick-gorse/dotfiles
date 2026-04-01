@@ -24,7 +24,7 @@ local _zcd="${ZSH_COMPDUMP:-$HOME/.cache/zcomp/zcompdump}"
 #}
 local ZCOMP_TTL_HOURS="${ZCOMP_TTL_HOURS:-20}"
 typeset -g ZCOMP_DUMP_PATH=${ZSH_COMPDUMP}
-typeset -rg FPATH_COMP=$FPATH
+[[ -z "${FPATH_COMP}" ]] && typeset -rg FPATH_COMP=$FPATH
 
 
 # collect completion files from the already-built `config_files` list

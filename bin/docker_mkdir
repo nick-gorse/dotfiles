@@ -1,0 +1,31 @@
+#autoload
+
+docker_mkdir () {
+    _dest="${HOST_DATA_ROOT:-/srv/docker/appdata}/${1}"
+
+    _current_host=($(hostname -s))
+    #_current_host=("swarm-mgr-1")
+    _nodes=($(_docker_nodes_list))
+    _current_host=(${_current_host:*_nodes})
+    _avail_hosts=($(_copy_files_ssh_hosts))
+    _nodes=(${${_nodes:|_current_host}:*_avail_hosts})
+    _cmd_exec="mkdir -p ${_dest}; chown -R 1000:988 ${_dest}"
+    [[ ${#_current_host} -gt 0 ]] && eval $_cmd_exec
+    for _ent in $_nodes; do
+	    eval "ssh -T $_ent -- $_cmd_exec"
+    done
+    return 0
+}
+
+_docker_nodes_list () {
+    print $(docker node ls --format '{{if eq .Availability "Active"}}{{.Hostname}}{{end}}')
+}
+
+
+
+_copy_files_ssh_hosts() {
+  local cfg="${HOME}/.ssh/config"
+  [[ -r "$cfg" ]] || return 0
+  print -l "${(@)${(@)${(M@)${(f)$(<${cfg})}:%Host[^*.]##}//Host /}:#*(nasng|script|[5])}"
+
+}
