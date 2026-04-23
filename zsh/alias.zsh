@@ -83,3 +83,4 @@ alias clear_ssh='kitty @ action close_shared_ssh_connections'
 alias -g NE='2> /dev/null'
 alias -g NS='>/dev/null'
 alias -g NN='>/dev/null 2>&1'
+alias tok="foo(){ kubectl create token headlamp --namespace kube-system --duration 0 | pbcopy - }; foo"

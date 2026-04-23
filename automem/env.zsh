@@ -1,0 +1,2 @@
+export AUTOMEM_ENDPOINT=https://automem.olb42.com
+export AUTOMEM_API_KEY=cd349bc5125e28a9be9f4d17c393bb053f1872ec03f5c381eca3dc1c11685803

@@ -29,10 +29,11 @@ typeset -g ZCOMP_DUMP_PATH=${ZSH_COMPDUMP}
 
 # collect completion files from the already-built `config_files` list
 typeset -a _completion_files
-_completion_files=(${(M)${(@)config_files}:#*/*completion*.zsh})
+#_completion_files=(${(M)${(@)config_files}:#*/*completion*.zsh})
 
 # fallback if compinit.zsh is called standalone (no `config_files` in scope)
-(( ${#_completion_files} == 0 )) && _completion_files=($DOTFILES/**/*completion*.zsh(N))
+#(( ${#_completion_files} == 0 )) &&
+_completion_files=($DOTFILES/**/*completion*.zsh(N))
 
 # include local additions if present
 local _have_local_comp=0
@@ -46,17 +47,17 @@ fi
 
 autoload -U compinit
 
-#if (( _fast )); then
-#  compinit -C -d "$_zcd"
-#else
-#  (( _have_local_comp )) && source "$HOME/.local_comp_rc"
-#  local f
-#  for f in "${_completion_files[@]}"; do
-#    call_file "$f" "${f:h:t}"
-#  done
-#  compinit -i -d "$_zcd"
-#  { zcompile "$_zcd" 2>/dev/null } &!
-#fi
+if (( _fast )); then
+  compinit -C -d "$_zcd"
+else
+  (( _have_local_comp )) && source "$HOME/.local_comp_rc"
+  local f
+  for f in "${_completion_files[@]}"; do
+    call_file "$f" "${f:h:t}"
+  done
+  compinit -i -d "$_zcd"
+  { zcompile "$_zcd" 2>/dev/null } &!
+fi
 
 unset _zcd _completion_files _fast _have_local_comp ZCOMP_TTL_HOURS
 
@@ -65,7 +66,7 @@ if [[ ! $(command -v antidote) ]] && [[ -d $DOTFILES/oh-my-zsh ]]; then
     call_file $DOTFILES/oh-my-zsh/completion.zsh "omz-comp"
 fi
 
-compinit -u
+#compinit -u
 
 # +---------+
 # | Options |
@@ -80,8 +81,8 @@ setopt COMPLETE_IN_WORD     # Complete from both ends of a word.
 zstyle ':completion:*' completer _extensions _complete _dynamic_directory_name _ignored
 
 # Use cache for commands using cache
-zstyle ':completion:*' use-cache off
-zstyle ':completion:*' cache-path  ${ZSH_COMPDUMP:h}
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path  ${ZSH_COMPDUMP}
 # Complete the alias when _expand_alias is used as a function
 zstyle ':completion:*' complete true
 
