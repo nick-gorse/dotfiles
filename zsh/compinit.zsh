@@ -23,7 +23,7 @@ local _zcd="${ZSH_COMPDUMP:-$HOME/.cache/zcomp/zcompdump}"
 #  return 1
 #}
 local ZCOMP_TTL_HOURS="${ZCOMP_TTL_HOURS:-20}"
-typeset -g ZCOMP_DUMP_PATH=${ZSH_COMPDUMP}
+typeset -g ZCOMP_DUMP_PATH=${ZSH_COMPDUMP:h}
 [[ -z "${FPATH_COMP}" ]] && typeset -rg FPATH_COMP=$FPATH
 
 
@@ -82,7 +82,8 @@ zstyle ':completion:*' completer _extensions _complete _dynamic_directory_name _
 
 # Use cache for commands using cache
 zstyle ':completion:*' use-cache on
-zstyle ':completion:*' cache-path  ${ZSH_COMPDUMP}
+zstyle ':completion:*' cache-path  ${ZSH_DUMP_PATH}
+
 # Complete the alias when _expand_alias is used as a function
 zstyle ':completion:*' complete true
 

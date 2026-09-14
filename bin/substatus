@@ -1,0 +1,70 @@
+#autoload
+# Per-submodule status for the devops monorepo. Uses the git binary by absolute path.
+#   substatus       fast, uses last-known remote refs
+#   substatus -f    fetch each submodule's remote first (accurate ahead/behind)
+substatus() {
+  emulate -L zsh
+  setopt local_options
+
+  local gitbin
+  gitbin=${commands[git]}                       # absolute path from zsh's command hash
+  [[ -z $gitbin ]] && gitbin=$(whence -p git 2>/dev/null)
+  [[ -z $gitbin ]] && { print -u2 "substatus: no git binary on \$path"; return 1 }
+
+  local root
+  root=$($gitbin rev-parse --show-superproject-working-tree 2>/dev/null)
+  [[ -z $root ]] && root=$($gitbin rev-parse --show-toplevel 2>/dev/null)
+  [[ -z $root ]] && { print -u2 "substatus: not inside a git repo"; return 1 }
+
+  local fetch=0
+  [[ $1 == (-f|--fetch) ]] && fetch=1
+
+  local g=$'\e[32m' y=$'\e[33m' r=$'\e[31m' c=$'\e[36m' dim=$'\e[2m' n=$'\e[0m'
+  printf "%b%-34s %-16s %-7s %-9s %s%b\n" "$dim" PATH BRANCH STATE AHD/BHD PIN "$n"
+
+  local -a lines paths
+  lines=("${(@f)$($gitbin -C "$root" config -f "$root/.gitmodules" --get-regexp '\.path$' 2>/dev/null)}")
+  local ln
+  for ln in $lines; do [[ -n $ln ]] && paths+=("${ln#* }"); done
+  paths=(${(o)paths})
+
+  local path sub branch state scol ab pin pcol rec cur counts
+  local -i nclean=0 ndirty=0 nmoved=0 nmiss=0
+
+  for path in $paths; do
+    sub="$root/$path"
+    if [[ ! -e $sub/.git ]]; then
+      printf "%b%-34s %s%b\n" "$r" "$path" "MISSING (not checked out)" "$n"
+      (( nmiss++ )); continue
+    fi
+
+    (( fetch )) && $gitbin -C "$sub" fetch --quiet --all 2>/dev/null
+
+    branch=$($gitbin -C "$sub" symbolic-ref --short -q HEAD 2>/dev/null) || branch="(detached)"
+
+    if [[ -n $($gitbin -C "$sub" status --porcelain 2>/dev/null) ]]; then
+      state="dirty"; scol=$y; (( ndirty++ ))
+    else
+      state="clean"; scol=$g; (( nclean++ ))
+    fi
+
+    ab="-"
+    if counts=$($gitbin -C "$sub" rev-list --left-right --count '@{u}...HEAD' 2>/dev/null); then
+      ab="+${counts##*[[:space:]]}/-${counts%%[[:space:]]*}"
+    fi
+
+    rec=$($gitbin -C "$root" rev-parse -q --verify "HEAD:$path" 2>/dev/null)
+    cur=$($gitbin -C "$sub" rev-parse HEAD 2>/dev/null)
+    if [[ -n $rec && $rec != $cur ]]; then
+      pin="moved"; pcol=$y; (( nmoved++ ))
+    else
+      pin="ok"; pcol=$g
+    fi
+
+    printf "%-34s %b%-16s%b %b%-7s%b %-9s %b%s%b\n" \
+      "$path" "$c" "$branch" "$n" "$scol" "$state" "$n" "$ab" "$pcol" "$pin" "$n"
+  done
+
+  printf "%b%d clean, %d dirty, %d moved-pin, %d missing%b\n" \
+    "$dim" $nclean $ndirty $nmoved $nmiss "$n"
+}

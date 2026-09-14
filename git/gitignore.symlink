@@ -8,3 +8,5 @@ __pycache__
 .autoversion
 .idea/
 **/CLAUDE.md
+
+**/.claude/settings.local.json

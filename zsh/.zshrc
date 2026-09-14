@@ -6,43 +6,38 @@
 # Profiling
 [[ "$ZPROFRC" -ne 1 ]] || zmodload zsh/zprof
 alias zprofrc="ZPROFRC=1 zsh"
-typeset -g POWERLEVEL9K_INSTANT_PROMPT=false
+typeset -g POWERLEVEL9K_INSTANT_PROMPT=true
 
 # Ensure globals
 typeset -g DOTFILES="${DOTFILES:-$HOME/.dotfiles}"
 typeset -g outfile="${outfile:-$HOME/zshrc-log.json}"
 : > "$outfile"  # clear old log
 
+# Use extended globbing syntax.
 setopt EXTENDED_GLOB
 
 if [[ ! `typeset -f call_file` ]]; then
   source "$DOTFILES/bin/call_file"
 fi
 
-POWERLEVEL9K_INSTANT_PROMPT=true
-#if [[ -e "${HOME}/zsh-defer/zsh-defer.plugin.zsh" ]]; then
-#    call_file ${HOME}/zsh-defer/zsh-defer.plugin.zsh
-#fi
-
-
-
-   # Use extended globbing syntax.
-
 # load envrc from $HOME
 if [[ -a $HOME/.envrc ]];then
-	call_file $HOME/.envrc "env"
+    call_file $HOME/.envrc "env"
 fi
 # load localrc from $HOME
 if [[ -a $HOME/.localrc ]];then
-	call_file $HOME/.localrc "local"
+    call_file $HOME/.localrc "local"
 fi
 
 if $POWERLEVEL9K_INSTANT_PROMPT; then
     if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-        call_file "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" "instant"
+        source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" "instant"
     fi
 fi
 
+if [[ -e "${HOME}/zsh-defer/zsh-defer.plugin.zsh" ]]; then
+    call_file ${HOME}/zsh-defer/zsh-defer.plugin.zsh
+fi
 
 unsetopt complete_aliases nobgnice
 typeset -U config_files

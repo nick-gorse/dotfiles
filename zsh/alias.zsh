@@ -11,6 +11,7 @@ elif command -v it2ssh >/dev/null 2>&1 && [[ -z "$SSH_CONNECTION" ]]; then
 	alias s='foa(){ it2ssh "$1" }; foa '
 fi
 
+
 # more ways to ls
 if command -v eza >/dev/null 2>&1; then
   alias ls='eza $eza_params'
@@ -84,3 +85,5 @@ alias -g NE='2> /dev/null'
 alias -g NS='>/dev/null'
 alias -g NN='>/dev/null 2>&1'
 alias tok="foo(){ kubectl create token headlamp --namespace kube-system --duration 0 | pbcopy - }; foo"
+alias pc_install="pre-commit install -c $PRE_COMMIT_CONF"
+alias icloud='cd $HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/'

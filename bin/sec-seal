@@ -1,0 +1,6 @@
+#autoload sec-seal
+sec-seal() {
+ _fi=${(j:.:)${(s/./)1}:#(secret|plain|yaml)}
+ kubeseal --format=yaml < $1 > $_fi.sealed.secret.yaml
+ echo $_fi.sealed.secret.yaml
+}

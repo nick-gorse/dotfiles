@@ -8,3 +8,8 @@
 # Added by GitButler installer
 export PATH="/Users/ngorse/.local/bin:$PATH"
 eval "$(but completions bash)"
+
+
+# Added by ToolHive UI - do not modify this block
+export PATH="$HOME/.toolhive/bin:$PATH"
+# End ToolHive UI

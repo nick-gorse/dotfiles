@@ -1,0 +1,13 @@
+#autoload
+klabelnode() {
+  local node="$1"
+  local key="$2"
+  local value="$3"
+
+  if [[ -z "$node" || -z "$key" || -z "$value" ]]; then
+    echo "Usage: klabelnode <node-name> <label-key> <label-value>"
+    return 1
+  fi
+
+  kubectl label node "$node" "$key=$value" --overwrite
+}

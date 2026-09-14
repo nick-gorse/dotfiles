@@ -9,6 +9,7 @@
 [user]
 	name = nick-gorse
 	email = nick@olb42.com
+	signingkey = 3C2095E7BE94E7F7
 [core]
 	excludesFile = ~/.gitignore
 	pager = delta
@@ -25,3 +26,9 @@
 	navigate = true
 [merge]
 	conflictStyle = zdiff3
+[help]
+	autocorrect = prompt
+[rerere]
+	enabled = true
+[push]
+	autoSetupRemote = true

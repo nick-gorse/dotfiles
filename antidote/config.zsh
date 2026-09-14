@@ -8,12 +8,14 @@ zsh_plugins=${DOTFILES}/antidote/zsh_plugins
 fpath=($HOME/.antidote/functions $fpath)
 autoload -Uz antidote
 
-ZSH=$(antidote path ohmyzsh/ohmyzsh)
 zstyle ':antidote:bundle' use-friendly-names 'yes'
 zstyle ':antidote:static' file "${DOTFILES}/antidote/zsh_plugins"
 zstyle ':antidote:static' zcompile 'yes'
-if [[ ! ${zsh_plugins} -nt ${zsh_plugins}.txt ]]; then
-    echo "${$(antidote bundle <${zsh_plugins}.txt)//source/call_file}" >|${zsh_plugins}
-    #antidote bundle <${zsh_plugins}.txt >|${zsh_plugins}.compile
+if [[ ${zsh_plugins}.txt -nt ${zsh_plugins} ]]; then
+    antidote bundle <${zsh_plugins}.txt >|${zsh_plugins}
+    if [[ ${zsh_plugins} -nt ${zsh_plugins}.zwc ]]; then
+      zcompile ${zsh_plugins}
+    fi
 fi
-call_file ${zsh_plugins} "antidote_plugin"
+ZSH=$(antidote path ohmyzsh/ohmyzsh)
+call_file ${zsh_plugins} "antidote_plugin_compiled"

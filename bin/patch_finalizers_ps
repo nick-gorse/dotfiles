@@ -1,0 +1,12 @@
+#autolod patch_finalizers_ns
+patch_finalizers_ns() {
+
+  NS=$1
+
+  kubectl get namespace "$NS" -o json \
+    | jq '.spec.finalizers=[]' \
+    > /tmp/"$NS"-finalize.json
+
+  kubectl replace --raw "/api/v1/namespaces/$NS/finalize" \
+    -f /tmp/"$NS"-finalize.json
+}
