@@ -1,0 +1,9 @@
+#autoload
+upload_doc() {
+    if [[ -f $1 ]]; then
+        mc cp $1 nas-s3/web-guide/guides 
+    else
+        echo "Error: need to specific a doc name"
+        exit 128
+    fi
+}
