@@ -15,9 +15,6 @@
 	pager = delta
 [webui]
 	autoupdate = true
-[alias]
-	webui = !/Users/ngorse/.git-webui/release/libexec/git-core/git-webui
-	st = "!f(){ git status --ignored --untracked-file; }; f"
 [instaweb]
 	browser = open
 [interactive]
@@ -27,8 +24,10 @@
 [merge]
 	conflictStyle = zdiff3
 [help]
-	autocorrect = prompt
+	autocorrect = 1
 [rerere]
 	enabled = true
 [push]
 	autoSetupRemote = true
+[pull]
+	rebase = true
