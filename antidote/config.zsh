@@ -9,6 +9,7 @@ fpath=($HOME/.antidote/functions $fpath)
 autoload -Uz antidote
 
 zstyle ':antidote:bundle' use-friendly-names 'yes'
+zstyle ':antidote:bundle' file "${DOTFILES}/antidote/zsh_plugins.txt"
 zstyle ':antidote:static' file "${DOTFILES}/antidote/zsh_plugins"
 zstyle ':antidote:static' zcompile 'yes'
 if [[ ${zsh_plugins}.txt -nt ${zsh_plugins} ]]; then

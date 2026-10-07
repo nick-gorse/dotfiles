@@ -1,32 +1,45 @@
 # .zsh_plugins.txt
-zsh-users/zsh-syntax-highlighting
+
+#zsh-users/zsh-syntax-highlighting
 zsh-users/zsh-autosuggestions
+
+using:mattmc3/zephyr path:plugins
+color
+completion
+compstyle
+directory
+editor
+environment
+history
+helper
+macos
+zfunctions
+
 zsh-users/zsh-history-substring-search
 
-
-mattmc3/zephyr path:plugins/color kind:defer
-mattmc3/zephyr path:plugins/helper kind:defer
-mattmc3/zephyr path:plugins/macos conditional:is-macos kind:defer
-
+#mattmc3/zephyr path:plugins/color
+#mattmc3/zephyr path:plugins/helper
+#mattmc3/zephyr path:plugins/macos conditional:is-macos
 
 # Oh-my-zsh dependency management
 getantidote/use-omz
-#ohmyzsh/ohmyzsh path:lib
-#ohmyzsh/ohmyzsh path:plugins/macos conditional:is-macos kind:defer
-ohmyzsh/ohmyzsh path:plugins/sudo kind:defer
-#ohmyzsh/ohmyzsh path:plugins/asdf kind:defer
-#ohmyzsh/ohmyzsh path:custom/plugins/fzf-tab kind:defer
-ohmyzsh/ohmyzsh path:plugins/mise kind:defer
-ohmyzsh/ohmyzsh path:plugins/pip kind:defer
-#ohmyzsh/ohmyzsh path:plugins/golang kind:defer
-ohmyzsh/ohmyzsh path:plugins/git kind:defer
-#ohmyzsh/ohmyzsh path:custom/plugins/you-should-use kind:defer
-ohmyzsh/ohmyzsh path:plugins/aliases kind:defer
-joshskidmore/zsh-fzf-history-search kind:defer
-zsh-hooks/zsh-hooks kind:defer
+ohmyzsh/ohmyzsh path:lib
+#ohmyzsh/ohmyzsh path:plugins/macos conditional:is-macos
+ohmyzsh/ohmyzsh path:plugins/sudo
+#ohmyzsh/ohmyzsh path:plugins/asdf
+ohmyzsh/ohmyzsh path:custom/plugins/fzf-tab
+ohmyzsh/ohmyzsh path:plugins/mise
+ohmyzsh/ohmyzsh path:plugins/pip
+#ohmyzsh/ohmyzsh path:plugins/golang
+#ohmyzsh/ohmyzsh path:plugins/git
+#ohmyzsh/ohmyzsh path:custom/plugins/you-should-use
+ohmyzsh/ohmyzsh path:plugins/aliases
+joshskidmore/zsh-fzf-history-search
+zsh-hooks/zsh-hooks
+unixorn/git-extra-commands
 
-mattmc3/zfunctions kind:defer
-zdharma-continuum/fast-syntax-highlighting kind:defer
+#mattmc3/zfunctions
+zdharma-continuum/fast-syntax-highlighting
 
 mattmc3/zsh-safe-rm
 unixorn/fzf-zsh-plugin
