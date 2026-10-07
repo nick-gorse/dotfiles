@@ -1,0 +1,16 @@
+#autoload
+ffile() {
+    osascript $DOTFILES/macos/ffile.scpt
+    }
+
+
+cfd() {
+    emulate -L zsh
+    [[ -n $DEBUG_ZSH ]] && {
+        export PS4='+%N:%i> '
+        set -x
+    }
+    local _return=$(ffile)
+    cd "${_return:h}"
+
+}

@@ -19,14 +19,21 @@ mise_init_project() {
 
   {
     echo '[task_config]'
-    echo "includes = [\"git::https://git.olb42.com/olb042/mise-tasks.git//docker.toml?ref=${ref}\"]"
+    echo """includes = [
+        \"git::https://git.olb42.com/olb042/mise-tasks.git//docker.toml?ref=${ref}\",
+        \"git::https://git.olb42.com/olb042/mise-tasks.git//release.toml?ref=${ref}\"
+        ]"""
     echo ''
     echo '[vars]'
     echo "# Published image name — defaults to the repo name; adjust if it differs."
     echo "image = \"${repo}\""
+    if [[ -d "${PWD}/charts" ]]; then
+      echo "helm_repo = \"${owner}\""
+    fi
+    echo ''
+    echo '[env]'
+    echo "PROJECT_ROOT = \"{{ config_root }}\""
     if [ "$owner" != "$root_ns" ]; then
-      echo ''
-      echo '[env]'
       echo "# This repo's owner (${owner}) differs from the root default (${root_ns})."
       echo "REGISTRY_NAMESPACE = \"${owner}\""
     fi
