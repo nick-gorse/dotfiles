@@ -11,11 +11,11 @@
 setopt complete_aliases nobgnice
 
 # dump location + TTL
-local _zcomp_loc="${XDG_CACHE_HOME:-$HOME/.cache}/zcomp/zcompdump"
+local _zcomp_loc="${__zsh_cache_dir:-$HOME/.cache/zsh}/zcompdump"
 if [[ "${ZSH_COMPDUMP}" != "${_zcomp_loc}" ]]; then
-    typeset -g -r ZSH_COMPDUMP="${_zcomp_loc}"
+    typeset -g ZSH_COMPDUMP="${_zcomp_loc}"
 fi
-local _zcd="${ZSH_COMPDUMP:-$HOME/.cache/zcomp/zcompdump}"
+local _zcd="${ZSH_COMPDUMP:-$HOME/.cache/completions/zcompdump}"
 
 # Guard if file missing
 #[[ ! -r "$ZSH_COMPDUMP" ]] && {
@@ -53,7 +53,7 @@ else
   (( _have_local_comp )) && source "$HOME/.local_comp_rc"
   local f
   for f in "${_completion_files[@]}"; do
-    call_file "$f" "${f:h:t}"
+    call_file "$f" "completion-${f:h:t}"
   done
   compinit -i -d "$_zcd"
   { zcompile "$_zcd" 2>/dev/null } &!
@@ -82,7 +82,9 @@ zstyle ':completion:*' completer _extensions _complete _dynamic_directory_name _
 
 # Use cache for commands using cache
 zstyle ':completion:*' use-cache on
-zstyle ':completion:*' cache-path  ${ZSH_DUMP_PATH}
+zstyle ':completion:*' cache-path ${ZSH_COMPDUMP}
+zstyle ':completion::complete:*' use-cache on
+zstyle ':completion::complete:*' cache-path ${ZSH_COMPDUMP}
 
 # Complete the alias when _expand_alias is used as a function
 zstyle ':completion:*' complete true
@@ -123,7 +125,7 @@ zstyle ':completion:*:' ignored-patterns '(_*|pre(cmd|exec)|prompt_*)'
 
 # Only display some tags for the command cd
 zstyle ':completion:*:*:cd:*' tag-order local-directories directory-stack path-directories
-# zstyle ':completion:*:complete:git:argument-1:' tag-order !aliases
+zstyle ':completion:*:complete:git:argument-1:' tag-order !aliases
 
 # Required for completion to be in good groups (named after the tags)
 zstyle ':completion:*' group-name ''

@@ -1,0 +1,15 @@
+#autoload
+
+retire_manifest() {
+ emulate -L zsh
+ local _dest=$HOME/unused-devops/
+ [[ -n $DEBUG_ZSH ]] && {
+     export PS4='+%N:%i> '
+     set -x
+ }
+ [[ -d $1 ]] && {
+   _dir_name=${1:a}
+   mv ${_dir_name} ${_dest}${_dir_name:t2:h}
+ }
+ 
+}

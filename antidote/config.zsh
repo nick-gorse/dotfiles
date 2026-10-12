@@ -9,14 +9,20 @@ fpath=($HOME/.antidote/functions $fpath)
 autoload -Uz antidote
 
 zstyle ':antidote:bundle' use-friendly-names 'yes'
-zstyle ':antidote:bundle' file "${DOTFILES}/antidote/zsh_plugins.txt"
-zstyle ':antidote:static' file "${DOTFILES}/antidote/zsh_plugins"
+#zstyle ':antidote:bundle' file "${DOTFILES}/antidote/zsh_plugins.txt"
+zstyle ':antidote:static' file "${zsh_plugins}"
 zstyle ':antidote:static' zcompile 'yes'
+# zstyle ":zephyr:plugin:completion" skip
+zstyle ':zephyr:plugin:completion' use-xdg-basedirs
+
 if [[ ${zsh_plugins}.txt -nt ${zsh_plugins} ]]; then
-    antidote bundle <${zsh_plugins}.txt >|${zsh_plugins}
-    if [[ ${zsh_plugins} -nt ${zsh_plugins}.zwc ]]; then
-      zcompile ${zsh_plugins}
-    fi
+   antidote bundle <${zsh_plugins}.txt >|${zsh_plugins}
+   if [[ ${zsh_plugins} -nt ${zsh_plugins}.zwc ]]; then
+     zcompile ${zsh_plugins}
+   fi
 fi
-ZSH=$(antidote path ohmyzsh/ohmyzsh)
+
+# antidote bundle <${zsh_plugins}.txt >|${zsh_plugins}
+# { zcompile "$zsh_plugins" 2>/dev/null } &!
 call_file ${zsh_plugins} "antidote_plugin_compiled"
+ZSH=$(antidote path ohmyzsh/ohmyzsh)

@@ -1,0 +1,36 @@
+#autoload
+
+replace_surrounded() {
+  emulate -L zsh
+
+  if (( $# != 3 )) || [[ -z $2 ]]; then
+    print -u2 'Usage: replace_surrounded FILE SEARCH REPLACEMENT'
+    return 2
+  fi
+  if [[ ! -f $1 || ! -r $1 ]]; then
+    print -u2 "Cannot read regular file: $1"
+    return 1
+  fi
+
+  local file=$1 search=$2 replacement=$3 content='' result=''
+  local -i i=1 n m
+
+  IFS= read -r -d '' content < "$file"
+  n=${#content}
+  m=${#search}
+
+  while (( i <= n )); do
+    if (( i > 1 && i + m <= n )) &&
+       [[ ${content[i,i+m-1]} == "$search" &&
+          ${content[i-1]} == [[:space:]] &&
+          ${content[i+m]} == [[:space:]] ]]; then
+      result+=$replacement
+      (( i += m ))
+    else
+      result+=${content[i]}
+      (( i++ ))
+    fi
+  done
+
+  print -rn -- "$result" >| "$file"
+}

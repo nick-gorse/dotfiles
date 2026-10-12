@@ -1,21 +1,23 @@
 # .zsh_plugins.txt
 
-#zsh-users/zsh-syntax-highlighting
+#zsh-users/zsh-syntax-highlighting kind:defer
+zdharma-continuum/fast-syntax-highlighting kind:defer
 zsh-users/zsh-autosuggestions
 
-using:mattmc3/zephyr path:plugins
-color
-completion
-compstyle
-directory
-editor
-environment
-history
-helper
-macos
-zfunctions
+mattmc3/zephyr path:plugins/color
+mattmc3/zephyr path:plugins/completion
+#mattmc3/zephyr path:plugins/compstyle kind:defer
+mattmc3/zephyr path:plugins/directory kind:defer
+#mattmc3/zephyr path:plugins/editor kind:defer
+#mattmc3/zephyr path:plugins/environment
+#mattmc3/zephyr path:plugins/history
+mattmc3/zephyr path:plugins/helper
+mattmc3/zephyr path:plugins/macos kind:defer conditional:is-macos
+mattmc3/zephyr path:plugins/zfunctions
 
 zsh-users/zsh-history-substring-search
+mattmc3/zsh-safe-rm kind:defer
+#unixorn/fzf-zsh-plugin
 
 #mattmc3/zephyr path:plugins/color
 #mattmc3/zephyr path:plugins/helper
@@ -24,24 +26,25 @@ zsh-users/zsh-history-substring-search
 # Oh-my-zsh dependency management
 getantidote/use-omz
 ohmyzsh/ohmyzsh path:lib
-#ohmyzsh/ohmyzsh path:plugins/macos conditional:is-macos
-ohmyzsh/ohmyzsh path:plugins/sudo
+#ohmyzsh/ohmyzsh path:plugins/macos kind:defer conditional:is-macos
+ohmyzsh/ohmyzsh path:plugins/sudo kind:defer
 #ohmyzsh/ohmyzsh path:plugins/asdf
-ohmyzsh/ohmyzsh path:custom/plugins/fzf-tab
-ohmyzsh/ohmyzsh path:plugins/mise
-ohmyzsh/ohmyzsh path:plugins/pip
+#ohmyzsh/ohmyzsh path:custom/plugins/fzf-tab
+ohmyzsh/ohmyzsh path:plugins/mise kind:defer
+ohmyzsh/ohmyzsh path:plugins/pip kind:defer
 #ohmyzsh/ohmyzsh path:plugins/golang
-#ohmyzsh/ohmyzsh path:plugins/git
+ohmyzsh/ohmyzsh path:plugins/git kind:defer
 #ohmyzsh/ohmyzsh path:custom/plugins/you-should-use
-ohmyzsh/ohmyzsh path:plugins/aliases
-joshskidmore/zsh-fzf-history-search
+ohmyzsh/ohmyzsh path:plugins/aliases 
+ohmyzsh/ohmyzsh path:plugins/kubectl kind:defer
+ohmyzsh/ohmyzsh path:plugins/argocd kind:defer
+ohmyzsh/ohmyzsh path:plugins/uv-env kind:defer
+#ohmyzsh/ohmyzsh path:plugins/zsh-navigation-tools 
+zdharma-continuum/zsh-navigation-tools kind:defer
+ohmyzsh/ohmyzsh path:plugins/eza kind:defer
+ohmyzsh/ohmyzsh path:plugins/magic-enter kind:defer
+#joshskidmore/zsh-fzf-history-search
 zsh-hooks/zsh-hooks
-unixorn/git-extra-commands
+unixorn/git-extra-commands kind:defer
 
-#mattmc3/zfunctions
-zdharma-continuum/fast-syntax-highlighting
-
-mattmc3/zsh-safe-rm
-unixorn/fzf-zsh-plugin
-
-#romkatv/zsh-bench kind:path
+romkatv/zsh-bench kind:path

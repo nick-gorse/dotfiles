@@ -12,23 +12,23 @@ elif command -v it2ssh >/dev/null 2>&1 && [[ -z "$SSH_CONNECTION" ]]; then
 fi
 
 
-# more ways to ls
-if command -v eza >/dev/null 2>&1; then
-  alias ls='eza $eza_params'
-  alias l='eza --git-ignore $eza_params'
-  alias ll='eza --all --header --long $eza_params'
-  alias llm='eza --all --header --long --sort=modified $eza_params'
-  alias la='eza -lbhma --smart-group --hyperlink --icons=auto'
-  alias lx='eza -lbhHigUmuSa@'
-  alias lt='eza --tree $eza_params'
-  alias tree='eza --tree $eza_params'
-elif command -v colorls >/dev/null 2>&1; then
-    alias ls='colorls -A --sd --hyperlink --gs'
-    alias ll='colorls -lA --sd'
-    alias la='colorls -lAh --sd'
-fi
-alias lsa="ls -a"
-alias ldot='ls -ld .* --sd'
+# # more ways to ls
+# if command -v eza >/dev/null 2>&1; then
+#   alias ls='eza $eza_params'
+#   alias l='eza --git-ignore $eza_params'
+#   alias ll='eza --all --header --long $eza_params'
+#   alias llm='eza --all --header --long --sort=modified $eza_params'
+#   alias la='eza -lbhma --smart-group --hyperlink --icons=auto'
+#   alias lx='eza -lbhHigUmuSa@'
+#   alias lt='eza --tree $eza_params'
+#   alias tree='eza --tree $eza_params'
+# elif command -v colorls >/dev/null 2>&1; then
+#     alias ls='colorls -A --sd --hyperlink --gs'
+#     alias ll='colorls -lA --sd'
+#     alias la='colorls -lAh --sd'
+# fi
+# alias lsa="ls -a"
+# alias ldot='ls -ld .* --sd'
 
 # disk usage
 alias df='df -H'

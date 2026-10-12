@@ -1,0 +1,5 @@
+#!autoload
+
+cp_guide() {
+    mc cp $1 nas-s3/web-guide/guides
+}
