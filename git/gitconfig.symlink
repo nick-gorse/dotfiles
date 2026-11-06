@@ -35,7 +35,7 @@
 [credential "https://git.olb42.com"]
 	useHttpPath = true
 	helper =
-	helper = !GITEA_CLI_CONFIG_DIR=~/.config/gitea-cli ~/.local/bin/gt auth git-credential --host https://git.olb42.com
+	helper = !GITEA_CLI_CONFIG_DIR=/Users/ngorse/.config/gitea-cli /Users/ngorse/.local/bin/gt auth git-credential --host https://git.olb42.com
 [gpg]
 	format = ssh
 [gpg "ssh"]
