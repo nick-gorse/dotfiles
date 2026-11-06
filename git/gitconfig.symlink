@@ -10,8 +10,9 @@
 	name = nick-gorse
 	email = nick@olb42.com
 	signingkey = 3C2095E7BE94E7F7
+	signingkey = ~/.ssh/id_script.pub
 [core]
-	excludesFile = ~/.gitignore
+	excludesFile = ~/gitignore
 	pager = delta
 [webui]
 	autoupdate = true
@@ -31,3 +32,11 @@
 	autoSetupRemote = true
 [pull]
 	rebase = true
+[credential "https://git.olb42.com"]
+	useHttpPath = true
+	helper =
+	helper = !GITEA_CLI_CONFIG_DIR=~/.config/gitea-cli ~/.local/bin/gt auth git-credential --host https://git.olb42.com
+[gpg]
+	format = ssh
+[gpg "ssh"]
+	allowedSignersFile = ~/.ssh/allowed_signers

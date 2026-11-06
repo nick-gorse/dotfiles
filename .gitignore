@@ -21,3 +21,5 @@ zsh/.zsh_history
 antidote/zsh_plugins.zwc
 antidote/zsh_plugins
 .claude/
+zsh-navigation-tools/*.db
+**/.DS_Store
